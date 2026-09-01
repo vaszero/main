@@ -52,7 +52,7 @@
 ## 테스트
 
 ```
-node test/calc.test.js
+node calc.test.js
 ```
 
 `index.html` 안의 순수 계산 함수 블록을 그대로 추출해 실행하므로, 배포 코드와 테스트 대상이 항상 같습니다.
