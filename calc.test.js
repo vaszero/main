@@ -4,7 +4,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const html = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+const html = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf8');
 const start = html.indexOf('  function parseDate(v){');
 const end = html.indexOf('  /* ── 상태 ');
 if (start < 0 || end < 0 || end <= start) {
