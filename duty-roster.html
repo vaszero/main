@@ -9,15 +9,15 @@
 <link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@700;800&family=IBM+Plex+Sans+KR:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #FCFDF9;
+    --bg: #FAFAF5;
     --surface: #FFFFFF;
-    --surface-2: #F2F4EC;
-    --border: #E1E6DA;
-    --text: #202821;
-    --text-muted: #66705F;
-    --accent: #3E7A56;
-    --accent-strong: #2C5B3E;
-    --accent-soft: #E4EFE7;
+    --surface-2: #F1F4EA;
+    --border: #E2E7DA;
+    --text: #1F2A20;
+    --text-muted: #63705E;
+    --accent: #2F7A52;
+    --accent-strong: #205C3D;
+    --accent-soft: #DEEFE2;
     --office1: #3468A6;
     --office1-soft: #E7EEF7;
     --office2: #B4761F;
@@ -28,6 +28,30 @@
     --danger-soft: #F6E7E3;
     --shadow: rgba(30, 40, 30, 0.10);
     color-scheme: light;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #12160F;
+      --surface: #191F15;
+      --surface-2: #20271B;
+      --border: #313B29;
+      --text: #E7ECE0;
+      --text-muted: #96A28B;
+      --accent: #62C093;
+      --accent-strong: #82DBAE;
+      --accent-soft: #20372A;
+      --office1: #7CAAE0;
+      --office1-soft: #1B2A3C;
+      --office2: #E3AC57;
+      --office2-soft: #3A2C15;
+      --office3: #C79ED8;
+      --office3-soft: #302339;
+      --danger: #E58A72;
+      --danger-soft: #3B2219;
+      --shadow: rgba(0, 0, 0, 0.35);
+      color-scheme: dark;
+    }
   }
 
   * { box-sizing: border-box; }
@@ -131,7 +155,7 @@
 
   .bars { display: flex; flex-direction: column; gap: 12px; }
   .bar-row { display: flex; align-items: center; gap: 10px; }
-  .bar-row .lab { width: 78px; flex: none; font-size: 13px; font-weight: 600; }
+  .bar-row .lab { width: 78px; flex: none; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
   .bar-track { flex: 1; height: 10px; background: var(--surface-2); border-radius: 999px; overflow: hidden; }
   .bar-fill { height: 100%; border-radius: 999px; }
   .bar-row.o1 .bar-fill { background: var(--office1); }
@@ -144,7 +168,7 @@
   th { font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); font-weight: 700; }
   tbody tr:hover { background: var(--surface-2); }
   .table-wrap { overflow-x: auto; }
-  .status-tag { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px; }
+  .status-tag { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
   .status-tag.confirmed { background: var(--accent-soft); color: var(--accent-strong); }
   .status-tag.planned { background: var(--surface-2); color: var(--text-muted); border: 1px solid var(--border); }
   .row-actions { display: flex; gap: 4px; }
@@ -178,7 +202,7 @@
   <header class="top">
     <div class="title">
       <h1>환경관리당번</h1>
-      <div class="sub">사무실 1·2·3 순환 배정 — 최근에 적게 한 사람부터 공정하게</div>
+      <div class="sub">사무실 1·2·3 중 매달 2곳이 순환 당번 — 최근에 적게 한 사람부터 공정하게 · 이 브라우저에만 저장됩니다</div>
     </div>
     <div class="stat-row" id="headerStats"></div>
   </header>
@@ -248,130 +272,73 @@
     </div>
   </section>
 
-  <footer class="note">환경관리당번 배정 도우미 · Firebase로 팀 전체에 실시간 공유됩니다</footer>
+  <footer class="note">환경관리당번 배정 도우미 · 데이터는 이 브라우저(이 컴퓨터)에만 저장되며 다른 사람과 자동으로 공유되지 않습니다</footer>
 </div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
-import {
-  getFirestore, collection, doc, setDoc, updateDoc, deleteDoc, addDoc,
-  onSnapshot, getDocs, writeBatch
-} from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
-
-// ── Firebase 설정 ────────────────────────────────────────────────
-// Firebase 콘솔 > 프로젝트 설정 > 내 앱 > 웹 앱에서 받은 값으로 바꿔주세요.
-var firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
-};
-// ────────────────────────────────────────────────────────────────
-
-// 2018~2025년 이력(공정 배정 계산용 기준값) + 기존 2026년 배정 일정.
-// Firestore가 비어 있을 때(최초 1회) 자동으로 채워 넣습니다.
-var SEED_PEOPLE = [
-  { id: "p01", name: "염미애", office: "2", baseCount: 6, baseLastY: 2023, baseLastM: 7 },
-  { id: "p02", name: "오승은", office: "3", baseCount: 7, baseLastY: 2024, baseLastM: 3 },
-  { id: "p03", name: "장윤하", office: "1", baseCount: 8, baseLastY: 2025, baseLastM: 7 },
-  { id: "p04", name: "신수아", office: "1", baseCount: 7, baseLastY: 2025, baseLastM: 5 },
-  { id: "p05", name: "신수경", office: "2", baseCount: 5, baseLastY: 2022, baseLastM: 8 },
-  { id: "p06", name: "박연희", office: "3", baseCount: 7, baseLastY: 2025, baseLastM: 11 },
-  { id: "p07", name: "정미라", office: "2", baseCount: 5, baseLastY: 2023, baseLastM: 8 },
-  { id: "p08", name: "김유진", office: "1", baseCount: 4, baseLastY: 2025, baseLastM: 4 },
-  { id: "p09", name: "안수진", office: "1", baseCount: 6, baseLastY: 2025, baseLastM: 8 },
-  { id: "p10", name: "이소연", office: "2", baseCount: 6, baseLastY: 2024, baseLastM: 8 },
-  { id: "p11", name: "김보경", office: "1", baseCount: 2, baseLastY: 2024, baseLastM: 4 },
-  { id: "p12", name: "안나연", office: "2", baseCount: 1, baseLastY: 2020, baseLastM: 11 },
-  { id: "p13", name: "허지혜", office: "2", baseCount: 4, baseLastY: 2024, baseLastM: 9 },
-  { id: "p14", name: "고은하", office: "2", baseCount: 2, baseLastY: 2023, baseLastM: 1 },
-  { id: "p15", name: "김현정", office: "1", baseCount: 3, baseLastY: 2025, baseLastM: 10 },
-  { id: "p16", name: "박유정", office: "2", baseCount: 3, baseLastY: 2025, baseLastM: 5 },
-  { id: "p17", name: "박보미", office: "1", baseCount: 2, baseLastY: 2025, baseLastM: 3 },
-  { id: "p18", name: "채영은", office: "1", baseCount: 1, baseLastY: 2025, baseLastM: 2 },
-  { id: "p19", name: "이현지", office: "3", baseCount: 2, baseLastY: 2025, baseLastM: 9 },
-  { id: "p20", name: "김유정", office: "3", baseCount: 2, baseLastY: 2025, baseLastM: 8 },
-  { id: "p21", name: "김영민", office: "1", baseCount: 1, baseLastY: 2025, baseLastM: 1 },
-  { id: "p22", name: "변수지", office: "2", baseCount: 2, baseLastY: 2025, baseLastM: 12 },
-  { id: "p23", name: "장다원", office: "2", baseCount: 2, baseLastY: 2025, baseLastM: 10 },
-  { id: "p24", name: "김도이", office: "2", baseCount: 1, baseLastY: 2025, baseLastM: 4 },
-  { id: "p25", name: "이은수", office: "1", baseCount: 1, baseLastY: 2025, baseLastM: 9 },
-  { id: "p26", name: "홍주희", office: "1", baseCount: 0, baseLastY: 0, baseLastM: 0 },
-  { id: "p27", name: "김수영", office: "2", baseCount: 0, baseLastY: 0, baseLastM: 0 },
-  { id: "p28", name: "정혜원", office: "3", baseCount: 0, baseLastY: 0, baseLastM: 0 },
-  { id: "p29", name: "김명호", office: "2", baseCount: 0, baseLastY: 0, baseLastM: 0 },
-  { id: "p30", name: "박초이", office: "1", baseCount: 0, baseLastY: 0, baseLastM: 0 },
-  { id: "p31", name: "신소민", office: "1", baseCount: 0, baseLastY: 0, baseLastM: 0 },
-  { id: "p32", name: "최동주", office: "2", baseCount: 0, baseLastY: 0, baseLastM: 0 },
-  { id: "p33", name: "용혜령", office: "1", baseCount: 0, baseLastY: 0, baseLastM: 0 }
-];
-var SEED_ASSIGNMENTS = [
-  { id: "2026-01", year: 2026, month: 1, status: "confirmed", entries: [{ office: "1", personId: "p15", personName: "김현정" }] },
-  { id: "2026-02", year: 2026, month: 2, status: "confirmed", entries: [{ office: "1", personId: "p08", personName: "김유진" }, { office: "2", personId: "p13", personName: "허지혜" }] },
-  { id: "2026-03", year: 2026, month: 3, status: "confirmed", entries: [{ office: "1", personId: "p18", personName: "채영은" }, { office: "2", personId: "p05", personName: "신수경" }] },
-  { id: "2026-04", year: 2026, month: 4, status: "confirmed", entries: [{ office: "2", personId: "p23", personName: "장다원" }, { office: "3", personId: "p20", personName: "김유정" }] },
-  { id: "2026-05", year: 2026, month: 5, status: "confirmed", entries: [{ office: "1", personId: "p17", personName: "박보미" }, { office: "2", personId: "p24", personName: "김도이" }] },
-  { id: "2026-06", year: 2026, month: 6, status: "confirmed", entries: [{ office: "1", personId: "p21", personName: "김영민" }, { office: "3", personId: "p28", personName: "정혜원" }] },
-  { id: "2026-07", year: 2026, month: 7, status: "confirmed", entries: [{ office: "1", personId: "p26", personName: "홍주희" }, { office: "2", personId: "p10", personName: "이소연" }] },
-  { id: "2026-08", year: 2026, month: 8, status: "confirmed", entries: [{ office: "1", personId: "p30", personName: "박초이" }, { office: "3", personId: "p19", personName: "이현지" }] },
-  { id: "2026-09", year: 2026, month: 9, status: "confirmed", entries: [{ office: "2", personId: "p14", personName: "고은하" }, { office: "3", personId: "p06", personName: "박연희" }] },
-  { id: "2026-10", year: 2026, month: 10, status: "planned", entries: [{ office: "1", personId: "p11", personName: "김보경" }, { office: "2", personId: "p29", personName: "김명호" }] },
-  { id: "2026-11", year: 2026, month: 11, status: "planned", entries: [{ office: "1", personId: "p25", personName: "이은수" }, { office: "2", personId: "p22", personName: "변수지" }] },
-  { id: "2026-12", year: 2026, month: 12, status: "planned", entries: [{ office: "1", personId: "p31", personName: "신소민" }, { office: "2", personId: "p27", personName: "김수영" }] }
-];
-
-function makeDb(fs) {
-  function col(path) {
-    var ref = collection(fs, path);
-    return {
-      onSnapshot: function (next, err) {
-        return onSnapshot(ref, function (snap) {
-          next({ docs: snap.docs.map(function (d) { return { id: d.id, data: function () { return d.data(); } }; }) });
-        }, err);
-      },
-      doc: function (id) {
-        var dref = doc(fs, path, id);
-        return {
-          set: function (data) { return setDoc(dref, data); },
-          update: function (data) { return updateDoc(dref, data); },
-          delete: function () { return deleteDoc(dref); }
-        };
-      },
-      add: function (data) { return addDoc(ref, data); }
-    };
-  }
-  return { collection: col };
-}
-
-async function maybeSeed(fs) {
-  var peopleSnap = await getDocs(collection(fs, "people"));
-  if (!peopleSnap.empty) return;
-  var batch = writeBatch(fs);
-  SEED_PEOPLE.forEach(function (p) {
-    batch.set(doc(fs, "people", p.id), {
-      name: p.name, office: p.office, active: true,
-      baseCount: p.baseCount, baseLastY: p.baseLastY, baseLastM: p.baseLastM
-    });
-  });
-  SEED_ASSIGNMENTS.forEach(function (a) {
-    batch.set(doc(fs, "assignments", a.id), {
-      year: a.year, month: a.month, status: a.status, entries: a.entries
-    });
-  });
-  await batch.commit();
-}
-
+<script>
 (function () {
+  var STORAGE_KEY = 'dutyRoster.v1';
   var OFFICES = ['1', '2', '3'];
   var OFFICE_LABEL = { '1': '1번 사무실', '2': '2번 사무실', '3': '3번 사무실' };
-  var db = null;
+
+  // 2018~2025년 이력(공정 배정 계산용 기준값) + 2026년 배정 일정.
+  // 환경관리당번.xlsx 원본 이력에서 그대로 옮긴 값입니다.
+  var SEED_PEOPLE = [
+    { id: "p01", name: "염미애", office: "2", baseCount: 6, baseLastY: 2023, baseLastM: 7 },
+    { id: "p02", name: "오승은", office: "3", baseCount: 7, baseLastY: 2024, baseLastM: 3 },
+    { id: "p03", name: "장윤하", office: "1", baseCount: 8, baseLastY: 2025, baseLastM: 7 },
+    { id: "p04", name: "신수아", office: "1", baseCount: 7, baseLastY: 2025, baseLastM: 5 },
+    { id: "p05", name: "신수경", office: "2", baseCount: 5, baseLastY: 2022, baseLastM: 8 },
+    { id: "p06", name: "박연희", office: "3", baseCount: 7, baseLastY: 2025, baseLastM: 11 },
+    { id: "p07", name: "정미라", office: "2", baseCount: 5, baseLastY: 2023, baseLastM: 8 },
+    { id: "p08", name: "김유진", office: "1", baseCount: 4, baseLastY: 2025, baseLastM: 4 },
+    { id: "p09", name: "안수진", office: "1", baseCount: 6, baseLastY: 2025, baseLastM: 8 },
+    { id: "p10", name: "이소연", office: "2", baseCount: 6, baseLastY: 2024, baseLastM: 8 },
+    { id: "p11", name: "김보경", office: "1", baseCount: 2, baseLastY: 2024, baseLastM: 4 },
+    { id: "p12", name: "안나연", office: "2", baseCount: 1, baseLastY: 2020, baseLastM: 11 },
+    { id: "p13", name: "허지혜", office: "2", baseCount: 4, baseLastY: 2024, baseLastM: 9 },
+    { id: "p14", name: "고은하", office: "2", baseCount: 2, baseLastY: 2023, baseLastM: 1 },
+    { id: "p15", name: "김현정", office: "1", baseCount: 3, baseLastY: 2025, baseLastM: 10 },
+    { id: "p16", name: "박유정", office: "2", baseCount: 3, baseLastY: 2025, baseLastM: 5 },
+    { id: "p17", name: "박보미", office: "1", baseCount: 2, baseLastY: 2025, baseLastM: 3 },
+    { id: "p18", name: "채영은", office: "1", baseCount: 1, baseLastY: 2025, baseLastM: 2 },
+    { id: "p19", name: "이현지", office: "3", baseCount: 2, baseLastY: 2025, baseLastM: 9 },
+    { id: "p20", name: "김유정", office: "3", baseCount: 2, baseLastY: 2025, baseLastM: 8 },
+    { id: "p21", name: "김영민", office: "1", baseCount: 1, baseLastY: 2025, baseLastM: 1 },
+    { id: "p22", name: "변수지", office: "2", baseCount: 2, baseLastY: 2025, baseLastM: 12 },
+    { id: "p23", name: "장다원", office: "2", baseCount: 2, baseLastY: 2025, baseLastM: 10 },
+    { id: "p24", name: "김도이", office: "2", baseCount: 1, baseLastY: 2025, baseLastM: 4 },
+    { id: "p25", name: "이은수", office: "1", baseCount: 1, baseLastY: 2025, baseLastM: 9 },
+    { id: "p26", name: "홍주희", office: "1", baseCount: 0, baseLastY: 0, baseLastM: 0 },
+    { id: "p27", name: "김수영", office: "2", baseCount: 0, baseLastY: 0, baseLastM: 0 },
+    { id: "p28", name: "정혜원", office: "3", baseCount: 0, baseLastY: 0, baseLastM: 0 },
+    { id: "p29", name: "김명호", office: "2", baseCount: 0, baseLastY: 0, baseLastM: 0 },
+    { id: "p30", name: "박초이", office: "1", baseCount: 0, baseLastY: 0, baseLastM: 0 },
+    { id: "p31", name: "신소민", office: "1", baseCount: 0, baseLastY: 0, baseLastM: 0 },
+    { id: "p32", name: "최동주", office: "2", baseCount: 0, baseLastY: 0, baseLastM: 0 },
+    { id: "p33", name: "용혜령", office: "1", baseCount: 0, baseLastY: 0, baseLastM: 0 }
+  ];
+  var SEED_ASSIGNMENTS = [
+    { id: "2026-01", year: 2026, month: 1, status: "confirmed", entries: [{ office: "1", personId: "p15", personName: "김현정" }] },
+    { id: "2026-02", year: 2026, month: 2, status: "confirmed", entries: [{ office: "1", personId: "p08", personName: "김유진" }, { office: "2", personId: "p13", personName: "허지혜" }] },
+    { id: "2026-03", year: 2026, month: 3, status: "confirmed", entries: [{ office: "1", personId: "p18", personName: "채영은" }, { office: "2", personId: "p05", personName: "신수경" }] },
+    { id: "2026-04", year: 2026, month: 4, status: "confirmed", entries: [{ office: "2", personId: "p23", personName: "장다원" }, { office: "3", personId: "p20", personName: "김유정" }] },
+    { id: "2026-05", year: 2026, month: 5, status: "confirmed", entries: [{ office: "1", personId: "p17", personName: "박보미" }, { office: "2", personId: "p24", personName: "김도이" }] },
+    { id: "2026-06", year: 2026, month: 6, status: "confirmed", entries: [{ office: "1", personId: "p21", personName: "김영민" }, { office: "3", personId: "p28", personName: "정혜원" }] },
+    { id: "2026-07", year: 2026, month: 7, status: "confirmed", entries: [{ office: "1", personId: "p26", personName: "홍주희" }, { office: "2", personId: "p10", personName: "이소연" }] },
+    { id: "2026-08", year: 2026, month: 8, status: "confirmed", entries: [{ office: "1", personId: "p30", personName: "박초이" }, { office: "3", personId: "p19", personName: "이현지" }] },
+    { id: "2026-09", year: 2026, month: 9, status: "confirmed", entries: [{ office: "2", personId: "p14", personName: "고은하" }, { office: "3", personId: "p06", personName: "박연희" }] },
+    { id: "2026-10", year: 2026, month: 10, status: "planned", entries: [{ office: "1", personId: "p11", personName: "김보경" }, { office: "2", personId: "p29", personName: "김명호" }] },
+    { id: "2026-11", year: 2026, month: 11, status: "planned", entries: [{ office: "1", personId: "p25", personName: "이은수" }, { office: "2", personId: "p22", personName: "변수지" }] },
+    { id: "2026-12", year: 2026, month: 12, status: "planned", entries: [{ office: "1", personId: "p31", personName: "신소민" }, { office: "2", personId: "p27", personName: "김수영" }] }
+  ];
+
   var people = [];
   var assignments = [];
   var formOffices = [];
   var formPeople = {};
   var currentEditingId = null;
+  var storageOk = true;
 
   function $(sel) { return document.querySelector(sel); }
   function $all(sel) { return Array.prototype.slice.call(document.querySelectorAll(sel)); }
@@ -383,6 +350,47 @@ async function maybeSeed(fs) {
     var b = $('#banner');
     b.textContent = msg;
     b.classList.add('show');
+  }
+
+  function loadState() {
+    try {
+      var raw = window.localStorage.getItem(STORAGE_KEY);
+      if (raw) return JSON.parse(raw);
+    } catch (e) {
+      storageOk = false;
+    }
+    return null;
+  }
+
+  function saveState() {
+    if (!storageOk) return;
+    try {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ people: people, assignments: assignments }));
+    } catch (e) {
+      storageOk = false;
+      showBanner('브라우저 저장소에 저장하지 못했습니다 (시크릿 모드이거나 저장 공간이 가득 찼을 수 있습니다). 이번 변경 사항은 새로고침하면 사라집니다.');
+    }
+  }
+
+  function initData() {
+    var state = loadState();
+    if (state && state.people && state.people.length) {
+      people = state.people;
+      assignments = state.assignments || [];
+    } else {
+      people = SEED_PEOPLE.map(function (p) { return Object.assign({ active: true }, p); });
+      assignments = SEED_ASSIGNMENTS.map(function (a) { return Object.assign({}, a, { entries: a.entries.slice() }); });
+      saveState();
+    }
+  }
+
+  function newPersonId() {
+    var maxN = 0;
+    people.forEach(function (p) {
+      var m = /^p(\d+)$/.exec(p.id);
+      if (m) maxN = Math.max(maxN, parseInt(m[1], 10));
+    });
+    return 'p' + pad2(maxN + 1);
   }
 
   function combinedStats(excludeKey) {
@@ -646,10 +654,12 @@ async function maybeSeed(fs) {
     });
     $all('[data-del]').forEach(function (btn) {
       btn.addEventListener('click', function () {
-        if (!db) return;
         var id = btn.getAttribute('data-del');
         if (!confirm(ymLabel_fromId(id) + ' 배정을 삭제할까요?')) return;
-        db.collection('assignments').doc(id).delete().catch(function () {});
+        assignments = assignments.filter(function (a) { return a.id !== id; });
+        if (currentEditingId === id) currentEditingId = null;
+        saveState();
+        renderAll();
       });
     });
   }
@@ -684,17 +694,21 @@ async function maybeSeed(fs) {
     });
     $all('[data-active]').forEach(function (cb) {
       cb.addEventListener('change', function () {
-        if (!db) return;
-        db.collection('people').doc(cb.getAttribute('data-active')).update({ active: cb.checked }).catch(function () {});
+        var p = people.filter(function (x) { return x.id === cb.getAttribute('data-active'); })[0];
+        if (!p) return;
+        p.active = cb.checked;
+        saveState();
+        renderAll();
       });
     });
     $all('[data-remove]').forEach(function (btn) {
       btn.addEventListener('click', function () {
-        if (!db) return;
         var p = people.filter(function (x) { return x.id === btn.getAttribute('data-remove'); })[0];
         if (!p) return;
         if (!confirm(p.name + '님을 명단에서 완전히 삭제할까요? 과거 배정 기록은 남습니다.')) return;
-        db.collection('people').doc(p.id).delete().catch(function () {});
+        people = people.filter(function (x) { return x.id !== p.id; });
+        saveState();
+        renderAll();
       });
     });
   }
@@ -735,7 +749,6 @@ async function maybeSeed(fs) {
   }
 
   function onSave() {
-    if (!db) { showBanner('저장 기능을 사용할 수 없는 상태입니다. Firebase 설정을 확인해주세요.'); return; }
     var y = parseInt($('#selYear').value, 10), m = parseInt($('#selMonth').value, 10);
     var key = keyOf(y, m);
     var entries = formOffices.slice().sort().map(function (o) {
@@ -747,64 +760,37 @@ async function maybeSeed(fs) {
     var now = new Date();
     var nowKeyNum = now.getFullYear() * 12 + (now.getMonth() + 1);
     if (y * 12 + m > nowKeyNum) status = 'planned';
-    var status_el = $('#saveStatus');
-    status_el.textContent = '저장 중…';
-    db.collection('assignments').doc(key).set({ year: y, month: m, status: status, entries: entries })
-      .then(function () { status_el.textContent = ymLabel(y, m) + ' 저장됨'; })
-      .catch(function () { status_el.textContent = '저장 실패 — 다시 시도해주세요.'; });
+
+    var idx = assignments.findIndex(function (a) { return a.id === key; });
+    var record = { id: key, year: y, month: m, status: status, entries: entries };
+    if (idx >= 0) assignments[idx] = record; else assignments.push(record);
+    currentEditingId = key;
+    saveState();
+    renderAll();
+    $('#saveStatus').textContent = ymLabel(y, m) + ' 저장됨';
   }
 
   function onAddPerson() {
-    if (!db) { showBanner('저장 기능을 사용할 수 없는 상태입니다. Firebase 설정을 확인해주세요.'); return; }
     var nameEl = $('#newName');
     var name = nameEl.value.trim();
     if (!name) return;
     var office = $('#newOffice').value;
-    db.collection('people').add({ name: name, office: office, active: true, baseCount: 0, baseLastY: 0, baseLastM: 0 })
-      .then(function () { nameEl.value = ''; })
-      .catch(function () { showBanner('추가에 실패했습니다.'); });
+    people.push({ id: newPersonId(), name: name, office: office, active: true, baseCount: 0, baseLastY: 0, baseLastM: 0 });
+    nameEl.value = '';
+    saveState();
+    renderAll();
   }
 
-  function subscribe() {
-    db.collection('people').onSnapshot(function (snap) {
-      people = snap.docs.map(function (d) { return Object.assign({ id: d.id }, d.data()); });
-      renderAll();
-    }, function () { showBanner('명단을 불러오는 중 문제가 발생했습니다.'); });
-
-    db.collection('assignments').onSnapshot(function (snap) {
-      assignments = snap.docs.map(function (d) { return Object.assign({ id: d.id }, d.data()); });
-      renderAll();
-      if (!currentEditingId && formOffices.length === 0) {
-        var y = parseInt($('#selYear').value, 10), m = parseInt($('#selMonth').value, 10);
-        loadFormFor(y, m);
-      }
-    }, function () { showBanner('일정을 불러오는 중 문제가 발생했습니다.'); });
-  }
-
-  function isConfigured() {
-    return firebaseConfig.apiKey && firebaseConfig.apiKey.indexOf('YOUR_') !== 0;
-  }
-
-  async function init() {
+  function init() {
+    initData();
     buildYearMonthSelectors();
     wireStaticUI();
+    if (!storageOk) {
+      showBanner('이 브라우저에서는 저장 기능을 사용할 수 없습니다 (시크릿 모드일 수 있습니다). 지금은 읽기 전용으로 동작합니다.');
+    }
     renderAll();
-
-    if (!isConfigured()) {
-      showBanner('Firebase 설정이 아직 입력되지 않았습니다. 코드 위쪽의 firebaseConfig 값을 채워야 저장 기능이 동작합니다. (지금은 읽기 전용 화면입니다)');
-      return;
-    }
-    try {
-      var app = initializeApp(firebaseConfig);
-      var fs = getFirestore(app);
-      await maybeSeed(fs);
-      db = makeDb(fs);
-      subscribe();
-      var y = parseInt($('#selYear').value, 10), m = parseInt($('#selMonth').value, 10);
-      loadFormFor(y, m);
-    } catch (e) {
-      showBanner('Firebase 연결에 실패했습니다: ' + e.message + ' (Firestore 보안 규칙을 확인해주세요)');
-    }
+    var y = parseInt($('#selYear').value, 10), m = parseInt($('#selMonth').value, 10);
+    loadFormFor(y, m);
   }
 
   init();
