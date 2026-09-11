@@ -1,0 +1,814 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>환경관리당번</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@700;800&family=IBM+Plex+Sans+KR:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FCFDF9;
+    --surface: #FFFFFF;
+    --surface-2: #F2F4EC;
+    --border: #E1E6DA;
+    --text: #202821;
+    --text-muted: #66705F;
+    --accent: #3E7A56;
+    --accent-strong: #2C5B3E;
+    --accent-soft: #E4EFE7;
+    --office1: #3468A6;
+    --office1-soft: #E7EEF7;
+    --office2: #B4761F;
+    --office2-soft: #F7EEDD;
+    --office3: #7C4F94;
+    --office3-soft: #F1E7F4;
+    --danger: #B3432F;
+    --danger-soft: #F6E7E3;
+    --shadow: rgba(30, 40, 30, 0.10);
+    color-scheme: light;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans KR', 'Malgun Gothic', sans-serif;
+    font-size: 15px;
+    line-height: 1.55;
+  }
+  h1, h2, h3 { font-family: 'Gothic A1', 'Malgun Gothic', sans-serif; text-wrap: balance; margin: 0; }
+  .num { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+
+  .wrap { max-width: 980px; margin: 0 auto; padding: 28px 20px 60px; }
+
+  header.top {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    gap: 16px; margin-bottom: 22px; flex-wrap: wrap;
+  }
+  header.top .title { display: flex; flex-direction: column; gap: 4px; }
+  header.top h1 { font-size: 26px; font-weight: 800; letter-spacing: -0.01em; }
+  header.top .sub { color: var(--text-muted); font-size: 13.5px; }
+  .stat-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .stat-pill {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 8px 14px; display: flex; flex-direction: column; gap: 2px; min-width: 76px;
+  }
+  .stat-pill .n { font-size: 18px; font-weight: 600; }
+  .stat-pill .l { font-size: 11px; color: var(--text-muted); letter-spacing: 0.02em; }
+
+  nav.tabs {
+    display: flex; gap: 4px; margin-bottom: 20px; border-bottom: 1px solid var(--border);
+  }
+  nav.tabs button {
+    appearance: none; border: none; background: none; cursor: pointer;
+    font-family: inherit; font-size: 14.5px; font-weight: 600; color: var(--text-muted);
+    padding: 10px 14px; border-bottom: 2px solid transparent; margin-bottom: -1px;
+  }
+  nav.tabs button.active { color: var(--accent-strong); border-bottom-color: var(--accent); }
+  nav.tabs button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+    padding: 20px 22px; box-shadow: 0 1px 2px var(--shadow);
+  }
+  .card + .card { margin-top: 16px; }
+  .card h2 { font-size: 16px; font-weight: 800; margin-bottom: 4px; }
+  .card .hint { color: var(--text-muted); font-size: 12.5px; margin-bottom: 14px; }
+
+  .grid2 { display: grid; grid-template-columns: 1.3fr 1fr; gap: 16px; align-items: start; }
+  @media (max-width: 760px) { .grid2 { grid-template-columns: 1fr; } }
+
+  .field-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 14px; }
+  select, input[type=text] {
+    font-family: inherit; font-size: 14px; color: var(--text); background: var(--surface-2);
+    border: 1px solid var(--border); border-radius: 8px; padding: 7px 10px;
+  }
+  select:focus-visible, input:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+  .btn {
+    font-family: inherit; font-size: 13.5px; font-weight: 600; cursor: pointer;
+    border-radius: 8px; padding: 8px 14px; border: 1px solid var(--border);
+    background: var(--surface-2); color: var(--text);
+  }
+  .btn:hover { filter: brightness(0.97); }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .btn.primary:hover { background: var(--accent-strong); }
+  .btn.ghost { background: transparent; }
+  .btn.danger-txt { background: transparent; border-color: transparent; color: var(--danger); padding: 4px 6px; }
+  .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+  .office-chip {
+    display: inline-flex; align-items: center; gap: 6px; padding: 7px 13px; border-radius: 999px;
+    border: 1.5px solid var(--border); background: var(--surface-2); cursor: pointer;
+    font-size: 13.5px; font-weight: 600; color: var(--text-muted);
+  }
+  .office-chip.o1.selected { background: var(--office1-soft); border-color: var(--office1); color: var(--office1); }
+  .office-chip.o2.selected { background: var(--office2-soft); border-color: var(--office2); color: var(--office2); }
+  .office-chip.o3.selected { background: var(--office3-soft); border-color: var(--office3); color: var(--office3); }
+  .chip-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+
+  .badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 11.5px; font-weight: 700; border-radius: 6px; padding: 2px 7px; min-width: 20px;
+  }
+  .badge.o1 { background: var(--office1-soft); color: var(--office1); }
+  .badge.o2 { background: var(--office2-soft); color: var(--office2); }
+  .badge.o3 { background: var(--office3-soft); color: var(--office3); }
+
+  .pick-list { display: flex; flex-direction: column; gap: 10px; }
+  .pick-item { display: flex; align-items: center; gap: 10px; }
+  .pick-item label { font-size: 12.5px; color: var(--text-muted); width: 60px; flex: none; }
+  .pick-item select { flex: 1; }
+
+  .save-row { display: flex; gap: 10px; margin-top: 16px; align-items: center; }
+  .save-status { font-size: 12.5px; color: var(--text-muted); }
+
+  .bars { display: flex; flex-direction: column; gap: 12px; }
+  .bar-row { display: flex; align-items: center; gap: 10px; }
+  .bar-row .lab { width: 78px; flex: none; font-size: 13px; font-weight: 600; }
+  .bar-track { flex: 1; height: 10px; background: var(--surface-2); border-radius: 999px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 999px; }
+  .bar-row.o1 .bar-fill { background: var(--office1); }
+  .bar-row.o2 .bar-fill { background: var(--office2); }
+  .bar-row.o3 .bar-fill { background: var(--office3); }
+  .bar-row .val { width: 96px; flex: none; text-align: right; font-size: 12px; color: var(--text-muted); }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  th { font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); font-weight: 700; }
+  tbody tr:hover { background: var(--surface-2); }
+  .table-wrap { overflow-x: auto; }
+  .status-tag { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px; }
+  .status-tag.confirmed { background: var(--accent-soft); color: var(--accent-strong); }
+  .status-tag.planned { background: var(--surface-2); color: var(--text-muted); border: 1px solid var(--border); }
+  .row-actions { display: flex; gap: 4px; }
+  .entry-tag { display: inline-flex; align-items: center; gap: 5px; margin-right: 8px; }
+
+  .roster-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  @media (max-width: 760px) { .roster-grid { grid-template-columns: 1fr; } }
+  .roster-col h3 { font-size: 14px; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+  .person-row { display: flex; align-items: center; gap: 8px; padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 13.5px; }
+  .person-row:last-child { border-bottom: none; }
+  .person-row .pname { flex: 1; }
+  .person-row .pmeta { color: var(--text-muted); font-size: 11.5px; }
+  .person-row input[type=checkbox] { accent-color: var(--accent); }
+
+  .add-person { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+  .add-person input { flex: 1; min-width: 140px; }
+
+  .empty-note { color: var(--text-muted); font-size: 13px; padding: 10px 0; }
+  .banner {
+    background: var(--danger-soft); color: var(--danger); border: 1px solid var(--danger);
+    border-radius: 10px; padding: 10px 14px; font-size: 13px; margin-bottom: 16px; display: none;
+  }
+  .banner.show { display: block; }
+  footer.note { margin-top: 22px; color: var(--text-muted); font-size: 12px; text-align: center; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div id="banner" class="banner"></div>
+
+  <header class="top">
+    <div class="title">
+      <h1>환경관리당번</h1>
+      <div class="sub">사무실 1·2·3 순환 배정 — 최근에 적게 한 사람부터 공정하게</div>
+    </div>
+    <div class="stat-row" id="headerStats"></div>
+  </header>
+
+  <nav class="tabs">
+    <button data-tab="assign" class="active">이번 배정</button>
+    <button data-tab="schedule">전체 일정</button>
+    <button data-tab="roster">명단 관리</button>
+  </nav>
+
+  <section class="panel active" id="panel-assign">
+    <div class="grid2">
+      <div class="card">
+        <h2>배정 대상 월 선택</h2>
+        <div class="hint">기존 기록이 있는 달을 고르면 그 내용을 불러오고, 없는 달은 추천을 자동으로 계산합니다.</div>
+        <div class="field-row">
+          <select id="selYear"></select>
+          <select id="selMonth"></select>
+          <button class="btn ghost" id="btnSuggest">추천 다시 계산</button>
+        </div>
+
+        <div class="chip-row" id="officeChips"></div>
+
+        <div class="pick-list" id="pickList"></div>
+
+        <div class="save-row">
+          <button class="btn primary" id="btnSave">이 달로 저장</button>
+          <span class="save-status" id="saveStatus"></span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>사무실별 배정 균형</h2>
+        <div class="hint">1인당 누적 배정 횟수 — 낮을수록 이번 달 우선순위가 높습니다</div>
+        <div class="bars" id="fairnessBars"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" id="panel-schedule">
+    <div class="card">
+      <h2>전체 배정 일정</h2>
+      <div class="hint">2026년부터의 배정 기록입니다. 행을 클릭하면 "이번 배정" 탭에서 수정할 수 있습니다.</div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>연월</th><th>상태</th><th>배정자</th><th></th></tr></thead>
+          <tbody id="scheduleBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" id="panel-roster">
+    <div class="card">
+      <h2>사무실별 명단</h2>
+      <div class="hint">체크를 해제하면 그 사람은 다음 배정 추천에서 제외됩니다(기록은 남습니다). 2018년부터의 이력이 공정 배정 계산에 반영되어 있습니다.</div>
+      <div class="roster-grid" id="rosterGrid"></div>
+      <div class="add-person">
+        <input type="text" id="newName" placeholder="이름">
+        <select id="newOffice">
+          <option value="1">1번 사무실</option>
+          <option value="2">2번 사무실</option>
+          <option value="3">3번 사무실</option>
+        </select>
+        <button class="btn primary" id="btnAddPerson">추가</button>
+      </div>
+    </div>
+  </section>
+
+  <footer class="note">환경관리당번 배정 도우미 · Firebase로 팀 전체에 실시간 공유됩니다</footer>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
+import {
+  getFirestore, collection, doc, setDoc, updateDoc, deleteDoc, addDoc,
+  onSnapshot, getDocs, writeBatch
+} from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+
+// ── Firebase 설정 ────────────────────────────────────────────────
+// Firebase 콘솔 > 프로젝트 설정 > 내 앱 > 웹 앱에서 받은 값으로 바꿔주세요.
+var firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+// ────────────────────────────────────────────────────────────────
+
+// 2018~2025년 이력(공정 배정 계산용 기준값) + 기존 2026년 배정 일정.
+// Firestore가 비어 있을 때(최초 1회) 자동으로 채워 넣습니다.
+var SEED_PEOPLE = [
+  { id: "p01", name: "염미애", office: "2", baseCount: 6, baseLastY: 2023, baseLastM: 7 },
+  { id: "p02", name: "오승은", office: "3", baseCount: 7, baseLastY: 2024, baseLastM: 3 },
+  { id: "p03", name: "장윤하", office: "1", baseCount: 8, baseLastY: 2025, baseLastM: 7 },
+  { id: "p04", name: "신수아", office: "1", baseCount: 7, baseLastY: 2025, baseLastM: 5 },
+  { id: "p05", name: "신수경", office: "2", baseCount: 5, baseLastY: 2022, baseLastM: 8 },
+  { id: "p06", name: "박연희", office: "3", baseCount: 7, baseLastY: 2025, baseLastM: 11 },
+  { id: "p07", name: "정미라", office: "2", baseCount: 5, baseLastY: 2023, baseLastM: 8 },
+  { id: "p08", name: "김유진", office: "1", baseCount: 4, baseLastY: 2025, baseLastM: 4 },
+  { id: "p09", name: "안수진", office: "1", baseCount: 6, baseLastY: 2025, baseLastM: 8 },
+  { id: "p10", name: "이소연", office: "2", baseCount: 6, baseLastY: 2024, baseLastM: 8 },
+  { id: "p11", name: "김보경", office: "1", baseCount: 2, baseLastY: 2024, baseLastM: 4 },
+  { id: "p12", name: "안나연", office: "2", baseCount: 1, baseLastY: 2020, baseLastM: 11 },
+  { id: "p13", name: "허지혜", office: "2", baseCount: 4, baseLastY: 2024, baseLastM: 9 },
+  { id: "p14", name: "고은하", office: "2", baseCount: 2, baseLastY: 2023, baseLastM: 1 },
+  { id: "p15", name: "김현정", office: "1", baseCount: 3, baseLastY: 2025, baseLastM: 10 },
+  { id: "p16", name: "박유정", office: "2", baseCount: 3, baseLastY: 2025, baseLastM: 5 },
+  { id: "p17", name: "박보미", office: "1", baseCount: 2, baseLastY: 2025, baseLastM: 3 },
+  { id: "p18", name: "채영은", office: "1", baseCount: 1, baseLastY: 2025, baseLastM: 2 },
+  { id: "p19", name: "이현지", office: "3", baseCount: 2, baseLastY: 2025, baseLastM: 9 },
+  { id: "p20", name: "김유정", office: "3", baseCount: 2, baseLastY: 2025, baseLastM: 8 },
+  { id: "p21", name: "김영민", office: "1", baseCount: 1, baseLastY: 2025, baseLastM: 1 },
+  { id: "p22", name: "변수지", office: "2", baseCount: 2, baseLastY: 2025, baseLastM: 12 },
+  { id: "p23", name: "장다원", office: "2", baseCount: 2, baseLastY: 2025, baseLastM: 10 },
+  { id: "p24", name: "김도이", office: "2", baseCount: 1, baseLastY: 2025, baseLastM: 4 },
+  { id: "p25", name: "이은수", office: "1", baseCount: 1, baseLastY: 2025, baseLastM: 9 },
+  { id: "p26", name: "홍주희", office: "1", baseCount: 0, baseLastY: 0, baseLastM: 0 },
+  { id: "p27", name: "김수영", office: "2", baseCount: 0, baseLastY: 0, baseLastM: 0 },
+  { id: "p28", name: "정혜원", office: "3", baseCount: 0, baseLastY: 0, baseLastM: 0 },
+  { id: "p29", name: "김명호", office: "2", baseCount: 0, baseLastY: 0, baseLastM: 0 },
+  { id: "p30", name: "박초이", office: "1", baseCount: 0, baseLastY: 0, baseLastM: 0 },
+  { id: "p31", name: "신소민", office: "1", baseCount: 0, baseLastY: 0, baseLastM: 0 },
+  { id: "p32", name: "최동주", office: "2", baseCount: 0, baseLastY: 0, baseLastM: 0 },
+  { id: "p33", name: "용혜령", office: "1", baseCount: 0, baseLastY: 0, baseLastM: 0 }
+];
+var SEED_ASSIGNMENTS = [
+  { id: "2026-01", year: 2026, month: 1, status: "confirmed", entries: [{ office: "1", personId: "p15", personName: "김현정" }] },
+  { id: "2026-02", year: 2026, month: 2, status: "confirmed", entries: [{ office: "1", personId: "p08", personName: "김유진" }, { office: "2", personId: "p13", personName: "허지혜" }] },
+  { id: "2026-03", year: 2026, month: 3, status: "confirmed", entries: [{ office: "1", personId: "p18", personName: "채영은" }, { office: "2", personId: "p05", personName: "신수경" }] },
+  { id: "2026-04", year: 2026, month: 4, status: "confirmed", entries: [{ office: "2", personId: "p23", personName: "장다원" }, { office: "3", personId: "p20", personName: "김유정" }] },
+  { id: "2026-05", year: 2026, month: 5, status: "confirmed", entries: [{ office: "1", personId: "p17", personName: "박보미" }, { office: "2", personId: "p24", personName: "김도이" }] },
+  { id: "2026-06", year: 2026, month: 6, status: "confirmed", entries: [{ office: "1", personId: "p21", personName: "김영민" }, { office: "3", personId: "p28", personName: "정혜원" }] },
+  { id: "2026-07", year: 2026, month: 7, status: "confirmed", entries: [{ office: "1", personId: "p26", personName: "홍주희" }, { office: "2", personId: "p10", personName: "이소연" }] },
+  { id: "2026-08", year: 2026, month: 8, status: "confirmed", entries: [{ office: "1", personId: "p30", personName: "박초이" }, { office: "3", personId: "p19", personName: "이현지" }] },
+  { id: "2026-09", year: 2026, month: 9, status: "confirmed", entries: [{ office: "2", personId: "p14", personName: "고은하" }, { office: "3", personId: "p06", personName: "박연희" }] },
+  { id: "2026-10", year: 2026, month: 10, status: "planned", entries: [{ office: "1", personId: "p11", personName: "김보경" }, { office: "2", personId: "p29", personName: "김명호" }] },
+  { id: "2026-11", year: 2026, month: 11, status: "planned", entries: [{ office: "1", personId: "p25", personName: "이은수" }, { office: "2", personId: "p22", personName: "변수지" }] },
+  { id: "2026-12", year: 2026, month: 12, status: "planned", entries: [{ office: "1", personId: "p31", personName: "신소민" }, { office: "2", personId: "p27", personName: "김수영" }] }
+];
+
+function makeDb(fs) {
+  function col(path) {
+    var ref = collection(fs, path);
+    return {
+      onSnapshot: function (next, err) {
+        return onSnapshot(ref, function (snap) {
+          next({ docs: snap.docs.map(function (d) { return { id: d.id, data: function () { return d.data(); } }; }) });
+        }, err);
+      },
+      doc: function (id) {
+        var dref = doc(fs, path, id);
+        return {
+          set: function (data) { return setDoc(dref, data); },
+          update: function (data) { return updateDoc(dref, data); },
+          delete: function () { return deleteDoc(dref); }
+        };
+      },
+      add: function (data) { return addDoc(ref, data); }
+    };
+  }
+  return { collection: col };
+}
+
+async function maybeSeed(fs) {
+  var peopleSnap = await getDocs(collection(fs, "people"));
+  if (!peopleSnap.empty) return;
+  var batch = writeBatch(fs);
+  SEED_PEOPLE.forEach(function (p) {
+    batch.set(doc(fs, "people", p.id), {
+      name: p.name, office: p.office, active: true,
+      baseCount: p.baseCount, baseLastY: p.baseLastY, baseLastM: p.baseLastM
+    });
+  });
+  SEED_ASSIGNMENTS.forEach(function (a) {
+    batch.set(doc(fs, "assignments", a.id), {
+      year: a.year, month: a.month, status: a.status, entries: a.entries
+    });
+  });
+  await batch.commit();
+}
+
+(function () {
+  var OFFICES = ['1', '2', '3'];
+  var OFFICE_LABEL = { '1': '1번 사무실', '2': '2번 사무실', '3': '3번 사무실' };
+  var db = null;
+  var people = [];
+  var assignments = [];
+  var formOffices = [];
+  var formPeople = {};
+  var currentEditingId = null;
+
+  function $(sel) { return document.querySelector(sel); }
+  function $all(sel) { return Array.prototype.slice.call(document.querySelectorAll(sel)); }
+  function pad2(n) { return String(n).length < 2 ? '0' + n : String(n); }
+  function keyOf(y, m) { return y + '-' + pad2(m); }
+  function ymLabel(y, m) { return y + '년 ' + m + '월'; }
+
+  function showBanner(msg) {
+    var b = $('#banner');
+    b.textContent = msg;
+    b.classList.add('show');
+  }
+
+  function combinedStats(excludeKey) {
+    var map = {};
+    people.forEach(function (p) {
+      map[p.id] = {
+        id: p.id, name: p.name, office: p.office, active: p.active !== false,
+        count: p.baseCount || 0, lastY: p.baseLastY || 0, lastM: p.baseLastM || 0
+      };
+    });
+    assignments.forEach(function (a) {
+      if (a.id === excludeKey) return;
+      (a.entries || []).forEach(function (e) {
+        var s = map[e.personId];
+        if (!s) return;
+        s.count += 1;
+        var t = a.year * 12 + a.month;
+        var lt = s.lastY * 12 + s.lastM;
+        if (t > lt) { s.lastY = a.year; s.lastM = a.month; }
+      });
+    });
+    return map;
+  }
+
+  function officeStats(stats) {
+    var out = {};
+    OFFICES.forEach(function (o) {
+      var members = Object.keys(stats).map(function (k) { return stats[k]; })
+        .filter(function (s) { return s.office === o && s.active; });
+      var total = 0, lastY = 0, lastM = 0;
+      members.forEach(function (m) {
+        total += m.count;
+        var t = m.lastY * 12 + m.lastM, lt = lastY * 12 + lastM;
+        if (t > lt) { lastY = m.lastY; lastM = m.lastM; }
+      });
+      out[o] = {
+        office: o, count: members.length, total: total,
+        rate: members.length ? total / members.length : 0,
+        lastY: lastY, lastM: lastM
+      };
+    });
+    return out;
+  }
+
+  function candidatesForOffice(stats, office) {
+    return Object.keys(stats).map(function (k) { return stats[k]; })
+      .filter(function (s) { return s.office === office && s.active; })
+      .sort(function (a, b) {
+        if (a.count !== b.count) return a.count - b.count;
+        var ta = a.lastY * 12 + a.lastM, tb = b.lastY * 12 + b.lastM;
+        if (ta !== tb) return ta - tb;
+        return a.name.localeCompare(b.name, 'ko');
+      });
+  }
+
+  function latestAssignedMonth() {
+    var best = null;
+    assignments.forEach(function (a) {
+      var t = a.year * 12 + a.month;
+      if (!best || t > best.t) best = { t: t, year: a.year, month: a.month };
+    });
+    return best;
+  }
+
+  function defaultTargetMonth() {
+    var last = latestAssignedMonth();
+    if (last) {
+      var t = last.t + 1;
+      return { year: Math.floor((t - 1) / 12), month: ((t - 1) % 12) + 1 };
+    }
+    var now = new Date();
+    return { year: now.getFullYear(), month: now.getMonth() + 1 };
+  }
+
+  function buildYearMonthSelectors() {
+    var base = defaultTargetMonth();
+    var ySel = $('#selYear'), mSel = $('#selMonth');
+    ySel.innerHTML = '';
+    for (var y = base.year - 1; y <= base.year + 3; y++) {
+      var opt = document.createElement('option');
+      opt.value = y; opt.textContent = y + '년';
+      ySel.appendChild(opt);
+    }
+    mSel.innerHTML = '';
+    for (var m = 1; m <= 12; m++) {
+      var mo = document.createElement('option');
+      mo.value = m; mo.textContent = m + '월';
+      mSel.appendChild(mo);
+    }
+    ySel.value = base.year;
+    mSel.value = base.month;
+  }
+
+  function assignmentAt(y, m) {
+    var key = keyOf(y, m);
+    return assignments.filter(function (a) { return a.id === key; })[0] || null;
+  }
+
+  function suggestForMonth(y, m) {
+    var key = keyOf(y, m);
+    var stats = combinedStats(key);
+    var os = officeStats(stats);
+    var ranked = OFFICES.slice().sort(function (a, b) {
+      if (os[a].rate !== os[b].rate) return os[a].rate - os[b].rate;
+      var ta = os[a].lastY * 12 + os[a].lastM, tb = os[b].lastY * 12 + os[b].lastM;
+      return ta - tb;
+    });
+    var chosen = ranked.slice(0, 2).sort();
+    var picks = {};
+    chosen.forEach(function (o) {
+      var cands = candidatesForOffice(stats, o);
+      if (cands.length) picks[o] = cands[0].id;
+    });
+    return { offices: chosen, picks: picks };
+  }
+
+  function loadFormFor(y, m) {
+    var key = keyOf(y, m);
+    var existing = assignmentAt(y, m);
+    currentEditingId = existing ? existing.id : null;
+    if (existing) {
+      formOffices = (existing.entries || []).map(function (e) { return e.office; });
+      formPeople = {};
+      (existing.entries || []).forEach(function (e) { formPeople[e.office] = e.personId; });
+    } else {
+      var sug = suggestForMonth(y, m);
+      formOffices = sug.offices;
+      formPeople = sug.picks;
+    }
+    renderAssignForm();
+  }
+
+  function renderHeaderStats() {
+    var active = people.filter(function (p) { return p.active !== false; });
+    var host = $('#headerStats');
+    host.innerHTML = '';
+    var items = [
+      { n: active.length, l: '전체 인원' },
+      { n: active.filter(function (p) { return p.office === '1'; }).length, l: '1번 사무실' },
+      { n: active.filter(function (p) { return p.office === '2'; }).length, l: '2번 사무실' },
+      { n: active.filter(function (p) { return p.office === '3'; }).length, l: '3번 사무실' }
+    ];
+    items.forEach(function (it) {
+      var d = document.createElement('div');
+      d.className = 'stat-pill';
+      d.innerHTML = '<span class="n num">' + it.n + '</span><span class="l">' + it.l + '</span>';
+      host.appendChild(d);
+    });
+  }
+
+  function renderOfficeChips() {
+    var host = $('#officeChips');
+    host.innerHTML = '';
+    OFFICES.forEach(function (o) {
+      var chip = document.createElement('button');
+      chip.type = 'button';
+      chip.className = 'office-chip o' + o + (formOffices.indexOf(o) >= 0 ? ' selected' : '');
+      chip.textContent = OFFICE_LABEL[o];
+      chip.addEventListener('click', function () {
+        var idx = formOffices.indexOf(o);
+        if (idx >= 0) { formOffices.splice(idx, 1); delete formPeople[o]; }
+        else {
+          formOffices.push(o);
+          var stats = combinedStats(currentEditingId);
+          var cands = candidatesForOffice(stats, o);
+          if (cands.length) formPeople[o] = cands[0].id;
+        }
+        renderAssignForm();
+      });
+      host.appendChild(chip);
+    });
+  }
+
+  function renderPickList() {
+    var host = $('#pickList');
+    host.innerHTML = '';
+    var stats = combinedStats(currentEditingId);
+    formOffices.slice().sort().forEach(function (o) {
+      var row = document.createElement('div');
+      row.className = 'pick-item';
+      var label = document.createElement('label');
+      label.innerHTML = '<span class="badge o' + o + '">' + o + '</span>';
+      row.appendChild(label);
+      var sel = document.createElement('select');
+      var cands = candidatesForOffice(stats, o);
+      cands.forEach(function (c) {
+        var opt = document.createElement('option');
+        opt.value = c.id;
+        var lastTxt = c.lastY ? (c.lastY + '.' + pad2(c.lastM)) : '없음';
+        opt.textContent = c.name + '  ·  누적 ' + c.count + '회, 최근 ' + lastTxt;
+        if (formPeople[o] === c.id) opt.selected = true;
+        sel.appendChild(opt);
+      });
+      sel.addEventListener('change', function () { formPeople[o] = sel.value; });
+      row.appendChild(sel);
+      host.appendChild(row);
+    });
+    if (!formOffices.length) {
+      var note = document.createElement('div');
+      note.className = 'empty-note';
+      note.textContent = '위에서 이번 달에 배정할 사무실을 선택하세요.';
+      host.appendChild(note);
+    }
+  }
+
+  function renderAssignForm() {
+    renderOfficeChips();
+    renderPickList();
+  }
+
+  function renderFairnessBars() {
+    var stats = combinedStats(null);
+    var os = officeStats(stats);
+    var maxRate = Math.max(0.001, os['1'].rate, os['2'].rate, os['3'].rate);
+    var host = $('#fairnessBars');
+    host.innerHTML = '';
+    OFFICES.forEach(function (o) {
+      var row = document.createElement('div');
+      row.className = 'bar-row o' + o;
+      var pct = Math.round((os[o].rate / maxRate) * 100);
+      row.innerHTML =
+        '<div class="lab"><span class="badge o' + o + '">' + o + '</span> ' + os[o].count + '명</div>' +
+        '<div class="bar-track"><div class="bar-fill" style="width:' + pct + '%"></div></div>' +
+        '<div class="val num">' + os[o].rate.toFixed(2) + ' / 인</div>';
+      host.appendChild(row);
+    });
+  }
+
+  function renderSchedule() {
+    var body = $('#scheduleBody');
+    body.innerHTML = '';
+    var sorted = assignments.slice().sort(function (a, b) { return (b.year * 12 + b.month) - (a.year * 12 + a.month); });
+    if (!sorted.length) {
+      body.innerHTML = '<tr><td colspan="4" class="empty-note">아직 저장된 일정이 없습니다.</td></tr>';
+      return;
+    }
+    sorted.forEach(function (a) {
+      var tr = document.createElement('tr');
+      var entriesHtml = (a.entries || []).map(function (e) {
+        return '<span class="entry-tag"><span class="badge o' + e.office + '">' + e.office + '</span>' + e.personName + '</span>';
+      }).join('');
+      tr.innerHTML =
+        '<td class="num">' + ymLabel(a.year, a.month) + '</td>' +
+        '<td><span class="status-tag ' + a.status + '">' + (a.status === 'confirmed' ? '확정' : '예정') + '</span></td>' +
+        '<td>' + (entriesHtml || '<span class="empty-note">없음</span>') + '</td>' +
+        '<td class="row-actions">' +
+          '<button class="btn ghost" data-edit="' + a.id + '">수정</button>' +
+          '<button class="btn danger-txt" data-del="' + a.id + '">삭제</button>' +
+        '</td>';
+      body.appendChild(tr);
+    });
+    $all('[data-edit]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var a = assignments.filter(function (x) { return x.id === btn.getAttribute('data-edit'); })[0];
+        if (!a) return;
+        $('#selYear').value = a.year;
+        $('#selMonth').value = a.month;
+        loadFormFor(a.year, a.month);
+        setTab('assign');
+      });
+    });
+    $all('[data-del]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        if (!db) return;
+        var id = btn.getAttribute('data-del');
+        if (!confirm(ymLabel_fromId(id) + ' 배정을 삭제할까요?')) return;
+        db.collection('assignments').doc(id).delete().catch(function () {});
+      });
+    });
+  }
+
+  function ymLabel_fromId(id) {
+    var parts = id.split('-');
+    return parts[0] + '년 ' + parseInt(parts[1], 10) + '월';
+  }
+
+  function renderRoster() {
+    var host = $('#rosterGrid');
+    host.innerHTML = '';
+    var stats = combinedStats(null);
+    OFFICES.forEach(function (o) {
+      var colEl = document.createElement('div');
+      colEl.className = 'roster-col';
+      var members = people.filter(function (p) { return p.office === o; })
+        .sort(function (a, b) { return a.name.localeCompare(b.name, 'ko'); });
+      var rowsHtml = members.map(function (p) {
+        var s = stats[p.id];
+        var lastTxt = s.lastY ? (s.lastY + '.' + pad2(s.lastM)) : '없음';
+        return '<div class="person-row">' +
+          '<input type="checkbox" data-active="' + p.id + '" ' + (p.active !== false ? 'checked' : '') + '>' +
+          '<span class="pname">' + p.name + '</span>' +
+          '<span class="pmeta num">누적 ' + s.count + ' · 최근 ' + lastTxt + '</span>' +
+          '<button class="btn danger-txt" data-remove="' + p.id + '">삭제</button>' +
+          '</div>';
+      }).join('');
+      colEl.innerHTML = '<h3><span class="badge o' + o + '">' + o + '</span>' + OFFICE_LABEL[o] + ' (' + members.length + '명)</h3>' +
+        (rowsHtml || '<div class="empty-note">등록된 인원이 없습니다.</div>');
+      host.appendChild(colEl);
+    });
+    $all('[data-active]').forEach(function (cb) {
+      cb.addEventListener('change', function () {
+        if (!db) return;
+        db.collection('people').doc(cb.getAttribute('data-active')).update({ active: cb.checked }).catch(function () {});
+      });
+    });
+    $all('[data-remove]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        if (!db) return;
+        var p = people.filter(function (x) { return x.id === btn.getAttribute('data-remove'); })[0];
+        if (!p) return;
+        if (!confirm(p.name + '님을 명단에서 완전히 삭제할까요? 과거 배정 기록은 남습니다.')) return;
+        db.collection('people').doc(p.id).delete().catch(function () {});
+      });
+    });
+  }
+
+  function renderAll() {
+    renderHeaderStats();
+    renderFairnessBars();
+    renderSchedule();
+    renderRoster();
+    renderPickList();
+  }
+
+  function setTab(name) {
+    $all('nav.tabs button').forEach(function (b) { b.classList.toggle('active', b.getAttribute('data-tab') === name); });
+    $all('.panel').forEach(function (p) { p.classList.toggle('active', p.id === 'panel-' + name); });
+  }
+
+  function wireStaticUI() {
+    $all('nav.tabs button').forEach(function (b) {
+      b.addEventListener('click', function () { setTab(b.getAttribute('data-tab')); });
+    });
+    $('#selYear').addEventListener('change', onMonthPickerChange);
+    $('#selMonth').addEventListener('change', onMonthPickerChange);
+    $('#btnSuggest').addEventListener('click', function () {
+      var y = parseInt($('#selYear').value, 10), m = parseInt($('#selMonth').value, 10);
+      var sug = suggestForMonth(y, m);
+      formOffices = sug.offices;
+      formPeople = sug.picks;
+      renderAssignForm();
+    });
+    $('#btnSave').addEventListener('click', onSave);
+    $('#btnAddPerson').addEventListener('click', onAddPerson);
+  }
+
+  function onMonthPickerChange() {
+    var y = parseInt($('#selYear').value, 10), m = parseInt($('#selMonth').value, 10);
+    loadFormFor(y, m);
+  }
+
+  function onSave() {
+    if (!db) { showBanner('저장 기능을 사용할 수 없는 상태입니다. Firebase 설정을 확인해주세요.'); return; }
+    var y = parseInt($('#selYear').value, 10), m = parseInt($('#selMonth').value, 10);
+    var key = keyOf(y, m);
+    var entries = formOffices.slice().sort().map(function (o) {
+      var pid = formPeople[o];
+      var person = people.filter(function (p) { return p.id === pid; })[0];
+      return { office: o, personId: pid, personName: person ? person.name : '' };
+    }).filter(function (e) { return e.personId; });
+    var status = 'confirmed';
+    var now = new Date();
+    var nowKeyNum = now.getFullYear() * 12 + (now.getMonth() + 1);
+    if (y * 12 + m > nowKeyNum) status = 'planned';
+    var status_el = $('#saveStatus');
+    status_el.textContent = '저장 중…';
+    db.collection('assignments').doc(key).set({ year: y, month: m, status: status, entries: entries })
+      .then(function () { status_el.textContent = ymLabel(y, m) + ' 저장됨'; })
+      .catch(function () { status_el.textContent = '저장 실패 — 다시 시도해주세요.'; });
+  }
+
+  function onAddPerson() {
+    if (!db) { showBanner('저장 기능을 사용할 수 없는 상태입니다. Firebase 설정을 확인해주세요.'); return; }
+    var nameEl = $('#newName');
+    var name = nameEl.value.trim();
+    if (!name) return;
+    var office = $('#newOffice').value;
+    db.collection('people').add({ name: name, office: office, active: true, baseCount: 0, baseLastY: 0, baseLastM: 0 })
+      .then(function () { nameEl.value = ''; })
+      .catch(function () { showBanner('추가에 실패했습니다.'); });
+  }
+
+  function subscribe() {
+    db.collection('people').onSnapshot(function (snap) {
+      people = snap.docs.map(function (d) { return Object.assign({ id: d.id }, d.data()); });
+      renderAll();
+    }, function () { showBanner('명단을 불러오는 중 문제가 발생했습니다.'); });
+
+    db.collection('assignments').onSnapshot(function (snap) {
+      assignments = snap.docs.map(function (d) { return Object.assign({ id: d.id }, d.data()); });
+      renderAll();
+      if (!currentEditingId && formOffices.length === 0) {
+        var y = parseInt($('#selYear').value, 10), m = parseInt($('#selMonth').value, 10);
+        loadFormFor(y, m);
+      }
+    }, function () { showBanner('일정을 불러오는 중 문제가 발생했습니다.'); });
+  }
+
+  function isConfigured() {
+    return firebaseConfig.apiKey && firebaseConfig.apiKey.indexOf('YOUR_') !== 0;
+  }
+
+  async function init() {
+    buildYearMonthSelectors();
+    wireStaticUI();
+    renderAll();
+
+    if (!isConfigured()) {
+      showBanner('Firebase 설정이 아직 입력되지 않았습니다. 코드 위쪽의 firebaseConfig 값을 채워야 저장 기능이 동작합니다. (지금은 읽기 전용 화면입니다)');
+      return;
+    }
+    try {
+      var app = initializeApp(firebaseConfig);
+      var fs = getFirestore(app);
+      await maybeSeed(fs);
+      db = makeDb(fs);
+      subscribe();
+      var y = parseInt($('#selYear').value, 10), m = parseInt($('#selMonth').value, 10);
+      loadFormFor(y, m);
+    } catch (e) {
+      showBanner('Firebase 연결에 실패했습니다: ' + e.message + ' (Firestore 보안 규칙을 확인해주세요)');
+    }
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>
