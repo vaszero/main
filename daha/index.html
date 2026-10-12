@@ -75,6 +75,12 @@ details.skill .body{padding:12px 14px 4px}
 footer{margin-top:40px;color:var(--muted);font-size:13.5px;border-top:1px solid var(--line);padding-top:14px}
 @media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
 html{scroll-behavior:smooth}
+.nbt{width:100%;border-collapse:collapse;font-size:15px;margin:0 0 18px;background:var(--surface)}
+.nbt th,.nbt td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+.nbt th{background:var(--sunk);font-weight:500;color:var(--muted)}
+.st{display:inline-block;font-size:13px;font-weight:700;padding:1px 8px;border-radius:4px;white-space:nowrap}
+.st.ok{background:var(--ok);color:var(--bg)}.st.no{background:var(--alert);color:var(--bg)}.st.q{background:var(--sunk);color:var(--ink)}
+.tbl{overflow-x:auto;margin-bottom:6px}
 </style>
 </head>
 <body>
@@ -144,8 +150,13 @@ html{scroll-behavior:smooth}
 </section>
 
 <section id="notebook">
-  <h2><span class="n">05</span>Gemini Notebook 요청 예시</h2>
+  <h2><span class="n">05</span>Gemini Notebook</h2>
   <p class="lead">공개 지침 · 매뉴얼만 넣기. 이용자 명단 · 상담 기록은 넣지 않음.</p>
+<h3>2026 업데이트 · 무료 계정에서 되는 것과 안 되는 것</h3>
+<p class="lead">NotebookLM이 2026년 7월 Gemini Notebook으로 이름을 바꾸며 기능이 추가됨. 다하 무료 계정 · 한국어 기준.</p>
+<div class="tbl"><table class="nbt"><thead><tr><th>기능</th><th>내용</th><th>무료 계정</th><th>참고</th></tr></thead><tbody><tr><td><b>코드 실행 · 데이터 분석</b></td><td>엑셀 직접 계산 · 차트 (7~8월 도입)</td><td><span class="st no">유료 전용</span></td><td>Pro · Ultra만, 무료 화면엔 버튼 없음</td></tr><tr><td><b>심층 리서치 보고서</b></td><td>출처 달린 보고서 자동 작성 (2025.11 도입)</td><td><span class="st ok">사용 가능</span></td><td>컴퓨팅 예산 한도 내</td></tr><tr><td><b>Gemini 앱 연동</b></td><td>Gemini 대화창 ↔ 노트북 자료 동기화</td><td><span class="st ok">사용 가능</span></td><td>오늘 실습에서 사용</td></tr><tr><td><b>구글 검색(AI Mode) 연동</b></td><td>검색창에서 내 노트북 자료로 질문</td><td><span class="st no">한국어 안 됨</span></td><td>현재 영어로만 작동</td></tr><tr><td><b>60초 세로 영상</b></td><td>요약을 쇼츠형 영상으로 (7월 도입)</td><td><span class="st q">미확인</span></td><td>유료 · 영어 사용자 중심 확대 중</td></tr><tr><td><b>실시간 음성 대화</b></td><td>모바일 앱에서 자료로 음성 토론 (9월 도입)</td><td><span class="st no">유료 전용</span></td><td>Ultra → Pro 확대 중</td></tr><tr><td><b>컴퓨팅 예산제</b></td><td>5시간마다 갱신 · 주간 한도 별도 (9월 초)</td><td><span class="st ok">적용됨</span></td><td>한도에 걸리면 5시간 뒤 다시 사용</td></tr></tbody></table></div>
+<h3>요청 예시</h3>
+
   <div id="c-notebook"></div>
 </section>
 
