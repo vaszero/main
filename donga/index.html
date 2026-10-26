@@ -109,8 +109,6 @@ button.reset:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
     <div class="opts"><label class="opt"><input type="radio" name="seoul" id="se-y" value="y"><span>예</span></label><label class="opt"><input type="radio" name="seoul" id="se-n" value="n"><span>아니요</span></label></div></div>
   <div class="qrow"><div class="q">2025년 연매출이 1억 400만 원 미만인가요?</div>
     <div class="opts"><label class="opt"><input type="radio" name="small" id="sm-y" value="y"><span>예</span></label><label class="opt"><input type="radio" name="small" id="sm-n" value="n"><span>아니요</span></label><label class="opt"><input type="radio" name="small" id="sm-u" value="u"><span>잘 모름</span></label></div></div>
-  <div class="qrow"><div class="q">사업을 시작한 지</div>
-    <div class="opts"><label class="opt"><input type="radio" name="age" id="ag-1" value="early"><span>3년 미만</span></label><label class="opt"><input type="radio" name="age" id="ag-2" value="grow"><span>3년 이상</span></label></div></div>
   <button type="button" class="reset" id="reset">처음부터 다시</button>
 </section>
 
@@ -162,7 +160,7 @@ const P = [
   where:"소상공인정책자금 ols.semas.or.kr", url:"https://ols.semas.or.kr"},
  {id:"seoulfund", name:"서울시 중소기업육성자금", kind:"서울 · 융자", st:"now", stt:"예산 소진 시까지",
   probs:["fund"], seoul:true,
-  what:"서울시 정책 융자 (보증 연계)", who:"서울 소재 소상공인·중소기업",
+  what:"서울시 정책 융자 (세부 한도·금리는 공고 확인)", who:"서울 소재 소상공인·중소기업",
   where:"서울신용보증재단 / 서울시 소상공인 종합지원 포털", url:"https://www.seoulsbdc.or.kr"},
  {id:"clinic", name:"서울시 자영업 클리닉", kind:"서울 · 무료 컨설팅", st:"now", stt:"상시 신청",
   probs:["cost","online","hyg","brand","fund","close"], seoul:true,
@@ -171,7 +169,7 @@ const P = [
   where:"seoulsbdc.or.kr · ☎ 1577-6119", url:"https://www.seoulsbdc.or.kr"},
  {id:"crisis", name:"서울시 위기 소상공인 선제지원", kind:"서울 · 경영개선", st:"now", stt:"예산 소진 시까지",
   probs:["cost"], seoul:true,
-  what:"경영진단 후 개선비용 최대 300만 원", who:"매출 감소 등 위기 신호가 있는 서울 소상공인",
+  what:"경영진단 후 개선비용 최대 300만 원", who:"서울 사업장 소상공인 (세부 요건은 포털 공고 확인)",
   where:"seoulsbdc.or.kr", url:"https://www.seoulsbdc.or.kr"},
  {id:"online", name:"소상공인 온라인 판로 지원", kind:"디지털 역량 강화", st:"next", stt:"2026년 3~4월 접수 · 다음 공고 대기",
   probs:["online","brand"],
@@ -215,13 +213,13 @@ const P = [
   tip:"사업계획서는 1분 30초 동영상. 작업장 현장에서 대표가 직접 설명해야 합니다.",
   where:"소상공인24", url:"https://www.sbiz24.kr"},
  {id:"local", name:"소상공인 도약 지원 (로컬기업 육성)", kind:"기업가형 소상공인 · 보조금", st:"next", stt:"2026년 3~5월 접수 · 다음 공고 대기",
-  probs:["brand"], stage:"early",
+  probs:["brand"],
   what:"정부지원금 4천만 원(총 사업비 80% 이하) + 자부담 1천만 원, 멘토링 자금 300만 원",
   who:"지역 자원을 활용하는 초기 단계 소상공인 (상시근로자 5명 미만, 제조 등 10명 미만)",
-  tip:"평가: 지역성 50 + 성장 가능성 50. 사업계획서는 PSST(문제인식·실현가능성·성장전략·조직 구성) 순서",
+  tip:"초기 단계용. 둘 다 신청할 수 있고 동시 선정 시 하나 선택. 평가: 지역성 50 + 성장 가능성 50. 사업계획서는 PSST(문제인식·실현가능성·성장전략·조직 구성) 순서",
   where:"소상공인24", url:"https://www.sbiz24.kr"},
  {id:"strong", name:"소상공인 도약 지원 (강한소상공인 성장지원)", kind:"기업가형 소상공인 · 보조금", st:"next", stt:"2026년 3~5월 접수 · 다음 공고 대기",
-  probs:["brand"], stage:"grow",
+  probs:["brand"],
   what:"성장 단계 소상공인 사업화 지원 (지원금·자부담 기준은 공고 원문 확인)",
   who:"성장 단계 소상공인 (로컬형·혁신형), 파트너사 협업 계획 필수",
   tip:"평가: 적합도 10 · 사업성 40 · 성장성 50. 사업계획서 첫 칸 ‘제품 한 줄 소개’는 무엇이 다른지 30자 내외로",
@@ -230,7 +228,7 @@ const P = [
   probs:["close"],
   what:"점포 철거·원상복구비 최대 600만 원, 재창업 사업화 최대 2천만 원, 취업 전환 교육·전직장려수당",
   who:"업력 60일 이상, 폐업했거나 폐업 예정인 소상공인",
-  tip:"폐업 신고 전에 상담부터 받으세요. 순서가 바뀌면 받을 수 있는 지원이 줄 수 있습니다.",
+  tip:"폐업 신고 전에 상담부터 받으세요.",
   where:"희망리턴패키지 hope.sbiz.or.kr · 소상공인24", url:"https://hope.sbiz.or.kr"},
  {id:"newroad", name:"서울시 새 길 여는 폐업지원", kind:"서울 · 재기 지원", st:"now", stt:"서울 포털에서 신청",
   probs:["close"], seoul:true,
@@ -244,7 +242,7 @@ const $ = s => document.querySelector(s);
 function val(name){const e=document.querySelector(`input[name="${name}"]:checked`);return e?e.value:null}
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
 function render(){
-  const type=val("type"), seoul=val("seoul"), small=val("small"), age=val("age");
+  const type=val("type"), seoul=val("seoul"), small=val("small");
   const probs=[...document.querySelectorAll('#prob input:checked')].map(i=>i.value);
   const out=$("#out");
   if(!probs.length){
@@ -257,7 +255,6 @@ function render(){
     if(p.seoul && seoul==="n") return false;
     if(p.types && type && !p.types.includes(type)) return false;
     if(p.need==="small" && small==="n") return false;
-    if(p.stage && age && p.stage!==age) return false;
     return true;
   });
   list.sort((a,b)=>ORDER[a.st]-ORDER[b.st]);
