@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
-<title>식품 소상공인 지원사업 찾기</title>
+<title>소상공인 지원사업 찾기</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
@@ -84,7 +84,9 @@ button.reset:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
   <div class="opts" id="type">
     <label class="opt"><input type="radio" name="type" id="t-a" value="A"><span>음식점·카페·베이커리</span></label>
     <label class="opt"><input type="radio" name="type" id="t-b" value="B"><span>식품 제조·가공</span></label>
-    <label class="opt"><input type="radio" name="type" id="t-c" value="C"><span>식품 유통·온라인 판매</span></label>
+    <label class="opt"><input type="radio" name="type" id="t-e" value="E"><span>그 밖의 제조업 (공방·의류·가구 등)</span></label>
+    <label class="opt"><input type="radio" name="type" id="t-c" value="C"><span>도소매·온라인 판매</span></label>
+    <label class="opt"><input type="radio" name="type" id="t-d" value="D"><span>서비스업 (미용·교육·숙박 등)</span></label>
   </div>
 </section>
 
@@ -94,7 +96,7 @@ button.reset:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
   <div class="opts" id="prob">
     <label class="opt"><input type="checkbox" id="p-cost" value="cost"><span>매출이 줄고 고정비 부담</span></label>
     <label class="opt"><input type="checkbox" id="p-online" value="online"><span>온라인 판매를 시작하고 싶음</span></label>
-    <label class="opt"><input type="checkbox" id="p-hyg" value="hyg"><span>주방·작업장 위생·설비 개선</span></label>
+    <label class="opt"><input type="checkbox" id="p-hyg" value="hyg"><span>매장·작업장 시설·설비·위생 개선</span></label>
     <label class="opt"><input type="checkbox" id="p-brand" value="brand"><span>브랜드를 키워 성장하고 싶음</span></label>
     <label class="opt"><input type="checkbox" id="p-fund" value="fund"><span>운영자금이 급함</span></label>
     <label class="opt"><input type="checkbox" id="p-close" value="close"><span>폐업·업종 전환 고민</span></label>
@@ -175,13 +177,13 @@ const P = [
   probs:["online","brand"],
   what:"상품 개선·상세페이지·콘텐츠·쇼핑몰·라이브커머스·SNS·온라인 홍보·물류 중 최대 4개 선택",
   who:"소상공인 확인서 보유, 국세·지방세 완납",
-  tip:"반찬·간편식은 상세페이지 + 라이브커머스 조합이 유리. 판판대로에 미리 가입하고 상품 정보를 등록해 두세요.",
+  tip:"식품·생활용품은 상세페이지 + 라이브커머스 조합이 유리. 판판대로에 미리 가입하고 상품 정보를 등록해 두세요.",
   where:"판판대로 fanfandaero.kr", url:"https://fanfandaero.kr"},
  {id:"ai", name:"혁신 소상공인 AI 활용지원", kind:"성장 지원 · AI", st:"next", stt:"2026년 6~7월 접수 · 다음 공고 대기",
   probs:["online","hyg"],
   what:"AI 진단·멘토링 → AI 사업모델 구현, 사업화자금 최대 4천만 원 (금액·자부담은 공고 원문 확인)",
   who:"정상 영업 중인 소상공인 (금융·부동산·약국·유흥업 등 제외)",
-  tip:"신청 전 ‘소상공인 지식배움터’ AI 학습관 온라인 강의 1개 이상 수강이 필수 — 지금 미리 들어 두세요. 키오스크·조리 자동화·매출 분석에 활용",
+  tip:"신청 전 ‘소상공인 지식배움터’ AI 학습관 온라인 강의 1개 이상 수강이 필수 — 지금 미리 들어 두세요. 키오스크·예약 관리·매출 분석·조리 자동화 등에 활용",
   where:"소상공인24 · 지식배움터 edu.sbiz.or.kr", url:"https://edu.sbiz.or.kr"},
  {id:"digital", name:"서울시 중장년 디지털 전환", kind:"서울 · 디지털", st:"ask", stt:"서울 포털에서 확인",
   probs:["online"], seoul:true,
@@ -192,22 +194,22 @@ const P = [
   what:"디지털·온라인 전환을 위한 융자, 유형별 7천만 ~ 10억 원",
   who:"디지털·온라인 전환을 추진하는 소상공인",
   where:"소상공인정책자금 ols.semas.or.kr", url:"https://ols.semas.or.kr"},
- {id:"hygiene", name:"백년소상공인 위생컨설팅·환경개선", kind:"식품 업종 특화", st:"next", stt:"2026년 추가공고 9.30 마감 · 다음 공고 대기",
-  probs:["hyg"], types:["A"],
+ {id:"hygiene", name:"백년소상공인 위생컨설팅·환경개선", kind:"음식점 · 위생", st:"next", stt:"2026년 추가공고 9.30 마감 · 다음 공고 대기",
+  probs:["hyg"], types:["A"], tl:"음식점 등 식품안심업소 대상",
   what:"위생 컨설팅 + 환경개선비 최대 50만 원",
   who:"백년소상공인 중 식품안심업소 대상 업종",
   where:"소상공인24", url:"https://www.sbiz24.kr"},
  {id:"haccp", name:"식품 제조 소공인 스마트 HACCP 연계", kind:"식품 제조 특화", st:"next", stt:"2026년 5월부터 모집 · 다음 공고 대기",
-  probs:["hyg"], types:["B"],
+  probs:["hyg"], types:["B"], tl:"식품 제조업만 해당",
   what:"스마트 HACCP 도입 연계 — 기술 지도·교육·컨설팅", who:"식품 제조 소공인",
   where:"소상공인24", url:"https://www.sbiz24.kr"},
  {id:"clean", name:"소공인 클린제조환경조성", kind:"제조 소공인 · 보조금", st:"next", stt:"2026년 3차 10.20 마감 · 다음 공고 대기",
-  probs:["hyg"], types:["B"],
+  probs:["hyg"], types:["B","E"], tl:"제조업만 해당",
   what:"작업장 안전 개선 국비 630만 원 이내 (국비 70% · 자부담 30%)",
   who:"제조 소공인 (상시근로자 10명 미만)",
   where:"소상공인24", url:"https://www.sbiz24.kr"},
  {id:"smart", name:"소공인 스마트공방", kind:"제조 소공인 · 보조금", st:"next", stt:"2026년 5~6월 접수 · 다음 공고 대기",
-  probs:["hyg","brand"], types:["B"],
+  probs:["hyg","brand"], types:["B","E"], tl:"제조업만 해당",
   what:"스마트 장비·SW 도입, 국비 60% 최대 3,600만 원 (자부담 40% 중 현금 20% 이상)",
   who:"도시형소공인 (제조업, 상시근로자 10명 미만) — 음식점·카페·도소매만 있으면 대상 아님",
   tip:"사업계획서는 1분 30초 동영상. 작업장 현장에서 대표가 직접 설명해야 합니다.",
@@ -237,7 +239,7 @@ const P = [
 ];
 const LABEL = {now:"지금 신청 가능", next:"다음 공고 대기", ask:"접수 여부 확인"};
 const ORDER = {now:0, ask:1, next:2};
-const PROB = {cost:"고정비 부담", online:"온라인 판매", hyg:"위생·설비", brand:"브랜드 성장", fund:"운영자금", close:"폐업·전환"};
+const PROB = {cost:"고정비 부담", online:"온라인 판매", hyg:"시설·설비", brand:"브랜드 성장", fund:"운영자금", close:"폐업·전환"};
 const $ = s => document.querySelector(s);
 function val(name){const e=document.querySelector(`input[name="${name}"]:checked`);return e?e.value:null}
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
@@ -266,7 +268,7 @@ function render(){
     const why=p.probs.filter(x=>probs.includes(x)).map(x=>PROB[x]).join(" · ");
     const flags=[];
     if(p.seoul && seoul!=="y") flags.push("서울 사업장만 해당");
-    if(p.types && !type) flags.push(p.types[0]==="B"?"식품 제조업만 해당":"음식점 등 식품안심업소 대상");
+    if(p.types && !type) flags.push(p.tl);
     if(p.need==="small" && small!=="y") flags.push("2025년 연매출 1억 400만 원 미만만 해당");
     return `<article class="card">
       <div class="top"><div><div class="kind">${esc(p.kind)}</div><h3>${esc(p.name)}</h3></div><span class="pill ${p.st}">${LABEL[p.st]}</span></div>
