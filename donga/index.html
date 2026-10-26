@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>식품 소상공인 지원사업 찾기</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
+</head>
+<body>
+<style>
+/* Layout: 한 줄 세로 흐름(휴대폰 우선) — 진단 3단계 → 추천 사업 카드 목록 */
+:root{
+  --bg:#F4F7FC; --surface:#FFFFFF; --ink:#16213A; --muted:#5B6782; --line:#D7E0EE;
+  --accent:#2457D6; --accent-soft:#E6EEFF; --on-accent:#FFFFFF;
+  --ok:#0F7A4A; --ok-soft:#E3F5EC; --warn:#A35A00; --warn-soft:#FFF1DC; --off:#6B7280; --off-soft:#EEF0F3;
+  --font:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0F1524; --surface:#182136; --ink:#E8EDF7; --muted:#A3AFC7; --line:#2B3754;
+  --accent:#7FA2FF; --accent-soft:#1E2B4D; --on-accent:#0F1524;
+  --ok:#5FD39C; --ok-soft:#173528; --warn:#F2B35C; --warn-soft:#3A2A14; --off:#A3AAB6; --off-soft:#252C3A; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F1524; --surface:#182136; --ink:#E8EDF7; --muted:#A3AFC7; --line:#2B3754;
+  --accent:#7FA2FF; --accent-soft:#1E2B4D; --on-accent:#0F1524;
+  --ok:#5FD39C; --ok-soft:#173528; --warn:#F2B35C; --warn-soft:#3A2A14; --off:#A3AAB6; --off-soft:#252C3A; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.55}
+.wrap{max-width:720px;margin:0 auto;padding-block:20px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:18px}
+header .eyebrow{font-size:13px;letter-spacing:.06em;color:var(--accent);font-weight:700}
+h1{font-size:26px;line-height:1.3;margin:4px 0 6px;font-weight:900;text-wrap:balance}
+header p{margin:0;color:var(--muted);font-size:15px}
+.step{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.step h2{font-size:17px;margin:0;display:flex;gap:8px;align-items:baseline}
+.step h2 b{color:var(--accent)}
+.step .hint{margin:0;font-size:14px;color:var(--muted)}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opt{position:relative}
+.opt input{position:absolute;opacity:0;width:1px;height:1px}
+.opt span{display:block;padding:10px 14px;border:1.5px solid var(--line);border-radius:999px;font-size:15px;cursor:pointer;background:var(--surface);user-select:none}
+.opt input:checked+span{background:var(--accent);border-color:var(--accent);color:var(--on-accent);font-weight:700}
+.opt input:focus-visible+span{outline:3px solid var(--accent);outline-offset:2px}
+.qrow{display:flex;flex-direction:column;gap:6px;padding-top:6px;border-top:1px dashed var(--line)}
+.qrow:first-of-type{border-top:0;padding-top:0}
+.qrow .q{font-size:15px;font-weight:500}
+.result-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
+.result-head h2{margin:0;font-size:20px}
+.result-head span{font-size:14px;color:var(--muted)}
+.empty{background:var(--accent-soft);border-radius:14px;padding:16px;font-size:15px}
+.cards{display:flex;flex-direction:column;gap:12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.card .top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.card h3{margin:0;font-size:18px;line-height:1.35}
+.kind{font-size:12px;color:var(--muted);font-weight:500}
+.pill{flex:none;font-size:12.5px;font-weight:700;padding:4px 10px;border-radius:999px;white-space:nowrap}
+.pill.now{background:var(--ok-soft);color:var(--ok)}
+.pill.next{background:var(--warn-soft);color:var(--warn)}
+.pill.ask{background:var(--off-soft);color:var(--off)}
+.card dl{margin:0;display:grid;grid-template-columns:4.2em 1fr;gap:4px 10px;font-size:15px}
+.card dt{color:var(--muted);font-weight:500}
+.card dd{margin:0;min-width:0;overflow-wrap:anywhere}
+.why{font-size:13.5px;color:var(--accent);font-weight:500}
+.tip{font-size:14px;background:var(--accent-soft);border-radius:10px;padding:8px 10px}
+.where{font-size:14px;font-variant-numeric:tabular-nums}
+.where a{color:var(--accent);font-weight:700}
+.note{font-size:13.5px;color:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.note ul{margin:6px 0 0;padding-left:18px}
+footer{font-size:12.5px;color:var(--muted);text-align:center}
+button.reset{align-self:flex-start;font:inherit;font-size:14px;padding:8px 14px;border-radius:999px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+button.reset:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">소상공인 지원사업 정복하기 · 실습</div>
+  <h1>내 사업 진단하고 맞는 지원사업 찾기</h1>
+  <p>받고 싶은 지원금이 아니라 해결해야 할 경영 문제부터 고르세요. 2026년 10월 기준 정보입니다.</p>
+</header>
+
+<section class="step" aria-labelledby="s1">
+  <h2 id="s1"><b>1</b>사업 유형</h2>
+  <div class="opts" id="type">
+    <label class="opt"><input type="radio" name="type" id="t-a" value="A"><span>음식점·카페·베이커리</span></label>
+    <label class="opt"><input type="radio" name="type" id="t-b" value="B"><span>식품 제조·가공</span></label>
+    <label class="opt"><input type="radio" name="type" id="t-c" value="C"><span>식품 유통·온라인 판매</span></label>
+  </div>
+</section>
+
+<section class="step" aria-labelledby="s2">
+  <h2 id="s2"><b>2</b>가장 해결하고 싶은 문제</h2>
+  <p class="hint">여러 개 골라도 됩니다.</p>
+  <div class="opts" id="prob">
+    <label class="opt"><input type="checkbox" id="p-cost" value="cost"><span>매출이 줄고 고정비 부담</span></label>
+    <label class="opt"><input type="checkbox" id="p-online" value="online"><span>온라인 판매를 시작하고 싶음</span></label>
+    <label class="opt"><input type="checkbox" id="p-hyg" value="hyg"><span>주방·작업장 위생·설비 개선</span></label>
+    <label class="opt"><input type="checkbox" id="p-brand" value="brand"><span>브랜드를 키워 성장하고 싶음</span></label>
+    <label class="opt"><input type="checkbox" id="p-fund" value="fund"><span>운영자금이 급함</span></label>
+    <label class="opt"><input type="checkbox" id="p-close" value="close"><span>폐업·업종 전환 고민</span></label>
+  </div>
+</section>
+
+<section class="step" aria-labelledby="s3">
+  <h2 id="s3"><b>3</b>내 조건 확인</h2>
+  <div class="qrow"><div class="q">사업장이 서울에 있나요?</div>
+    <div class="opts"><label class="opt"><input type="radio" name="seoul" id="se-y" value="y"><span>예</span></label><label class="opt"><input type="radio" name="seoul" id="se-n" value="n"><span>아니요</span></label></div></div>
+  <div class="qrow"><div class="q">2025년 연매출이 1억 400만 원 미만인가요?</div>
+    <div class="opts"><label class="opt"><input type="radio" name="small" id="sm-y" value="y"><span>예</span></label><label class="opt"><input type="radio" name="small" id="sm-n" value="n"><span>아니요</span></label><label class="opt"><input type="radio" name="small" id="sm-u" value="u"><span>잘 모름</span></label></div></div>
+  <div class="qrow"><div class="q">사업을 시작한 지</div>
+    <div class="opts"><label class="opt"><input type="radio" name="age" id="ag-1" value="early"><span>3년 미만</span></label><label class="opt"><input type="radio" name="age" id="ag-2" value="grow"><span>3년 이상</span></label></div></div>
+  <button type="button" class="reset" id="reset">처음부터 다시</button>
+</section>
+
+<section aria-live="polite" style="display:flex;flex-direction:column;gap:12px">
+  <div class="result-head"><h2>추천 사업</h2><span id="count"></span></div>
+  <div id="out" class="cards"></div>
+</section>
+
+<div class="note">
+  <b>신청 전 꼭 확인할 것</b>
+  <ul>
+    <li>공고문 다섯 군데: 지원대상 · 제외대상 · 지원내용과 자부담 · 제출서류 · 평가항목과 마감 시각</li>
+    <li>‘다음 공고 대기’ 사업은 12월 말 2027년 통합공고에서 일정이 나옵니다.</li>
+    <li>금액과 조건은 해마다 바뀝니다. 신청 전 해당 연도 공고 원문으로 다시 확인하세요.</li>
+  </ul>
+</div>
+
+<footer>© 2026 바스제로컨설팅(VASZERO Consulting) · 강사 정경 · 010-9727-6345</footer>
+</div>
+
+<script>
+const P = [
+ {id:"voucher", name:"경영안정 바우처", kind:"경영부담 완화 · 바우처", st:"now", stt:"12.18 18:00 마감",
+  probs:["cost"], need:"small",
+  what:"사업체당 25만 원(카드 포인트) — 전기·가스·수도요금, 4대보험료, 차량 연료비 등에 사용",
+  who:"2025년 연매출 1억 400만 원 미만, 2025.12.31 이전 개업, 현재 영업 중",
+  tip:"포인트는 12월 31일에 소멸됩니다. 2027 정부 예산안에서 종료 예정이라 올해 꼭 신청하세요.",
+  where:"voucher.sbiz24.kr", url:"https://voucher.sbiz24.kr", tel:"1533-0600"},
+ {id:"emp", name:"소상공인 고용보험료 지원", kind:"경영부담 완화", st:"now", stt:"연중 신청",
+  probs:["cost"],
+  what:"사장님 본인 고용보험료의 50~80% (기준보수 1~2등급 80% · 3~4등급 60% · 5~7등급 50%), 최대 5년",
+  who:"고용보험에 가입한 1인 자영업자·소상공인 (소급 지원 없음)",
+  tip:"아직 가입 전이면 근로복지공단 토탈서비스에서 가입, 이미 가입했다면 소상공인24에서 신청",
+  where:"sbiz24.kr", url:"https://www.sbiz24.kr"},
+ {id:"sanjae", name:"서울시 자영업자 산재보험료 지원", kind:"서울 · 경영부담 완화", st:"now", stt:"예산 소진 시까지",
+  probs:["cost"], seoul:true,
+  what:"월 납입 산재보험료의 30~50%, 최대 5년", who:"서울 사업장 영세 자영업자",
+  where:"서울시 소상공인 종합지원 포털 seoulsbdc.or.kr", url:"https://www.seoulsbdc.or.kr"},
+ {id:"refi", name:"소상공인 대환대출", kind:"정책자금 · 융자", st:"now", stt:"자금 소진 시까지",
+  probs:["cost","fund"],
+  what:"연 7% 이상 고금리 대출을 연 4.5% 고정금리(10년)로 갈아타기, 최대 5천만 원",
+  who:"고금리 사업자 대출을 쓰고 있는 소상공인",
+  where:"소상공인정책자금 ols.semas.or.kr", url:"https://ols.semas.or.kr"},
+ {id:"general", name:"일반경영안정자금 (대리대출)", kind:"정책자금 · 융자", st:"now", stt:"4분기 접수 중 · 예산 소진 시",
+  probs:["fund"],
+  what:"운영자금 최대 7천만 원, 금리 기준금리 + 0.6%p",
+  who:"운영자금이 필요한 일반 소상공인 (신용·보증 심사 있음)",
+  tip:"신용이 낮다면 신용취약소상공인자금(최대 3천만 원, 신용관리교육 이수 필요)도 확인",
+  where:"소상공인정책자금 ols.semas.or.kr", url:"https://ols.semas.or.kr"},
+ {id:"seoulfund", name:"서울시 중소기업육성자금", kind:"서울 · 융자", st:"now", stt:"예산 소진 시까지",
+  probs:["fund"], seoul:true,
+  what:"서울시 정책 융자 (보증 연계)", who:"서울 소재 소상공인·중소기업",
+  where:"서울신용보증재단 / 서울시 소상공인 종합지원 포털", url:"https://www.seoulsbdc.or.kr"},
+ {id:"clinic", name:"서울시 자영업 클리닉", kind:"서울 · 무료 컨설팅", st:"now", stt:"상시 신청",
+  probs:["cost","online","hyg","brand","fund","close"], seoul:true,
+  what:"37개 분야 1:1 현장 컨설팅, 횟수 제한 없음",
+  who:"서울 사업장 소상공인", tip:"어떤 사업부터 할지 막막하면 여기서 먼저 상담받는 것이 가장 빠릅니다.",
+  where:"seoulsbdc.or.kr · ☎ 1577-6119", url:"https://www.seoulsbdc.or.kr"},
+ {id:"crisis", name:"서울시 위기 소상공인 선제지원", kind:"서울 · 경영개선", st:"now", stt:"예산 소진 시까지",
+  probs:["cost"], seoul:true,
+  what:"경영진단 후 개선비용 최대 300만 원", who:"매출 감소 등 위기 신호가 있는 서울 소상공인",
+  where:"seoulsbdc.or.kr", url:"https://www.seoulsbdc.or.kr"},
+ {id:"online", name:"소상공인 온라인 판로 지원", kind:"디지털 역량 강화", st:"next", stt:"2026년 3~4월 접수 · 다음 공고 대기",
+  probs:["online","brand"],
+  what:"상품 개선·상세페이지·콘텐츠·쇼핑몰·라이브커머스·SNS·온라인 홍보·물류 중 최대 4개 선택",
+  who:"소상공인 확인서 보유, 국세·지방세 완납",
+  tip:"반찬·간편식은 상세페이지 + 라이브커머스 조합이 유리. 판판대로에 미리 가입하고 상품 정보를 등록해 두세요.",
+  where:"판판대로 fanfandaero.kr", url:"https://fanfandaero.kr"},
+ {id:"ai", name:"혁신 소상공인 AI 활용지원", kind:"성장 지원 · AI", st:"next", stt:"2026년 6~7월 접수 · 다음 공고 대기",
+  probs:["online","hyg"],
+  what:"AI 진단·멘토링 → AI 사업모델 구현, 사업화자금 최대 4천만 원 (금액·자부담은 공고 원문 확인)",
+  who:"정상 영업 중인 소상공인 (금융·부동산·약국·유흥업 등 제외)",
+  tip:"신청 전 ‘소상공인 지식배움터’ AI 학습관 온라인 강의 1개 이상 수강이 필수 — 지금 미리 들어 두세요. 키오스크·조리 자동화·매출 분석에 활용",
+  where:"소상공인24 · 지식배움터 edu.sbiz.or.kr", url:"https://edu.sbiz.or.kr"},
+ {id:"digital", name:"서울시 중장년 디지털 전환", kind:"서울 · 디지털", st:"ask", stt:"서울 포털에서 확인",
+  probs:["online"], seoul:true,
+  what:"실행비 최대 300만 원", who:"만 40~65세 미만 서울 소상공인",
+  where:"seoulsbdc.or.kr", url:"https://www.seoulsbdc.or.kr"},
+ {id:"coexist", name:"상생성장지원자금", kind:"정책자금 · 융자", st:"ask", stt:"누리집에서 접수 여부 확인",
+  probs:["online"],
+  what:"디지털·온라인 전환을 위한 융자, 유형별 7천만 ~ 10억 원",
+  who:"디지털·온라인 전환을 추진하는 소상공인",
+  where:"소상공인정책자금 ols.semas.or.kr", url:"https://ols.semas.or.kr"},
+ {id:"hygiene", name:"백년소상공인 위생컨설팅·환경개선", kind:"식품 업종 특화", st:"next", stt:"2026년 추가공고 9.30 마감 · 다음 공고 대기",
+  probs:["hyg"], types:["A"],
+  what:"위생 컨설팅 + 환경개선비 최대 50만 원",
+  who:"백년소상공인 중 식품안심업소 대상 업종",
+  where:"소상공인24", url:"https://www.sbiz24.kr"},
+ {id:"haccp", name:"식품 제조 소공인 스마트 HACCP 연계", kind:"식품 제조 특화", st:"next", stt:"2026년 5월부터 모집 · 다음 공고 대기",
+  probs:["hyg"], types:["B"],
+  what:"스마트 HACCP 도입 연계 — 기술 지도·교육·컨설팅", who:"식품 제조 소공인",
+  where:"소상공인24", url:"https://www.sbiz24.kr"},
+ {id:"clean", name:"소공인 클린제조환경조성", kind:"제조 소공인 · 보조금", st:"next", stt:"2026년 3차 10.20 마감 · 다음 공고 대기",
+  probs:["hyg"], types:["B"],
+  what:"작업장 안전 개선 국비 630만 원 이내 (국비 70% · 자부담 30%)",
+  who:"제조 소공인 (상시근로자 10명 미만)",
+  where:"소상공인24", url:"https://www.sbiz24.kr"},
+ {id:"smart", name:"소공인 스마트공방", kind:"제조 소공인 · 보조금", st:"next", stt:"2026년 5~6월 접수 · 다음 공고 대기",
+  probs:["hyg","brand"], types:["B"],
+  what:"스마트 장비·SW 도입, 국비 60% 최대 3,600만 원 (자부담 40% 중 현금 20% 이상)",
+  who:"도시형소공인 (제조업, 상시근로자 10명 미만) — 음식점·카페·도소매만 있으면 대상 아님",
+  tip:"사업계획서는 1분 30초 동영상. 작업장 현장에서 대표가 직접 설명해야 합니다.",
+  where:"소상공인24", url:"https://www.sbiz24.kr"},
+ {id:"local", name:"소상공인 도약 지원 (로컬기업 육성)", kind:"기업가형 소상공인 · 보조금", st:"next", stt:"2026년 3~5월 접수 · 다음 공고 대기",
+  probs:["brand"], stage:"early",
+  what:"정부지원금 4천만 원(총 사업비 80% 이하) + 자부담 1천만 원, 멘토링 자금 300만 원",
+  who:"지역 자원을 활용하는 초기 단계 소상공인 (상시근로자 5명 미만, 제조 등 10명 미만)",
+  tip:"평가: 지역성 50 + 성장 가능성 50. 사업계획서는 PSST(문제인식·실현가능성·성장전략·조직 구성) 순서",
+  where:"소상공인24", url:"https://www.sbiz24.kr"},
+ {id:"strong", name:"소상공인 도약 지원 (강한소상공인 성장지원)", kind:"기업가형 소상공인 · 보조금", st:"next", stt:"2026년 3~5월 접수 · 다음 공고 대기",
+  probs:["brand"], stage:"grow",
+  what:"성장 단계 소상공인 사업화 지원 (지원금·자부담 기준은 공고 원문 확인)",
+  who:"성장 단계 소상공인 (로컬형·혁신형), 파트너사 협업 계획 필수",
+  tip:"평가: 적합도 10 · 사업성 40 · 성장성 50. 사업계획서 첫 칸 ‘제품 한 줄 소개’는 무엇이 다른지 30자 내외로",
+  where:"소상공인24", url:"https://www.sbiz24.kr"},
+ {id:"hope", name:"희망리턴패키지", kind:"재기 지원", st:"now", stt:"철거비 연중 상시",
+  probs:["close"],
+  what:"점포 철거·원상복구비 최대 600만 원, 재창업 사업화 최대 2천만 원, 취업 전환 교육·전직장려수당",
+  who:"업력 60일 이상, 폐업했거나 폐업 예정인 소상공인",
+  tip:"폐업 신고 전에 상담부터 받으세요. 순서가 바뀌면 받을 수 있는 지원이 줄 수 있습니다.",
+  where:"희망리턴패키지 hope.sbiz.or.kr · 소상공인24", url:"https://hope.sbiz.or.kr"},
+ {id:"newroad", name:"서울시 새 길 여는 폐업지원", kind:"서울 · 재기 지원", st:"now", stt:"서울 포털에서 신청",
+  probs:["close"], seoul:true,
+  what:"원상복구비·임차료 등 최대 300만 원 (정부 지원과 합치면 최대 900만 원)", who:"폐업 예정 서울 소상공인",
+  where:"seoulsbdc.or.kr", url:"https://www.seoulsbdc.or.kr"}
+];
+const LABEL = {now:"지금 신청 가능", next:"다음 공고 대기", ask:"접수 여부 확인"};
+const ORDER = {now:0, ask:1, next:2};
+const PROB = {cost:"고정비 부담", online:"온라인 판매", hyg:"위생·설비", brand:"브랜드 성장", fund:"운영자금", close:"폐업·전환"};
+const $ = s => document.querySelector(s);
+function val(name){const e=document.querySelector(`input[name="${name}"]:checked`);return e?e.value:null}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+function render(){
+  const type=val("type"), seoul=val("seoul"), small=val("small"), age=val("age");
+  const probs=[...document.querySelectorAll('#prob input:checked')].map(i=>i.value);
+  const out=$("#out");
+  if(!probs.length){
+    $("#count").textContent="";
+    out.innerHTML='<div class="empty">2번에서 해결하고 싶은 문제를 하나 이상 고르면 맞는 사업이 여기에 나옵니다. 유형과 조건까지 고르면 해당 없는 사업은 빠집니다.</div>';
+    return;
+  }
+  let list=P.filter(p=>p.probs.some(x=>probs.includes(x)));
+  list=list.filter(p=>{
+    if(p.seoul && seoul==="n") return false;
+    if(p.types && type && !p.types.includes(type)) return false;
+    if(p.need==="small" && small==="n") return false;
+    if(p.stage && age && p.stage!==age) return false;
+    return true;
+  });
+  list.sort((a,b)=>ORDER[a.st]-ORDER[b.st]);
+  const nowN=list.filter(p=>p.st==="now").length;
+  $("#count").textContent=`${list.length}개 · 지금 신청 가능 ${nowN}개`;
+  if(!list.length){out.innerHTML='<div class="empty">조건에 맞는 사업이 없습니다. 조건을 ‘잘 모름’으로 바꾸거나 다른 문제를 골라 보세요.</div>';return}
+  out.innerHTML=list.map(p=>{
+    const why=p.probs.filter(x=>probs.includes(x)).map(x=>PROB[x]).join(" · ");
+    const flags=[];
+    if(p.seoul && seoul!=="y") flags.push("서울 사업장만 해당");
+    if(p.types && !type) flags.push(p.types[0]==="B"?"식품 제조업만 해당":"음식점 등 식품안심업소 대상");
+    if(p.need==="small" && small!=="y") flags.push("2025년 연매출 1억 400만 원 미만만 해당");
+    return `<article class="card">
+      <div class="top"><div><div class="kind">${esc(p.kind)}</div><h3>${esc(p.name)}</h3></div><span class="pill ${p.st}">${LABEL[p.st]}</span></div>
+      <div class="why">내 문제: ${esc(why)}${flags.length?" · 확인: "+esc(flags.join(", ")):""}</div>
+      <dl><dt>지원</dt><dd>${esc(p.what)}</dd><dt>대상</dt><dd>${esc(p.who)}</dd><dt>시기</dt><dd>${esc(p.stt)}</dd></dl>
+      ${p.tip?`<div class="tip">${esc(p.tip)}</div>`:""}
+      <div class="where">신청: <a href="${p.url}" target="_blank" rel="noopener">${esc(p.where)}</a>${p.tel?` · ☎ ${p.tel}`:""}</div>
+    </article>`;}).join("");
+}
+document.addEventListener("change",render);
+$("#reset").addEventListener("click",()=>{document.querySelectorAll("input").forEach(i=>i.checked=false);render();window.scrollTo({top:0,behavior:"smooth"})});
+render();
+</script>
+</body></html>
