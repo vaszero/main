@@ -11,7 +11,7 @@
 </head>
 <body>
 <style>
-/* Layout: 한 줄 세로 흐름(휴대폰 우선) — 진단 3단계 → 추천 사업 카드 목록 */
+/* Layout: 휴대폰 우선 세로 흐름 — 진단 3단계 → 공고 기준 사업 카드 */
 :root{
   --bg:#F4F7FC; --surface:#FFFFFF; --ink:#16213A; --muted:#5B6782; --line:#D7E0EE;
   --accent:#2457D6; --accent-soft:#E6EEFF; --on-accent:#FFFFFF;
@@ -35,36 +35,37 @@ header p{margin:0;color:var(--muted);font-size:15px}
 .step{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px}
 .step h2{font-size:17px;margin:0;display:flex;gap:8px;align-items:baseline}
 .step h2 b{color:var(--accent)}
-.step .hint{margin:0;font-size:14px;color:var(--muted)}
+.hint{margin:0;font-size:14px;color:var(--muted)}
 .opts{display:flex;flex-wrap:wrap;gap:8px}
 .opt{position:relative}
 .opt input{position:absolute;opacity:0;width:1px;height:1px}
 .opt span{display:block;padding:10px 14px;border:1.5px solid var(--line);border-radius:999px;font-size:15px;cursor:pointer;background:var(--surface);user-select:none}
 .opt input:checked+span{background:var(--accent);border-color:var(--accent);color:var(--on-accent);font-weight:700}
 .opt input:focus-visible+span{outline:3px solid var(--accent);outline-offset:2px}
-.qrow{display:flex;flex-direction:column;gap:6px;padding-top:6px;border-top:1px dashed var(--line)}
-.qrow:first-of-type{border-top:0;padding-top:0}
+.qrow{display:flex;flex-direction:column;gap:6px}
+.qrow+.qrow{padding-top:8px;border-top:1px dashed var(--line)}
 .qrow .q{font-size:15px;font-weight:500}
 .result-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
 .result-head h2{margin:0;font-size:20px}
 .result-head span{font-size:14px;color:var(--muted)}
+.filters{display:flex;gap:8px;flex-wrap:wrap}
 .empty{background:var(--accent-soft);border-radius:14px;padding:16px;font-size:15px}
 .cards{display:flex;flex-direction:column;gap:12px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.card.closed{opacity:.92}
 .card .top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
 .card h3{margin:0;font-size:18px;line-height:1.35}
-.kind{font-size:12px;color:var(--muted);font-weight:500}
+.kind{font-size:12.5px;color:var(--muted);font-weight:500}
 .pill{flex:none;font-size:12.5px;font-weight:700;padding:4px 10px;border-radius:999px;white-space:nowrap}
-.pill.now{background:var(--ok-soft);color:var(--ok)}
-.pill.next{background:var(--warn-soft);color:var(--warn)}
-.pill.ask{background:var(--off-soft);color:var(--off)}
+.pill.now,.pill.always{background:var(--ok-soft);color:var(--ok)}
+.pill.closed{background:var(--warn-soft);color:var(--warn)}
+.pill.check{background:var(--off-soft);color:var(--off)}
 .card dl{margin:0;display:grid;grid-template-columns:4.2em 1fr;gap:4px 10px;font-size:15px}
 .card dt{color:var(--muted);font-weight:500}
 .card dd{margin:0;min-width:0;overflow-wrap:anywhere}
 .why{font-size:13.5px;color:var(--accent);font-weight:500}
-.tip{font-size:14px;background:var(--accent-soft);border-radius:10px;padding:8px 10px}
-.where{font-size:14px;font-variant-numeric:tabular-nums}
-.where a{color:var(--accent);font-weight:700}
+.links{font-size:14px;display:flex;flex-wrap:wrap;gap:6px 14px}
+.links a{color:var(--accent);font-weight:700;overflow-wrap:anywhere}
 .note{font-size:13.5px;color:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
 .note ul{margin:6px 0 0;padding-left:18px}
 footer{font-size:12.5px;color:var(--muted);text-align:center}
@@ -76,44 +77,38 @@ button.reset:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 <header>
   <div class="eyebrow">소상공인 지원사업 정복하기 · 실습</div>
   <h1>내 사업 진단하고 맞는 지원사업 찾기</h1>
-  <p>받고 싶은 지원금이 아니라 해결해야 할 경영 문제부터 고르세요. 2026년 10월 기준 정보입니다.</p>
+  <p>업종과 해결하고 싶은 문제를 고르면 2026년 공고 기준으로 맞는 사업이 나옵니다. 사업마다 공고 출처를 달았습니다. (2026.10.27 확인)</p>
 </header>
 
 <section class="step" aria-labelledby="s1">
-  <h2 id="s1"><b>1</b>사업 유형</h2>
-  <div class="opts" id="type">
-    <label class="opt"><input type="radio" name="type" id="t-a" value="A"><span>음식점·카페·베이커리</span></label>
-    <label class="opt"><input type="radio" name="type" id="t-b" value="B"><span>식품 제조·가공</span></label>
-    <label class="opt"><input type="radio" name="type" id="t-e" value="E"><span>그 밖의 제조업 (공방·의류·가구 등)</span></label>
-    <label class="opt"><input type="radio" name="type" id="t-c" value="C"><span>도소매·온라인 판매</span></label>
-    <label class="opt"><input type="radio" name="type" id="t-d" value="D"><span>서비스업 (미용·교육·숙박 등)</span></label>
+  <h2 id="s1"><b>1</b>업종</h2>
+  <div class="opts">
+    <label class="opt"><input type="radio" name="ind" id="i-fr" value="food_restaurant"><span>음식점·카페·베이커리</span></label>
+    <label class="opt"><input type="radio" name="ind" id="i-fm" value="food_mfg"><span>식품 제조·가공</span></label>
+    <label class="opt"><input type="radio" name="ind" id="i-mf" value="mfg"><span>그 밖의 제조업 (공방·의류·가구 등)</span></label>
+    <label class="opt"><input type="radio" name="ind" id="i-ro" value="retail_online"><span>도소매·온라인 판매</span></label>
+    <label class="opt"><input type="radio" name="ind" id="i-sv" value="service"><span>서비스업 (미용·교육·숙박 등)</span></label>
   </div>
 </section>
 
 <section class="step" aria-labelledby="s2">
-  <h2 id="s2"><b>2</b>가장 해결하고 싶은 문제</h2>
-  <p class="hint">여러 개 골라도 됩니다.</p>
-  <div class="opts" id="prob">
-    <label class="opt"><input type="checkbox" id="p-cost" value="cost"><span>매출이 줄고 고정비 부담</span></label>
-    <label class="opt"><input type="checkbox" id="p-online" value="online"><span>온라인 판매를 시작하고 싶음</span></label>
-    <label class="opt"><input type="checkbox" id="p-hyg" value="hyg"><span>매장·작업장 시설·설비·위생 개선</span></label>
-    <label class="opt"><input type="checkbox" id="p-brand" value="brand"><span>브랜드를 키워 성장하고 싶음</span></label>
-    <label class="opt"><input type="checkbox" id="p-fund" value="fund"><span>운영자금이 급함</span></label>
-    <label class="opt"><input type="checkbox" id="p-close" value="close"><span>폐업·업종 전환 고민</span></label>
-  </div>
+  <h2 id="s2"><b>2</b>해결하고 싶은 문제</h2>
+  <p class="hint">받고 싶은 지원금이 아니라 경영 문제로 고르세요. 여러 개 가능.</p>
+  <div class="opts" id="prob"></div>
 </section>
 
 <section class="step" aria-labelledby="s3">
-  <h2 id="s3"><b>3</b>내 조건 확인</h2>
-  <div class="qrow"><div class="q">사업장이 서울에 있나요?</div>
-    <div class="opts"><label class="opt"><input type="radio" name="seoul" id="se-y" value="y"><span>예</span></label><label class="opt"><input type="radio" name="seoul" id="se-n" value="n"><span>아니요</span></label></div></div>
-  <div class="qrow"><div class="q">2025년 연매출이 1억 400만 원 미만인가요?</div>
+  <h2 id="s3"><b>3</b>내 조건</h2>
+  <div class="qrow"><div class="q">사업장 지역</div>
+    <div class="opts"><label class="opt"><input type="radio" name="seoul" id="se-y" value="y"><span>서울</span></label><label class="opt"><input type="radio" name="seoul" id="se-n" value="n"><span>서울 외 지역</span></label></div></div>
+  <div class="qrow"><div class="q">2025년 연매출 1억 400만 원 미만인가요?</div>
     <div class="opts"><label class="opt"><input type="radio" name="small" id="sm-y" value="y"><span>예</span></label><label class="opt"><input type="radio" name="small" id="sm-n" value="n"><span>아니요</span></label><label class="opt"><input type="radio" name="small" id="sm-u" value="u"><span>잘 모름</span></label></div></div>
   <button type="button" class="reset" id="reset">처음부터 다시</button>
 </section>
 
 <section aria-live="polite" style="display:flex;flex-direction:column;gap:12px">
   <div class="result-head"><h2>추천 사업</h2><span id="count"></span></div>
+  <div class="filters"><label class="opt"><input type="checkbox" id="onlynow"><span>지금 신청 가능한 것만</span></label></div>
   <div id="out" class="cards"></div>
 </section>
 
@@ -121,158 +116,55 @@ button.reset:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
   <b>신청 전 꼭 확인할 것</b>
   <ul>
     <li>공고문 다섯 군데: 지원대상 · 제외대상 · 지원내용과 자부담 · 제출서류 · 평가항목과 마감 시각</li>
-    <li>‘다음 공고 대기’ 사업은 12월 말 2027년 통합공고에서 일정이 나옵니다.</li>
-    <li>금액과 조건은 해마다 바뀝니다. 신청 전 해당 연도 공고 원문으로 다시 확인하세요.</li>
+    <li>‘2026년 마감’ 사업은 보통 연말에 나오는 2027년 통합공고에서 다음 일정이 발표됩니다.</li>
+    <li>금액과 조건은 해마다 바뀝니다. 신청 전 각 카드의 공고 원문을 다시 확인하세요.</li>
   </ul>
 </div>
 
-<footer>© 2026 바스제로컨설팅(VASZERO Consulting) · 강사 정경 · 010-9727-6345</footer>
+<footer>© 2026 바스제로컨설팅(VASZERO Consulting) · 강사 정경</footer>
 </div>
 
 <script>
-const P = [
- {id:"voucher", name:"경영안정 바우처", kind:"경영부담 완화 · 바우처", st:"now", stt:"12.18 18:00 마감",
-  probs:["cost"], need:"small",
-  what:"사업체당 25만 원(카드 포인트) — 전기·가스·수도요금, 4대보험료, 차량 연료비 등에 사용",
-  who:"2025년 연매출 1억 400만 원 미만, 2025.12.31 이전 개업, 현재 영업 중",
-  tip:"포인트는 12월 31일에 소멸됩니다. 2027 정부 예산안에서 종료 예정이라 올해 꼭 신청하세요.",
-  where:"voucher.sbiz24.kr", url:"https://voucher.sbiz24.kr", tel:"1533-0600"},
- {id:"emp", name:"소상공인 고용보험료 지원", kind:"경영부담 완화", st:"now", stt:"연중 신청",
-  probs:["cost"],
-  what:"사장님 본인 고용보험료의 50~80% (기준보수 1~2등급 80% · 3~4등급 60% · 5~7등급 50%), 최대 5년",
-  who:"고용보험에 가입한 1인 자영업자·소상공인 (소급 지원 없음)",
-  tip:"아직 가입 전이면 근로복지공단 토탈서비스에서 가입, 이미 가입했다면 소상공인24에서 신청",
-  where:"sbiz24.kr", url:"https://www.sbiz24.kr"},
- {id:"sanjae", name:"서울시 자영업자 산재보험료 지원", kind:"서울 · 경영부담 완화", st:"now", stt:"예산 소진 시까지",
-  probs:["cost"], seoul:true,
-  what:"월 납입 산재보험료의 30~50%, 최대 5년", who:"서울 사업장 영세 자영업자",
-  where:"서울시 소상공인 종합지원 포털 seoulsbdc.or.kr", url:"https://www.seoulsbdc.or.kr"},
- {id:"refi", name:"소상공인 대환대출", kind:"정책자금 · 융자", st:"now", stt:"자금 소진 시까지",
-  probs:["cost","fund"],
-  what:"연 7% 이상 고금리 대출을 연 4.5% 고정금리(10년)로 갈아타기, 최대 5천만 원",
-  who:"고금리 사업자 대출을 쓰고 있는 소상공인",
-  where:"소상공인정책자금 ols.semas.or.kr", url:"https://ols.semas.or.kr"},
- {id:"general", name:"일반경영안정자금 (대리대출)", kind:"정책자금 · 융자", st:"now", stt:"4분기 접수 중 · 예산 소진 시",
-  probs:["fund"],
-  what:"운영자금 최대 7천만 원, 금리 기준금리 + 0.6%p",
-  who:"운영자금이 필요한 일반 소상공인 (신용·보증 심사 있음)",
-  tip:"신용이 낮다면 신용취약소상공인자금(최대 3천만 원, 신용관리교육 이수 필요)도 확인",
-  where:"소상공인정책자금 ols.semas.or.kr", url:"https://ols.semas.or.kr"},
- {id:"seoulfund", name:"서울시 중소기업육성자금", kind:"서울 · 융자", st:"now", stt:"예산 소진 시까지",
-  probs:["fund"], seoul:true,
-  what:"서울시 정책 융자 (세부 한도·금리는 공고 확인)", who:"서울 소재 소상공인·중소기업",
-  where:"서울신용보증재단 / 서울시 소상공인 종합지원 포털", url:"https://www.seoulsbdc.or.kr"},
- {id:"clinic", name:"서울시 자영업 클리닉", kind:"서울 · 무료 컨설팅", st:"now", stt:"상시 신청",
-  probs:["cost","online","hyg","brand","fund","close"], seoul:true,
-  what:"37개 분야 1:1 현장 컨설팅, 횟수 제한 없음",
-  who:"서울 사업장 소상공인", tip:"어떤 사업부터 할지 막막하면 여기서 먼저 상담받는 것이 가장 빠릅니다.",
-  where:"seoulsbdc.or.kr · ☎ 1577-6119", url:"https://www.seoulsbdc.or.kr"},
- {id:"crisis", name:"서울시 위기 소상공인 선제지원", kind:"서울 · 경영개선", st:"now", stt:"예산 소진 시까지",
-  probs:["cost"], seoul:true,
-  what:"경영진단 후 개선비용 최대 300만 원", who:"서울 사업장 소상공인 (세부 요건은 포털 공고 확인)",
-  where:"seoulsbdc.or.kr", url:"https://www.seoulsbdc.or.kr"},
- {id:"online", name:"소상공인 온라인 판로 지원", kind:"디지털 역량 강화", st:"next", stt:"2026년 3~4월 접수 · 다음 공고 대기",
-  probs:["online","brand"],
-  what:"상품 개선·상세페이지·콘텐츠·쇼핑몰·라이브커머스·SNS·온라인 홍보·물류 중 최대 4개 선택",
-  who:"소상공인 확인서 보유, 국세·지방세 완납",
-  tip:"식품·생활용품은 상세페이지 + 라이브커머스 조합이 유리. 판판대로에 미리 가입하고 상품 정보를 등록해 두세요.",
-  where:"판판대로 fanfandaero.kr", url:"https://fanfandaero.kr"},
- {id:"ai", name:"혁신 소상공인 AI 활용지원", kind:"성장 지원 · AI", st:"next", stt:"2026년 6~7월 접수 · 다음 공고 대기",
-  probs:["online","hyg"],
-  what:"AI 진단·멘토링 → AI 사업모델 구현, 사업화자금 최대 4천만 원 (금액·자부담은 공고 원문 확인)",
-  who:"정상 영업 중인 소상공인 (금융·부동산·약국·유흥업 등 제외)",
-  tip:"신청 전 ‘소상공인 지식배움터’ AI 학습관 온라인 강의 1개 이상 수강이 필수 — 지금 미리 들어 두세요. 키오스크·예약 관리·매출 분석·조리 자동화 등에 활용",
-  where:"소상공인24 · 지식배움터 edu.sbiz.or.kr", url:"https://edu.sbiz.or.kr"},
- {id:"digital", name:"서울시 중장년 디지털 전환", kind:"서울 · 디지털", st:"ask", stt:"서울 포털에서 확인",
-  probs:["online"], seoul:true,
-  what:"실행비 최대 300만 원", who:"만 40~65세 미만 서울 소상공인",
-  where:"seoulsbdc.or.kr", url:"https://www.seoulsbdc.or.kr"},
- {id:"coexist", name:"상생성장지원자금", kind:"정책자금 · 융자", st:"ask", stt:"누리집에서 접수 여부 확인",
-  probs:["online"],
-  what:"디지털·온라인 전환을 위한 융자, 유형별 7천만 ~ 10억 원",
-  who:"디지털·온라인 전환을 추진하는 소상공인",
-  where:"소상공인정책자금 ols.semas.or.kr", url:"https://ols.semas.or.kr"},
- {id:"hygiene", name:"백년소상공인 위생컨설팅·환경개선", kind:"음식점 · 위생", st:"next", stt:"2026년 추가공고 9.30 마감 · 다음 공고 대기",
-  probs:["hyg"], types:["A"], tl:"음식점 등 식품안심업소 대상",
-  what:"위생 컨설팅 + 환경개선비 최대 50만 원",
-  who:"백년소상공인 중 식품안심업소 대상 업종",
-  where:"소상공인24", url:"https://www.sbiz24.kr"},
- {id:"haccp", name:"식품 제조 소공인 스마트 HACCP 연계", kind:"식품 제조 특화", st:"next", stt:"2026년 5월부터 모집 · 다음 공고 대기",
-  probs:["hyg"], types:["B"], tl:"식품 제조업만 해당",
-  what:"스마트 HACCP 도입 연계 — 기술 지도·교육·컨설팅", who:"식품 제조 소공인",
-  where:"소상공인24", url:"https://www.sbiz24.kr"},
- {id:"clean", name:"소공인 클린제조환경조성", kind:"제조 소공인 · 보조금", st:"next", stt:"2026년 3차 10.20 마감 · 다음 공고 대기",
-  probs:["hyg"], types:["B","E"], tl:"제조업만 해당",
-  what:"작업장 안전 개선 국비 630만 원 이내 (국비 70% · 자부담 30%)",
-  who:"제조 소공인 (상시근로자 10명 미만)",
-  where:"소상공인24", url:"https://www.sbiz24.kr"},
- {id:"smart", name:"소공인 스마트공방", kind:"제조 소공인 · 보조금", st:"next", stt:"2026년 5~6월 접수 · 다음 공고 대기",
-  probs:["hyg","brand"], types:["B","E"], tl:"제조업만 해당",
-  what:"스마트 장비·SW 도입, 국비 60% 최대 3,600만 원 (자부담 40% 중 현금 20% 이상)",
-  who:"도시형소공인 (제조업, 상시근로자 10명 미만) — 음식점·카페·도소매만 있으면 대상 아님",
-  tip:"사업계획서는 1분 30초 동영상. 작업장 현장에서 대표가 직접 설명해야 합니다.",
-  where:"소상공인24", url:"https://www.sbiz24.kr"},
- {id:"local", name:"소상공인 도약 지원 (로컬기업 육성)", kind:"기업가형 소상공인 · 보조금", st:"next", stt:"2026년 3~5월 접수 · 다음 공고 대기",
-  probs:["brand"],
-  what:"정부지원금 4천만 원(총 사업비 80% 이하) + 자부담 1천만 원, 멘토링 자금 300만 원",
-  who:"지역 자원을 활용하는 초기 단계 소상공인 (상시근로자 5명 미만, 제조 등 10명 미만)",
-  tip:"초기 단계용. 둘 다 신청할 수 있고 동시 선정 시 하나 선택. 평가: 지역성 50 + 성장 가능성 50. 사업계획서는 PSST(문제인식·실현가능성·성장전략·조직 구성) 순서",
-  where:"소상공인24", url:"https://www.sbiz24.kr"},
- {id:"strong", name:"소상공인 도약 지원 (강한소상공인 성장지원)", kind:"기업가형 소상공인 · 보조금", st:"next", stt:"2026년 3~5월 접수 · 다음 공고 대기",
-  probs:["brand"],
-  what:"성장 단계 소상공인 사업화 지원 (지원금·자부담 기준은 공고 원문 확인)",
-  who:"성장 단계 소상공인 (로컬형·혁신형), 파트너사 협업 계획 필수",
-  tip:"평가: 적합도 10 · 사업성 40 · 성장성 50. 사업계획서 첫 칸 ‘제품 한 줄 소개’는 무엇이 다른지 30자 내외로",
-  where:"소상공인24", url:"https://www.sbiz24.kr"},
- {id:"hope", name:"희망리턴패키지", kind:"재기 지원", st:"now", stt:"철거비 연중 상시",
-  probs:["close"],
-  what:"점포 철거·원상복구비 최대 600만 원, 재창업 사업화 최대 2천만 원, 취업 전환 교육·전직장려수당",
-  who:"업력 60일 이상, 폐업했거나 폐업 예정인 소상공인",
-  tip:"폐업 신고 전에 상담부터 받으세요.",
-  where:"희망리턴패키지 hope.sbiz.or.kr · 소상공인24", url:"https://hope.sbiz.or.kr"},
- {id:"newroad", name:"서울시 새 길 여는 폐업지원", kind:"서울 · 재기 지원", st:"now", stt:"서울 포털에서 신청",
-  probs:["close"], seoul:true,
-  what:"원상복구비·임차료 등 최대 300만 원 (정부 지원과 합치면 최대 900만 원)", who:"폐업 예정 서울 소상공인",
-  where:"seoulsbdc.or.kr", url:"https://www.seoulsbdc.or.kr"}
-];
-const LABEL = {now:"지금 신청 가능", next:"다음 공고 대기", ask:"접수 여부 확인"};
-const ORDER = {now:0, ask:1, next:2};
-const PROB = {cost:"고정비 부담", online:"온라인 판매", hyg:"시설·설비", brand:"브랜드 성장", fund:"운영자금", close:"폐업·전환"};
+const DATA = [{"name": "소상공인 경영안정 바우처", "org": "중기부·소상공인시장진흥공단", "what": "업체당 25만 원 — 전기·가스·수도요금, 4대 보험료, 차량 연료비, 전통시장 화재공제료에 사용 (사용기한 12.31, 잔액 환수)", "who": "2025년 연매출 0원 초과 1억 400만 원 미만, 2025.12.31 이전 개업, 휴·폐업 아닌 소상공인 — 대표자 본인 명의 개인카드만 등록", "industry": "all", "small": true, "status": "now", "status_note": "12.18(금) 18:00 마감 · 예산 소진 시 조기 마감 · 2027 정부 예산안에서는 종료 예정", "apply": "voucher.sbiz24.kr", "source": "https://www.tossbank.com/articles/small-business-management-stability-voucher-2026", "problems": ["cost"], "region": "national"}, {"name": "소상공인 고용보험료 지원", "org": "소상공인시장진흥공단·근로복지공단", "what": "사장님 본인 자영업자 고용보험료의 50~80% 환급, 최대 5년 (신청한 달부터, 소급 없음)", "who": "자영업자 고용보험에 가입한 소상공인 사업주", "exclude": "부동산임대업 등 일부 업종 가입 제한 (근로복지공단 1588-0075 확인)", "industry": "all", "status": "always", "status_note": "연중 신청 · 신규 가입자는 근로복지공단, 기존 가입자는 소상공인24", "apply": "sbiz24.kr", "source": "https://anseongcci.korcham.net/file/dext5uploaddata/2026/2.+(소진공)[2026]+소상공인시장진흥공단+지원시책(안성센터).pdf", "problems": ["cost", "close"], "region": "national"}, {"name": "희망리턴패키지", "org": "중기부·소상공인시장진흥공단", "what": "① 폐업: 사업정리 컨설팅, 점포철거비 최대 600만 원(3.3㎡당 20만 원, 생애 1회), 법률자문·채무조정 ② 취업: 취업교육·전직장려수당 ③ 재기사업화: 재창업 교육·멘토링·사업화자금 최대 2천만 원 (자부담 50%)", "who": "폐업(예정) 또는 경영위기 소상공인 — 점포철거는 임차 점포·업력 60일 이상", "exclude": "자가·무상 임차 점포는 철거 지원 제외", "industry": "all", "status": "always", "status_note": "점포철거는 연중 접수(예산 소진 시 마감) · 재기사업화는 회차별 모집", "apply": "hope.sbiz.or.kr", "source": "https://kbthink.com/business/tips/hope-return-2026.html", "problems": ["close", "start"], "region": "national"}, {"name": "소상공인 온라인판로 지원 (판판대로)", "org": "중기부·중소기업유통센터", "what": "상품 개선·상세페이지·콘텐츠·쇼핑몰 판매·라이브커머스·SNS 마케팅·온라인 홍보·물류 8개 메뉴 중 선택 (서비스로 지원, 연간 한도 600만 원)", "who": "정상 영업 중인 소상공인 (전국)", "exclude": "휴·폐업, 체납, 해외 수입 완제품·대기업 최종 제조 상품", "industry": ["retail_online", "food_mfg", "mfg"], "status": "closed", "status_note": "2026년 2차(5.27~6.10)·추가 회차 모두 마감 · 판판대로에 미리 가입해 두기", "apply": "fanfandaero.kr", "source": "https://www.venturesquare.net/announcement/1087991", "problems": ["online", "brand"], "region": "national"}, {"name": "혁신 소상공인 AI 활용지원", "org": "중기부·소상공인시장진흥공단", "what": "AI 활용모델 구축·고도화, 사업화자금 최대 4천만 원 (정부 80% 이하, 자부담 20% 이상)", "who": "정상 영업 중인 소상공인 — 신청 전 지식배움터 AI학습관 온라인 강의 1개 이상 수강 필수", "industry": "all", "status": "closed", "status_note": "2026년 7.3 16:00 마감 · 지식배움터 AI 강의는 지금 미리 수강 가능", "apply": "sbiz24.kr", "source": "https://www.heraldk.com/article/2026051413482962458", "problems": ["online", "facility"], "region": "national"}, {"name": "스마트상점 기술보급", "org": "중기부·소상공인시장진흥공단", "what": "키오스크·서빙로봇·사이니지·S/W 도입 — 구입형 최대 500만 원(50~70%), 렌탈형 연 최대 350만 원, 선도형 최대 1천만 원, S/W형 연 최대 30만 원", "who": "정상 영업 중인 소상공인 점포 (간이과세자·1인 자영업자는 지원율 우대)", "exclude": "예비창업자, 체납자, 공급업체·대행사를 통한 대리신청", "industry": ["food_restaurant", "retail_online", "service"], "status": "closed", "status_note": "2026년 2차 9.30 마감", "apply": "sbiz.or.kr/smst", "source": "https://www.venturesquare.net/announcement/1110634", "problems": ["facility", "online", "cost"], "region": "national"}, {"name": "소상공인 도약 지원 (로컬기업 육성·강한소상공인)", "org": "중기부·소상공인시장진흥공단", "what": "선발 시 성장지원금 300만 원 → 권역 오디션 최종 선정 시 사업화자금 로컬기업 최대 5천만 원(자부담 포함 총액), 강한소상공인 최대 1억 원", "who": "정상 영업 중인 소상공인 — 로컬기업은 지역자원 기반, 강한소상공인은 혁신 아이템", "industry": "all", "status": "closed", "status_note": "2026년 4월 접수 마감 · 2027 공고 대기", "apply": "sbiz24.kr", "source": "https://www.venturesquare.net/announcement/1071502", "problems": ["brand", "fund"], "region": "national"}, {"name": "글로벌 소상공인 육성", "org": "중기부·소상공인시장진흥공단", "what": "수출 진단·교육, 수출상품화 사업화자금 최대 1억 원, 박람회·해외 쇼핑몰 입점", "who": "신사업창업사관학교·로컬크리에이터·강한소상공인 수혜, 투자 유치, 또는 연 수출 3만 달러 이상 실적 소상공인", "industry": ["food_mfg", "mfg", "retail_online"], "status": "closed", "status_note": "2026년 5.15 마감", "apply": "sbiz24.kr", "source": "https://www.venturesquare.net/announcement/1079267", "problems": ["export", "brand"], "region": "national"}, {"name": "소공인 스마트제조지원 (스마트공방)", "org": "중기부·소상공인시장진흥공단", "what": "스마트장비 구매비·SaaS 임차비 — 총사업비 6천만 원 기준 정부 3,600만 원 (자부담 40%)", "who": "도시형소공인 (제조업, 상시근로자 10인 미만) — 음식점·카페·도소매만 있으면 대상 아님", "industry": ["mfg", "food_mfg"], "status": "closed", "status_note": "2026년 본모집·추가모집(7.3) 마감", "apply": "sbiz24.kr", "source": "https://thevc.kr/grants/b12f9817304ce8c62b68f28c", "problems": ["facility"], "region": "national"}, {"name": "소공인 클린제조환경조성", "org": "중기부·소상공인시장진흥공단", "what": "작업장 안전·환경 개선 국비 630만 원 이내 (국비 70%, 자부담 30%)", "who": "제조 소공인 (상시근로자 10인 미만, 사업자등록 업종이 실제 제조와 일치)", "industry": ["mfg", "food_mfg"], "status": "closed", "status_note": "2026년 3차 10.6~10.20 18:00 마감", "apply": "sbiz24.kr", "source": "https://aboda.kr/?p=33004", "problems": ["facility"], "region": "national"}, {"name": "백년가게·백년소공인 지정", "org": "중기부·소상공인시장진흥공단", "what": "인증 현판, 홍보·판로·시설개선 지원, 정책자금 우대, 다른 사업 가점 (현금 지원 아님)", "who": "백년가게: 업력 30년 이상 (제조업 외) / 백년소공인: 업력 15년 이상 숙련 소공인", "industry": "all", "status": "closed", "status_note": "2026년 지정 완료(7.27 발표) · 2027 공고 대기", "apply": "sbiz24.kr", "source": "https://newsseoul.co.kr/news/view/1065585021096434", "problems": ["brand"], "region": "national"}, {"name": "소상공인 교육 (지식배움터·업종전문기술교육·1:1 컨설팅)", "org": "소상공인시장진흥공단", "what": "지식배움터 온라인 강의 무료 / 업종전문기술교육 수료 시 교육비 90% 환급(60만 원 한도) / 경영·마케팅·세무·노무 찾아가는 1:1 교육", "who": "예비창업자·소상공인 (온라인은 누구나)", "industry": "all", "status": "always", "status_note": "온라인은 상시 · 오프라인·1:1 교육은 회차별 공고", "apply": "edu.sbiz.or.kr", "source": "https://anseongcci.korcham.net/file/dext5uploaddata/2026/2.+(소진공)[2026]+소상공인시장진흥공단+지원시책(안성센터).pdf", "problems": ["edu", "start"], "region": "national"}, {"name": "노란우산공제", "org": "중소기업중앙회", "what": "폐업·노령 대비 공제 (압류 금지) — 소득공제 연 최대 600만 원 (사업소득 4천만 원 이하 기준)", "who": "개인사업자·소상공인 대표자", "exclude": "유흥주점, 카지노, 사행시설 운영업 등", "industry": "all", "status": "always", "status_note": "연중 가입", "apply": "kbiz.or.kr", "source": "https://wikidocs.net/blog/@openwiki/21225/", "problems": ["close", "cost"], "region": "national"}, {"name": "일반경영안정자금 (대리대출)", "org": "중기부·소상공인시장진흥공단", "what": "최대 7천만 원, 정책자금 기준금리 + 0.6%p 변동 (4분기 안내금리 연 4.72%), 5년 (거치 2년 포함)", "who": "사업자등록이 있는 소상공인, 업력 무관 (상시근로자 5인 미만, 제조·건설·운수·광업 10인 미만)", "exclude": "융자 제외 업종, 휴·폐업, 같은 해 같은 자금 부결", "industry": "all", "status": "now", "status_note": "4분기 10.6부터 예산 소진 시까지 · 확인서 유효 12.23까지", "apply": "ols.semas.or.kr", "source": "https://thecheck.co.kr/?p=7324", "problems": ["fund", "cost"], "region": "national"}, {"name": "청년고용연계자금 (대리대출)", "org": "소상공인시장진흥공단", "what": "최대 7천만 원, 정책자금 기준금리 변동 (4분기 안내금리 연 4.12%), 5년", "who": "만 39세 이하 청년 소상공인 또는 청년을 고용한 소상공인", "industry": "all", "status": "now", "status_note": "4분기 10.6부터 예산 소진 시까지", "apply": "ols.semas.or.kr", "source": "https://thecheck.co.kr/?p=7324", "problems": ["fund", "start", "hire"], "region": "national"}, {"name": "소공인특화자금 (대리대출)", "org": "소상공인시장진흥공단", "what": "제조 소공인 운전·시설 자금, 기준금리 + 0.4%p 수준 (4분기 안내금리 연 4.72%)", "who": "상시근로자 10인 미만 제조업 소공인", "industry": ["food_mfg", "mfg"], "status": "now", "status_note": "4분기 10.6부터 · 유형별 한도는 공고 확인", "apply": "ols.semas.or.kr", "source": "https://thecheck.co.kr/?p=7324", "problems": ["fund", "facility"], "region": "national"}, {"name": "소상공인 대환대출", "org": "소상공인시장진흥공단", "what": "연 7% 이상 고금리 사업자대출을 연 4.5% 고정 (최대 10년)으로 갈아타기, 최대 5천만 원", "who": "NCB 919점 이하 중·저신용 소상공인 — 2025.6.30 이전 취급한 고금리 대출 보유", "industry": "all", "status": "check", "status_note": "2026년 운영 중 · 4분기 접수 상태는 누리집에서 확인", "apply": "ols.semas.or.kr", "source": "https://tossplace.com/story/2026support_funds", "problems": ["cost", "fund"], "region": "national"}, {"name": "신용취약소상공인자금 (직접대출)", "org": "소상공인시장진흥공단", "what": "최대 3천만 원, 기준금리 + 1.6%p 변동 (4분기 안내금리 연 5.72%), 5년", "who": "NCB 839점 이하 중·저신용 소상공인 — 지식배움터 신용관리 교육 먼저 이수", "industry": "all", "status": "check", "status_note": "회차제 접수 · 다음 회차는 누리집에서 확인", "apply": "ols.semas.or.kr", "source": "https://kbthink.com/business/tips/ceo-tip/260720.html", "problems": ["fund"], "region": "national"}, {"name": "혁신성장촉진자금 (직접대출)", "org": "소상공인시장진흥공단", "what": "운전 최대 2억 · 시설 최대 10억, 기준금리 + 0.4%p 변동 (4분기 안내금리 연 4.52%)", "who": "수출 실적, 2년 연속 매출 10% 이상 증가, 강한소상공인·로컬크리에이터 선정 등 성장 소상공인", "industry": "all", "status": "check", "status_note": "2026년 운영 중 · 회차·잔여 예산은 누리집 확인", "apply": "ols.semas.or.kr", "source": "https://thevc.kr/grants/0546aa44c67900a7795d9d27", "problems": ["fund", "facility", "brand"], "region": "national"}, {"name": "상생성장지원자금 (직접대출)", "org": "소상공인시장진흥공단", "what": "일반형 운전 7천만 / 성장형 운전 1억·시설 5억 / 도약형 운전 2억·시설 10억", "who": "TOPS 선정자 또는 소진공 상생협약 플랫폼 입점 소상공인", "industry": "all", "status": "check", "status_note": "2026년 운영 중 · 접수 상태는 누리집 확인", "apply": "ols.semas.or.kr", "source": "https://www.heraldk.com/article/2025122813000061426", "problems": ["fund", "online"], "region": "national"}, {"name": "긴급경영안정자금", "org": "소상공인시장진흥공단", "what": "재해 피해: 최대 1억, 연 2.0% 고정 / 일시적 경영애로: 최대 7천만, 5년 (거치 2년)", "who": "재해확인증을 받은 소상공인, 또는 매출 감소 등 일시적 경영애로 소상공인 (연매출 1억 400만 원 미만·업력 7년 미만)", "industry": "all", "status": "check", "status_note": "재해는 수시 접수 · 일시적 경영애로는 회차 확인", "apply": "ols.semas.or.kr", "source": "https://tossplace.com/story/2026support_funds", "problems": ["fund", "cost"], "region": "national"}, {"name": "재도전특별자금 (직접대출)", "org": "소상공인시장진흥공단", "what": "일반형 7천만 / 희망형 1억 / 도약형 2억, 기준금리 변동, 5년", "who": "재창업 준비·초기 소상공인, 채무조정 성실상환 소상공인", "industry": "all", "status": "now", "status_note": "8.3부터 예산 소진 시까지", "apply": "ols.semas.or.kr", "source": "https://kbthink.com/business/tips/ceo-tip/260720.html", "problems": ["close", "start", "fund"], "region": "national"}, {"name": "새출발기금 (채무조정)", "org": "한국자산관리공사·신용회복위원회", "what": "부실차주 순부채 60~80% 감면 (취약계층 최대 90%), 최대 20년 분할상환 / 부실우려차주는 금리 감면·만기 연장", "who": "2020.4~2025.6 사업을 한 개인사업자·소상공인 중 연체 중이거나 연체 우려가 있는 차주", "exclude": "폐업 법인", "industry": "all", "status": "always", "status_note": "2026년 운영 중", "apply": "새출발기금.kr", "source": "https://kbmaeil.com/article/20260303500619", "problems": ["cost", "close"], "region": "national"}, {"name": "햇살론일반 (개인사업자 포함)", "org": "서민금융진흥원·취급 금융사", "what": "보증 최대 1,500만 원, 5년 원리금균등 분할상환", "who": "연소득 3,500만 원 이하, 또는 4,500만 원 이하이면서 신용 하위 20% — 사업 3개월 이상·소득증빙 필요", "industry": "all", "status": "always", "status_note": "상시", "apply": "kinfa.or.kr", "source": "https://www.tossbank.com/articles/sunloan2026", "problems": ["fund"], "region": "national"}, {"name": "자영업 클리닉", "org": "서울시·서울신용보증재단", "what": "분야별 전문가 1:1 현장 컨설팅 무료 — 마케팅·점포 연출·세무·노무·O2O 등 37개 분야, 횟수 제한 없음", "who": "사업장이 서울인 소상공인", "region": "seoul", "industry": "all", "status": "always", "status_note": "연중 상시 신청 (예산 소진 여부는 포털에서 확인)", "apply": "seoulsbdc.or.kr", "source": "https://news.seoul.go.kr/economy/small-business-supports", "problems": ["edu", "online", "brand", "cost"]}, {"name": "위기 소상공인 조기발굴 및 선제지원", "org": "서울시·서울신용보증재단", "what": "경영진단과 컨설팅, 홍보·시설 개선 등 경영개선비 최대 300만 원(부가세 자부담), 특별 정책자금 연계", "who": "경영 위기 서울 소상공인 (2026년 3,000명)", "region": "seoul", "industry": "all", "status": "always", "status_note": "연중 상시 · 예산 소진 시 종료", "apply": "seoulsbdc.or.kr", "source": "https://news.seoul.go.kr/economy/small-business-supports", "problems": ["cost", "fund", "facility", "brand"]}, {"name": "서울시 창업 컨설팅", "org": "서울시·서울신용보증재단", "what": "1:1 컨설팅 — 상권·입지 분석, 사업계획, 수익성 분석, 판매 전략, 보증 안내", "who": "서울 예비창업자, 창업 3년 이내 업체", "region": "seoul", "industry": "all", "status": "always", "status_note": "연중 상시", "apply": "seoulsbdc.or.kr", "source": "https://news.seoul.go.kr/economy/small-business-supports", "problems": ["start", "edu"]}, {"name": "중장년 소상공인 디지털 전환", "org": "서울시·서울신용보증재단", "what": "디지털 교육·컨설팅 + 실행비 최대 300만 원, 우수 업체 최대 100만 원 추가(부가세 자부담)", "who": "만 40세 이상 65세 미만 서울 소상공인 (2026년 1,000명)", "region": "seoul", "industry": "all", "status": "always", "status_note": "연중 상시 · 선정 인원 한정", "apply": "seoulsbdc.or.kr", "source": "https://news.seoul.go.kr/economy/small-business-supports", "problems": ["online", "edu"]}, {"name": "다시서기 프로젝트 (재도전)", "org": "서울시·서울신용보증재단", "what": "재도전 교육·컨설팅, 이자·보증료 지원, 사업초기자금 최대 200만 원(부가세 자부담)", "who": "성실 실패·성실 상환 후 재창업하려는 서울 소상공인", "region": "seoul", "industry": "all", "status": "always", "status_note": "연중 상시 · 사업계획 평가로 선발", "apply": "seoulsbdc.or.kr", "source": "https://news.seoul.go.kr/economy/small-business-supports", "problems": ["start", "close"]}, {"name": "새 길 여는 폐업지원", "org": "서울시·서울신용보증재단", "what": "폐업 컨설팅 + 원상복구비·양도수수료·임대료·보관료 등 폐업 비용 최대 300만 원(부가세 자부담)", "who": "폐업 예정 서울 소상공인", "region": "seoul", "industry": "all", "status": "always", "status_note": "연중 상시", "apply": "seoulsbdc.or.kr", "source": "https://news.seoul.go.kr/economy/small-business-supports", "problems": ["close"]}, {"name": "서울소상공인아카데미", "org": "서울신용보증재단", "what": "창업·성장·재도전 온라인 실무 교육, 오프라인 교육", "who": "서울 예비창업자·소상공인", "region": "seoul", "industry": "all", "status": "always", "status_note": "상시", "apply": "edu.seoulsbdc.or.kr", "source": "https://news.seoul.go.kr/economy/small-business-supports", "problems": ["edu", "start"]}, {"name": "서울시 소상공인 산재보험료 지원", "org": "서울시(서울신용보증재단 접수)", "what": "사업주 본인 산재보험료 30~50% 환급, 최대 5년 (보수등급 1~4등급 50% · 5~8등급 40% · 9~12등급 30%)", "who": "근로복지공단 중소기업사업주 산재보험에 가입한 서울 소상공인", "region": "seoul", "industry": "all", "status": "now", "status_note": "매년 3~12월 접수 · 예산 소진 시 조기 마감", "apply": "seoulsbdc.or.kr", "source": "https://news.seoul.go.kr/economy/?p=568967", "problems": ["cost"]}, {"name": "서울시 자영업자 고용보험료 지원", "org": "서울시(서울신용보증재단 접수)", "what": "자영업자 고용보험료 20% 환급, 최대 5년 — 국비(소진공) 지원과 함께 받을 수 있음", "who": "자영업자 고용보험에 가입한 서울 소상공인", "region": "seoul", "industry": "all", "status": "now", "status_note": "매년 3~12월 접수 · 예산 소진 시 조기 마감", "apply": "seoulsbdc.or.kr", "source": "https://news.seoul.go.kr/economy/archives/568900", "problems": ["cost", "close"]}, {"name": "노란우산공제 희망장려금 (서울)", "org": "서울시·중소기업중앙회", "what": "노란우산공제 가입 월부터 최대 1년간 월 2만 원 추가 적립", "who": "노란우산공제에 가입한 서울 소상공인", "region": "seoul", "industry": "all", "status": "always", "status_note": "세부 요건은 포털 확인", "apply": "seoulsbdc.or.kr", "source": "https://news.seoul.go.kr/economy/?p=568820", "problems": ["cost", "close"]}, {"name": "2026 서울시 중소기업육성자금", "org": "서울시·서울신용보증재단", "what": "경제활성화자금(이자차액 1.8% 보전, 최대 5억), 긴급 자영업자금(2.5% 고정, 최대 5천만), 재기지원자금(최대 1억) 등 — 중도상환수수료 면제", "who": "서울 소재 중소기업·소상공인 (자금별 상이)", "region": "seoul", "industry": "all", "status": "now", "status_note": "2026.1.2부터 접수 · 자금별 한도 소진 여부 확인", "apply": "seoulshinbo.co.kr", "source": "https://mediahub.seoul.go.kr/archives/2016675", "problems": ["fund", "start", "close"]}, {"name": "서울시 식품진흥기금 융자 (음식점 시설개선)", "org": "서울시·자치구 보건소", "what": "음식점·제과점 시설개선 최대 1억 원(소요액 80% 이내) 연 2%, 모범음식점 최대 5천만 원 연 2%, 화장실 개선 최대 2천만 원 연 1% — 2년 거치 3년 분할상환", "who": "관내 일반·휴게음식점, 제과점 등 식품접객업소", "exclude": "휴·폐업, 단란·유흥주점, 1년 이내 행정처분 업소", "region": "seoul", "industry": "food_restaurant", "status": "now", "status_note": "자치구별 공고 · 예산 소진 시까지 (서초구는 2.2부터)", "apply": "관할 구청 보건소 위생과", "source": "https://www.heraldk.com/article/2026020114245713965", "problems": ["facility", "fund"]}, {"name": "서울배달+ 땡겨요 (공공배달앱)", "org": "서울시", "what": "공공·민간 협력 배달앱 — 중개수수료 2% 수준", "who": "서울에서 배달하는 소상공인", "region": "seoul", "industry": "food_restaurant", "status": "always", "status_note": "상시 입점", "apply": "news.seoul.go.kr/economy/seoul-delivery-plus", "source": "https://news.seoul.go.kr/economy/seoul-delivery-plus", "problems": ["cost", "online"]}, {"name": "두루누리 사회보험료 지원", "org": "고용노동부·보건복지부", "what": "신규 근로자 고용보험·국민연금 보험료 80% 지원, 최대 36개월 (고지서에서 차감)", "who": "근로자 10명 미만 사업장의 월보수 270만 원 미만 신규 가입 근로자와 사업주", "exclude": "직전 1년 가입 이력자, 재산 과세표준 6억 이상, 종합소득 4,300만 원 이상", "region": "national", "industry": "all", "status": "always", "status_note": "연중 · 신청한 달부터 적용", "apply": "4insure.or.kr", "source": "https://v.daum.net/v/20260118125700309", "problems": ["hire", "cost"]}, {"name": "청년일자리도약장려금", "org": "고용노동부", "what": "청년 정규직 채용 후 6개월 이상 고용 유지 시 최대 720만 원 (월 60만 원)", "who": "5인 이상 우선지원대상기업 — 만 15~34세 취업애로청년 채용", "region": "national", "industry": "all", "status": "now", "status_note": "2026년 연중 · 채용 전 참여 신청 · 지역별 예산 소진 시 마감", "apply": "work24.go.kr", "source": "https://www.bokjiro.go.kr/ssis-tbu/cms/pc/news/promotion/1309561_1118.html", "problems": ["hire"]}, {"name": "사업주 본인 산재보험 가입", "org": "근로복지공단", "what": "사업주 본인·무급가족종사자도 산재보험 가입 가능 — 업무상 재해 시 요양·휴업급여", "who": "근로자가 없거나 300인 미만을 둔 사업주", "region": "national", "industry": "all", "status": "always", "status_note": "상시 가입", "apply": "total.comwel.or.kr", "source": "https://www.metroseoul.co.kr/article/20240118500371", "problems": ["cost"]}, {"name": "축산물 HACCP 시설개선 지원", "org": "식약처·한국식품안전관리인증원", "what": "시설개선 비용 50% 국비, 업체당 최대 1천만 원", "who": "2026년 HACCP 인증받는 소규모 축산물 업체 (식육포장처리업 등)", "region": "national", "industry": "food_mfg", "status": "now", "status_note": "2026.2.2~연말 또는 국비 소진 시", "apply": "haccp.or.kr", "source": "https://kbmaeil.com/article/20260203500004", "problems": ["facility"]}];
+const PROB = {cost:"매출 감소·고정비 부담", online:"온라인 판매·디지털 전환", facility:"매장·작업장 시설·설비 개선", brand:"브랜드·사업 키우기", fund:"운영자금이 급함", hire:"직원 채용·인건비", start:"창업 준비·초기", export:"해외 판매", close:"폐업·업종 전환", edu:"교육·컨설팅 받기"};
+const IND = {food_restaurant:"음식점·카페", food_mfg:"식품 제조", mfg:"제조업", retail_online:"도소매·온라인", service:"서비스업"};
+const LABEL = {now:"지금 신청 가능", always:"상시 신청", check:"접수 여부 확인", closed:"2026년 마감"};
+const ORDER = {now:0, always:1, check:2, closed:3};
 const $ = s => document.querySelector(s);
-function val(name){const e=document.querySelector(`input[name="${name}"]:checked`);return e?e.value:null}
-function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+const used = new Set(DATA.flatMap(p=>p.problems||[]));
+$("#prob").innerHTML = Object.entries(PROB).filter(([k])=>used.has(k)).map(([k,v])=>`<label class="opt"><input type="checkbox" id="p-${k}" value="${k}"><span>${v}</span></label>`).join("");
+function val(n){const e=document.querySelector(`input[name="${n}"]:checked`);return e?e.value:null}
+function esc(s){return String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+function host(u){try{return new URL(u).hostname.replace(/^www\./,"")}catch(e){return u}}
+function inds(p){const v=p.industry;if(!v||v==="all")return null;return Array.isArray(v)?(v.includes("all")?null:v):[v]}
 function render(){
-  const type=val("type"), seoul=val("seoul"), small=val("small");
+  const ind=val("ind"), seoul=val("seoul"), small=val("small"), onlyNow=$("#onlynow").checked;
   const probs=[...document.querySelectorAll('#prob input:checked')].map(i=>i.value);
   const out=$("#out");
-  if(!probs.length){
-    $("#count").textContent="";
-    out.innerHTML='<div class="empty">2번에서 해결하고 싶은 문제를 하나 이상 고르면 맞는 사업이 여기에 나옵니다. 유형과 조건까지 고르면 해당 없는 사업은 빠집니다.</div>';
-    return;
-  }
-  let list=P.filter(p=>p.probs.some(x=>probs.includes(x)));
-  list=list.filter(p=>{
-    if(p.seoul && seoul==="n") return false;
-    if(p.types && type && !p.types.includes(type)) return false;
-    if(p.need==="small" && small==="n") return false;
+  if(!probs.length){$("#count").textContent="";out.innerHTML='<div class="empty">2번에서 해결하고 싶은 문제를 하나 이상 고르면 맞는 사업이 여기에 나옵니다. 업종과 지역을 고르면 해당 없는 사업은 빠집니다.</div>';return}
+  let list=DATA.filter(p=>(p.problems||[]).some(x=>probs.includes(x))).filter(p=>{
+    const I=inds(p);
+    if(I && ind && !I.includes(ind)) return false;
+    if(p.region==="seoul" && seoul==="n") return false;
+    if(p.small && small==="n") return false;
+    if(onlyNow && !(p.status==="now"||p.status==="always")) return false;
     return true;
   });
-  list.sort((a,b)=>ORDER[a.st]-ORDER[b.st]);
-  const nowN=list.filter(p=>p.st==="now").length;
+  list.sort((a,b)=>ORDER[a.status]-ORDER[b.status]);
+  const nowN=list.filter(p=>p.status==="now"||p.status==="always").length;
   $("#count").textContent=`${list.length}개 · 지금 신청 가능 ${nowN}개`;
-  if(!list.length){out.innerHTML='<div class="empty">조건에 맞는 사업이 없습니다. 조건을 ‘잘 모름’으로 바꾸거나 다른 문제를 골라 보세요.</div>';return}
+  if(!list.length){out.innerHTML='<div class="empty">조건에 맞는 사업이 없습니다. 다른 문제를 고르거나 ‘지금 신청 가능한 것만’을 끄고 다시 보세요.</div>';return}
   out.innerHTML=list.map(p=>{
-    const why=p.probs.filter(x=>probs.includes(x)).map(x=>PROB[x]).join(" · ");
-    const flags=[];
-    if(p.seoul && seoul!=="y") flags.push("서울 사업장만 해당");
-    if(p.types && !type) flags.push(p.tl);
-    if(p.need==="small" && small!=="y") flags.push("2025년 연매출 1억 400만 원 미만만 해당");
-    return `<article class="card">
-      <div class="top"><div><div class="kind">${esc(p.kind)}</div><h3>${esc(p.name)}</h3></div><span class="pill ${p.st}">${LABEL[p.st]}</span></div>
+    const why=(p.problems||[]).filter(x=>probs.includes(x)).map(x=>PROB[x]).join(" · ");
+    const flags=[]; const I=inds(p);
+    if(I && !ind) flags.push(I.map(x=>IND[x]).join("·")+"만 해당");
+    if(p.region==="seoul" && seoul!=="y") flags.push("서울 사업장만 해당");
+    if(p.small && small!=="y") flags.push("2025년 연매출 1억 400만 원 미만만 해당");
+    return `<article class="card ${p.status}">
+      <div class="top"><div><div class="kind">${esc(p.org)}</div><h3>${esc(p.name)}</h3></div><span class="pill ${p.status}">${LABEL[p.status]}</span></div>
       <div class="why">내 문제: ${esc(why)}${flags.length?" · 확인: "+esc(flags.join(", ")):""}</div>
-      <dl><dt>지원</dt><dd>${esc(p.what)}</dd><dt>대상</dt><dd>${esc(p.who)}</dd><dt>시기</dt><dd>${esc(p.stt)}</dd></dl>
-      ${p.tip?`<div class="tip">${esc(p.tip)}</div>`:""}
-      <div class="where">신청: <a href="${p.url}" target="_blank" rel="noopener">${esc(p.where)}</a>${p.tel?` · ☎ ${p.tel}`:""}</div>
+      <dl><dt>지원</dt><dd>${esc(p.what)}</dd><dt>대상</dt><dd>${esc(p.who)}</dd>${p.exclude?`<dt>제외</dt><dd>${esc(p.exclude)}</dd>`:""}<dt>접수</dt><dd>${esc(p.status_note||p.period2026)}</dd></dl>
+      <div class="links">${p.apply?`<span>신청: <a href="${esc(p.apply.startsWith("http")?p.apply:"https://"+p.apply)}" target="_blank" rel="noopener">${esc(host(p.apply.startsWith("http")?p.apply:"https://"+p.apply))}</a></span>`:""}${p.source?`<span>공고 출처: <a href="${esc(p.source)}" target="_blank" rel="noopener">${esc(host(p.source))}</a></span>`:""}</div>
     </article>`;}).join("");
 }
 document.addEventListener("change",render);
