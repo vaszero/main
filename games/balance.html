@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>우리 팀장님 밸런스 게임</title>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@500;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{--bg:#10131c;--y:#ffd23f;--a:#ff3b5c;--b:#2f7bff}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:#fff;font-family:'Noto Sans KR',sans-serif;min-height:100vh;overflow:hidden}
+h1,h2,.disp{font-family:'Black Han Sans',sans-serif;font-weight:400}
+button{font:inherit;font-weight:800;border:0;border-radius:14px;cursor:pointer}
+[hidden]{display:none!important}
+.btn{background:var(--y);color:#111;font-size:3vh;padding:1.5vh 4vh}
+.btn.ghost{background:#ffffff22;color:#fff}
+
+/* 큰 화면 */
+#host{height:100vh;display:flex;flex-direction:column;padding:2.5vh 3vw}
+#host header{display:flex;justify-content:space-between;align-items:center;min-height:7vh}
+#host h1{font-size:5vh}#host h1 b{color:var(--y);font-weight:400}
+#qnum{font-size:3vh;opacity:.8}
+main{flex:1;display:flex;flex-direction:column;min-height:0;margin-top:2vh}
+footer{display:flex;gap:1.5vw;align-items:center;margin-top:2vh}
+#hostMsg{font-size:2.4vh;opacity:.85}
+
+#lobby{flex:1;display:flex;gap:3vw;align-items:center}
+.qrbox{background:#fff;color:#111;border-radius:24px;padding:3vh;text-align:center;width:34vw}
+#qr{display:flex;justify-content:center;margin-bottom:2vh}#qr img,#qr canvas{width:28vh!important;height:28vh!important}
+.qrbox p{font-size:2.6vh;font-weight:800}.qrbox small{display:block;margin-top:1vh;font-size:1.4vh;color:#666;word-break:break-all}
+.plist{flex:1;height:62vh;border:4px solid var(--y);border-radius:24px;padding:2.5vh;overflow:hidden}
+.plist h2{color:var(--y);font-size:4.5vh}
+.plist .tip{font-size:2.1vh;opacity:.8;margin:1vh 0 1.5vh}
+.plist ul{list-style:none;display:flex;flex-wrap:wrap;gap:1vh}
+.plist li{background:#ffffff22;padding:.6vh 1.6vh;border-radius:99px;font-size:2.4vh;font-weight:800;cursor:pointer}
+.plist li.star{background:var(--y);color:#111}
+
+#stage{flex:1;display:flex;flex-direction:column;min-height:0}
+#vs{flex:1;display:flex;gap:2vw;position:relative}
+.side{flex:1;border-radius:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:3vh;position:relative;overflow:hidden}
+.side.a{background:var(--a)}.side.b{background:var(--b)}
+.side .txt{font-family:'Black Han Sans';font-size:7vh;line-height:1.3;position:relative;z-index:1}
+.side .pct{font-family:'Black Han Sans';font-size:10vh;margin-top:2vh;position:relative;z-index:1}
+.side .cnt{font-size:2.6vh;position:relative;z-index:1}
+.side .fill{position:absolute;left:0;right:0;bottom:0;height:0;background:#ffffff38;transition:height 1.2s ease-out}
+.side.pick{outline:10px solid var(--y)}
+.side .boss{position:absolute;top:2vh;left:0;right:0;font-size:3vh;font-weight:800;color:var(--y);z-index:1}
+.vsmark{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:var(--bg);border-radius:50%;width:13vh;height:13vh;display:flex;align-items:center;justify-content:center;font-family:'Black Han Sans';font-size:6vh;color:var(--y);z-index:2}
+#side{display:flex;justify-content:space-between;align-items:center;margin-top:2vh;font-size:2.6vh;min-height:8vh}
+#timer{font-family:'Black Han Sans';font-size:7vh;color:var(--y)}
+#matchInfo b{color:var(--y)}
+
+#final{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+#final h2{font-size:7vh;color:var(--y);margin-bottom:4vh}
+.podium{display:flex;align-items:flex-end;gap:2vw}
+.pod{width:20vw}
+.pod .nm{font-size:4vh;font-weight:800;margin-bottom:1vh}.pod .sc{font-size:2.6vh;opacity:.8;margin-bottom:1vh}
+.pod .blk{border-radius:18px 18px 0 0;font-family:'Black Han Sans';font-size:8vh;color:#111;padding-top:2vh}
+.p1 .blk{height:28vh;background:var(--y)}.p2 .blk{height:20vh;background:#c9ced8}.p3 .blk{height:14vh;background:#d08b4a}
+#finalNote{margin-top:4vh;font-size:2.8vh;line-height:1.7;opacity:.9}
+#finalNote b{color:var(--y)}
+
+#editor{position:fixed;inset:0;background:#000d;z-index:6;display:flex;gap:2vw;padding:4vh 3vw}
+#editor .col{flex:1;display:flex;flex-direction:column;gap:1.5vh;min-height:0}
+#editor h2{font-size:3.6vh;color:var(--y)}
+#editor textarea{flex:1;width:100%;font:500 2.1vh/1.7 'Noto Sans KR',sans-serif;padding:2vh;border-radius:14px;border:0;resize:none}
+#editor .note{font-size:1.9vh;opacity:.85;line-height:1.6}
+#parseMsg{font-size:2.2vh;font-weight:800}
+
+/* 참가자 폰 */
+#player{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;text-align:center}
+#joinBox,#pGame{width:100%}
+#joinBox h1{font-size:30px;margin-bottom:24px}
+#nameIn{width:100%;font-size:22px;padding:16px;border-radius:14px;border:0;text-align:center;margin-bottom:14px}
+#joinBtn{width:100%;background:var(--y);color:#111;font-size:24px;padding:18px}
+#pMsg{margin-top:16px;font-size:17px;opacity:.85;line-height:1.5}
+#pHead{font-size:17px;opacity:.8;margin-bottom:8px}
+#pBig{font-family:'Black Han Sans';font-size:42px;line-height:1.3;margin:12px 0}
+#pSub{font-size:19px;opacity:.9;line-height:1.6;white-space:pre-line}
+#pOpts{display:grid;gap:14px;margin-top:14px}
+#pOpts button{color:#fff;font-family:'Black Han Sans';font-weight:400;font-size:30px;padding:30px 12px;min-height:22vh;line-height:1.3}
+body.good{background:#11522f}body.star{background:#4a3a00}
+</style>
+</head>
+<body>
+
+<section id="host" hidden>
+  <header><h1>우리 팀장님 <b>밸런스 게임</b></h1><div id="qnum"></div></header>
+  <main>
+    <div id="lobby">
+      <div class="qrbox"><div id="qr"></div><p>QR 찍고 이름만 쓰면 참가!</p><small id="url">연결 준비 중…</small></div>
+      <div class="plist"><h2>참가자 <span id="pc">0</span>명</h2><p class="tip">이름을 누르면 ⭐주인공이 돼요. 주인공과 같은 답을 고르면 점수!</p><ul id="pl"></ul></div>
+    </div>
+    <div id="stage" hidden>
+      <div id="vs">
+        <div class="side a" id="sa"><div class="boss"></div><div class="fill"></div><div class="txt"></div><div class="pct"></div><div class="cnt"></div></div>
+        <div class="side b" id="sb"><div class="boss"></div><div class="fill"></div><div class="txt"></div><div class="pct"></div><div class="cnt"></div></div>
+        <div class="vsmark">VS</div>
+      </div>
+      <div id="side"><div id="answered"></div><div id="matchInfo"></div><div id="timer"></div></div>
+    </div>
+    <div id="final" hidden><h2 id="fTitle"></h2><div class="podium" id="podium"></div><div id="finalNote"></div></div>
+  </main>
+  <footer>
+    <button class="btn" id="startBtn">게임 시작</button>
+    <button class="btn ghost" id="editBtn">질문 넣기</button>
+    <button class="btn" id="nextBtn" hidden>다음 질문</button>
+    <span id="hostMsg"></span>
+  </footer>
+  <div id="editor" hidden>
+    <div class="col">
+      <h2>1. 이 문장을 AI에게 붙여 넣기</h2>
+      <p class="note">ChatGPT·Claude·제미나이 아무거나 괜찮아요. 맨 아래에 회사·모임 정보(업종, 분위기, 최근 이슈)를 적으면 맞춤 질문이 나와요.</p>
+      <textarea id="promptBox" readonly></textarea>
+      <button class="btn ghost" id="copyBtn">프롬프트 복사</button>
+    </div>
+    <div class="col">
+      <h2>2. 질문을 여기에 붙여 넣기 (한 줄에 A vs B)</h2>
+      <textarea id="qBox"></textarea>
+      <div id="parseMsg"></div>
+      <div style="display:flex;gap:1vw"><button class="btn" id="saveBtn">이 질문으로 하기</button><button class="btn ghost" id="closeBtn">닫기</button></div>
+    </div>
+  </div>
+</section>
+
+<section id="player" hidden>
+  <div id="joinBox">
+    <h1>우리 팀장님 밸런스 게임</h1>
+    <input id="nameIn" maxlength="10" placeholder="이름 (예: 김대리)">
+    <button id="joinBtn">참가하기</button>
+    <p id="pMsg"></p>
+  </div>
+  <div id="pGame" hidden><div id="pHead"></div><div id="pBig"></div><div id="pSub"></div><div id="pOpts"></div></div>
+</section>
+
+<script>
+const Q_SEC = 15;   // 질문당 제한 시간(초)
+const MATCH = 100;  // 주인공과 같은 답이면 받는 점수
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+const PROMPT = `직장 행사에서 쓸 밸런스 게임 질문 15개를 만들어 줘.
+- 한 줄에 하나씩 "A vs B" 형식, 번호·설명 없이 출력
+- A, B는 각각 15자 이내
+- 다 같이 웃을 수 있게, 누구도 불편하지 않게 (외모·정치·종교·연봉 공개 금지)
+- 아래 회사 정보를 반영한 질문을 5개 이상 넣기
+
+[회사·모임 정보]
+`;
+
+const SAMPLE = `회식 1차만 vs 끝까지 달리기
+점심 혼밥 vs 다 같이 점심
+연봉 10% 인상 vs 주 4일 근무
+재택근무 vs 사무실 출근
+월요일 아침 회의 vs 금요일 오후 회의
+카톡 업무 지시 vs 전화 업무 지시
+보너스 100만 원 vs 휴가 5일
+엘리베이터에서 대표님 vs 화장실에서 대표님
+여름휴가 vs 겨울휴가
+아이스 아메리카노 vs 따뜻한 라떼
+워크숍 등산 vs 워크숍 레크리에이션
+송년회 장기자랑 vs 송년회 사회 보기
+짜장면 vs 짬뽕
+민트초코 찬성 vs 민트초코 반대
+칼퇴 대신 점심 30분 vs 점심 1시간 대신 야근`;
+
+// 한 줄 = "A vs B" (또는 "A / B"). 양쪽 다 있어야 인정
+function parseQs(text) {
+  return String(text).split('\n').map(l => l.trim().replace(/^\d+[.)]\s*/, '').split(/\s+vs\.?\s+|\s*\/\s*/i))
+    .filter(p => p.length === 2 && p.every(s => s.trim() && s.trim().length <= 20)).map(p => p.map(s => s.trim()));
+}
+const pct = (n, total) => total ? Math.round(n / total * 100) : 0;
+
+console.assert(parseQs(SAMPLE).length === 15, 'sample 15');
+console.assert(JSON.stringify(parseQs('1. 커피 VS 차\n짜장 / 짬뽕\n그냥 문장\nA vs B vs C')) === '[["커피","차"],["짜장","짬뽕"]]', 'parseQs');
+console.assert(pct(1, 3) === 33 && pct(0, 0) === 0, 'pct');
+
+const joinId = new URLSearchParams(location.search).get('join');
+if (typeof Peer === 'undefined') document.body.innerHTML = '<p style="padding:40px;font-size:22px">인터넷 연결을 확인하고 새로고침해 주세요.</p>';
+else if (joinId) startPlayer(joinId); else startHost();
+
+/* ---------- 큰 화면(진행자) ---------- */
+function startHost() {
+  $('host').hidden = false;
+  const id = 'vs-' + Math.random().toString(36).slice(2, 8);
+  const peer = new Peer(id);
+  const players = new Map();
+  let qs = parseQs(SAMPLE), phase = 'lobby', qi = -1, qStart = 0, star = null, timers = [], history = [];
+
+  $('promptBox').value = PROMPT; $('qBox').value = SAMPLE;
+  peer.on('open', () => {
+    const url = location.origin + location.pathname + '?join=' + id;
+    new QRCode($('qr'), { text: url, width: 300, height: 300 });
+    $('url').textContent = url;
+  });
+  peer.on('error', e => $('hostMsg').textContent = '연결 오류: ' + e.type + ' — 새로고침해 주세요');
+  peer.on('connection', conn => {
+    conn.on('data', d => onData(conn, d));
+    conn.on('close', () => { const p = players.get(conn.peer); players.delete(conn.peer); if (p === star) star = null; renderLobby(); });
+  });
+
+  function onData(conn, d) {
+    if (!d || typeof d !== 'object') return;
+    const p = players.get(conn.peer);
+    if (d.type === 'join' && !p) {
+      const np = { name: String(d.name || '').trim().slice(0, 10) || '익명', score: 0, conn, votes: {} };
+      players.set(conn.peer, np); tell(np); renderLobby();
+    } else if (d.type === 'vote' && p && phase === 'q' && d.qi === qi && !(qi in p.votes) && (d.v === 0 || d.v === 1)) {
+      p.votes[qi] = d.v;
+      const n = [...players.values()].filter(x => qi in x.votes).length;
+      $('answered').textContent = `응답 ${n} / ${players.size}`;
+      if (n === players.size) reveal();
+    }
+  }
+  const ranked = () => [...players.values()].filter(p => p !== star).sort((a, b) => b.score - a.score);
+  function tell(p, extra = {}) {
+    if (!p.conn.open) return;
+    const s = { type: 'state', phase, qi, total: qs.length, isStar: p === star, starName: star ? star.name : '' };
+    if (phase === 'q' || phase === 'reveal') s.q = qs[qi];
+    p.conn.send({ ...s, ...extra });
+  }
+  const tellAll = fn => players.forEach(p => tell(p, fn ? fn(p) : {}));
+
+  function renderLobby() {
+    $('pc').textContent = players.size;
+    $('pl').innerHTML = '';
+    players.forEach(p => {
+      const li = document.createElement('li');
+      li.textContent = (p === star ? '⭐ ' : '') + p.name; if (p === star) li.className = 'star';
+      li.onclick = () => { star = star === p ? null : p; renderLobby(); tellAll(); };
+      $('pl').appendChild(li);
+    });
+    if (phase === 'lobby') $('hostMsg').textContent = `질문 ${qs.length}개 · ${star ? '주인공: ' + star.name : '주인공 없음(투표만)'} · ${players.size}명 참가`;
+  }
+  function show(v) { ['lobby', 'stage', 'final'].forEach(x => $(x).hidden = x !== v); }
+
+  // 질문 넣기
+  $('editBtn').onclick = () => { $('editor').hidden = false; checkQs(); };
+  $('closeBtn').onclick = () => $('editor').hidden = true;
+  $('qBox').oninput = checkQs;
+  function checkQs() {
+    const n = parseQs($('qBox').value).length, lines = $('qBox').value.split('\n').filter(l => l.trim()).length;
+    $('parseMsg').textContent = n ? `✅ ${n}개 인식됨${lines > n ? ` (형식이 안 맞는 ${lines - n}줄은 빠짐)` : ''}` : '⚠️ 인식된 질문이 없어요. "A vs B" 형식인지 확인해 주세요';
+  }
+  $('saveBtn').onclick = () => { const q = parseQs($('qBox').value); if (q.length) { qs = q; $('editor').hidden = true; renderLobby(); } };
+  $('copyBtn').onclick = async () => {
+    try { await navigator.clipboard.writeText(PROMPT); $('copyBtn').textContent = '복사됨!'; }
+    catch (e) { $('promptBox').select(); $('copyBtn').textContent = '선택됨 — Ctrl+C 눌러 주세요'; }
+    setTimeout(() => $('copyBtn').textContent = '프롬프트 복사', 2000);
+  };
+
+  $('startBtn').onclick = () => {
+    if (players.size < 2) { $('hostMsg').textContent = '2명 이상 있어야 시작할 수 있어요'; return; }
+    players.forEach(p => { p.score = 0; p.votes = {}; });
+    qi = -1; history = [];
+    $('startBtn').hidden = $('editBtn').hidden = true;
+    nextQ();
+  };
+  $('nextBtn').onclick = () => qi + 1 < qs.length ? nextQ() : finish();
+
+  function nextQ() {
+    timers.forEach(clearTimeout); timers = [];
+    qi++; phase = 'q'; qStart = Date.now();
+    show('stage'); $('nextBtn').hidden = true; $('hostMsg').textContent = ''; $('matchInfo').innerHTML = '';
+    $('qnum').textContent = `${qi + 1} / ${qs.length}`;
+    [['sa', 0], ['sb', 1]].forEach(([el, i]) => {
+      const s = $(el); s.classList.remove('pick');
+      s.querySelector('.txt').textContent = qs[qi][i];
+      s.querySelector('.pct').textContent = s.querySelector('.cnt').textContent = s.querySelector('.boss').textContent = '';
+      s.querySelector('.fill').style.height = '0';
+    });
+    $('answered').textContent = `응답 0 / ${players.size}`;
+    tellAll(); tick();
+  }
+  function tick() {
+    if (phase !== 'q') return;
+    const left = Q_SEC * 1000 - (Date.now() - qStart);
+    $('timer').textContent = Math.max(0, Math.ceil(left / 1000)) + '초';
+    if (left <= 0) reveal(); else timers.push(setTimeout(tick, 250));
+  }
+
+  function reveal() {
+    if (phase !== 'q') return;
+    phase = 'reveal'; timers.forEach(clearTimeout); timers = [];
+    const all = [...players.values()], c = [0, 0];
+    all.forEach(p => { if (qi in p.votes) c[p.votes[qi]]++; });
+    const total = c[0] + c[1], sv = star && qi in star.votes ? star.votes[qi] : null;
+    const matched = sv === null ? [] : all.filter(p => p !== star && p.votes[qi] === sv);
+    matched.forEach(p => p.score += MATCH);
+    history.push({ q: qs[qi], c, sv });
+    [['sa', 0], ['sb', 1]].forEach(([el, i]) => {
+      const s = $(el);
+      s.querySelector('.pct').textContent = pct(c[i], total) + '%';
+      s.querySelector('.cnt').textContent = c[i] + '명';
+      s.querySelector('.fill').style.height = pct(c[i], total) + '%';
+      if (sv === i) { s.classList.add('pick'); s.querySelector('.boss').textContent = `⭐ ${star.name} 님의 선택!`; }
+    });
+    $('timer').textContent = '';
+    if (star) $('matchInfo').innerHTML = sv === null ? '주인공이 답을 안 골랐어요 😅' : `주인공과 통한 사람 <b>${matched.length}명</b> (+${MATCH}점)`;
+    tellAll(p => ({ c, sv, my: qi in p.votes ? p.votes[qi] : null, matched: matched.includes(p), score: p.score }));
+    $('nextBtn').textContent = qi + 1 < qs.length ? '다음 질문' : '최종 결과'; $('nextBtn').hidden = false;
+  }
+
+  function finish() {
+    phase = 'final'; show('final'); $('nextBtn').hidden = true; $('qnum').textContent = '';
+    const rk = ranked();
+    const close = [...history].filter(h => h.c[0] + h.c[1]).sort((a, b) => Math.abs(pct(a.c[0], a.c[0] + a.c[1]) - 50) - Math.abs(pct(b.c[0], b.c[0] + b.c[1]) - 50))[0];
+    const oneSide = [...history].filter(h => h.c[0] + h.c[1]).sort((a, b) => Math.abs(pct(b.c[0], b.c[0] + b.c[1]) - 50) - Math.abs(pct(a.c[0], a.c[0] + a.c[1]) - 50))[0];
+    if (star) {
+      $('fTitle').textContent = `⭐ ${star.name} 님 마음을 가장 잘 아는 사람`;
+      const pod = (p, r) => p ? `<div class="pod p${r}"><div class="nm">${esc(p.name)}</div><div class="sc">${p.score}점</div><div class="blk">${r}</div></div>` : '';
+      $('podium').innerHTML = pod(rk[1], 2) + pod(rk[0], 1) + pod(rk[2], 3);
+    } else { $('fTitle').textContent = '밸런스 게임 결과'; $('podium').innerHTML = ''; }
+    const line = (h, label) => h ? `${label}: <b>${esc(h.q[0])}</b> ${pct(h.c[0], h.c[0] + h.c[1])}% vs <b>${esc(h.q[1])}</b> ${pct(h.c[1], h.c[0] + h.c[1])}%` : '';
+    $('finalNote').innerHTML = [line(close, '🔥 가장 팽팽했던 질문'), line(oneSide, '🤝 만장일치에 가까웠던 질문')].filter(Boolean).join('<br>');
+    tellAll(p => p === star ? {} : { rank: rk.indexOf(p) + 1, n: rk.length, score: p.score });
+    $('startBtn').textContent = '처음부터 다시'; $('startBtn').hidden = $('editBtn').hidden = false;
+  }
+  renderLobby();
+}
+
+/* ---------- 참가자 폰 ---------- */
+function startPlayer(hostId) {
+  $('player').hidden = false;
+  let conn, cur = null;
+  $('joinBtn').onclick = () => {
+    const name = $('nameIn').value.trim();
+    if (!name) { $('pMsg').textContent = '이름을 입력해 주세요'; return; }
+    $('joinBtn').disabled = true; $('pMsg').textContent = '연결 중…';
+    const peer = new Peer();
+    peer.on('error', e => { $('pMsg').textContent = '연결 실패 — QR을 다시 찍어 주세요 (' + e.type + ')'; $('joinBtn').disabled = false; });
+    peer.on('open', () => {
+      conn = peer.connect(hostId, { reliable: true });
+      conn.on('open', () => conn.send({ type: 'join', name }));
+      conn.on('data', onState);
+      conn.on('close', () => view('', '연결이 끊겼어요', 'QR을 다시 찍어 주세요'));
+    });
+  };
+  function view(head, big, sub, cls = '') {
+    $('joinBox').hidden = true; $('pGame').hidden = false;
+    $('pHead').textContent = head; $('pBig').textContent = big; $('pSub').textContent = sub; $('pOpts').innerHTML = '';
+    document.body.className = cls;
+  }
+  function onState(d) {
+    if (!d || d.type !== 'state') return;
+    const head = d.phase === 'q' || d.phase === 'reveal' ? `질문 ${d.qi + 1} / ${d.total}` : '';
+    if (d.phase === 'lobby') view('', d.isStar ? '⭐ 당신이 주인공!' : '참가 완료!', d.isStar ? '솔직하게 고르세요.\n다른 사람들이 당신 답을 맞혀요' : (d.starName ? `${d.starName} 님이 고를 답을 맞혀 보세요` : '큰 화면을 보며 시작을 기다려 주세요'), d.isStar ? 'star' : '');
+    if (d.phase === 'q') {
+      cur = d;
+      view(head, '', d.isStar ? '⭐ 주인공은 솔직하게!' : d.starName ? `${d.starName} 님이라면?` : '나라면?', d.isStar ? 'star' : '');
+      d.q.forEach((t, i) => {
+        const b = document.createElement('button');
+        b.style.background = i ? 'var(--b)' : 'var(--a)'; b.textContent = t;
+        b.onclick = () => {
+          if (cur !== d) return; cur = null;
+          conn.send({ type: 'vote', qi: d.qi, v: i });
+          view(head, t, '선택 완료! 큰 화면을 보세요', d.isStar ? 'star' : '');
+        };
+        $('pOpts').appendChild(b);
+      });
+    }
+    if (d.phase === 'reveal') {
+      const total = d.c[0] + d.c[1], mine = d.my === null ? '선택 안 함' : d.q[d.my];
+      const same = d.my === null ? '' : `나와 같은 선택 ${Math.round(d.c[d.my] / total * 100)}%`;
+      if (d.isStar || d.sv === null || d.sv === undefined || !d.starName) view(head, mine, same);
+      else view(head, d.matched ? `통했다! +${MATCH}` : '빗나감 😅', `${d.starName} 님 선택: ${d.q[d.sv]}\n내 점수 ${d.score}점`, d.matched ? 'good' : '');
+    }
+    if (d.phase === 'final') {
+      if (d.rank) view('최종 결과', d.starName ? `${d.rank}위` : '끝!', d.starName ? `${d.n}명 중 · ${d.score}점` : '큰 화면에서 결과를 보세요', d.starName && d.rank <= 3 ? 'good' : '');
+      else view('최종 결과', '수고했어요 ⭐', '큰 화면에서 결과를 보세요', 'star');
+    }
+  }
+}
+</script>
+</body>
+</html>

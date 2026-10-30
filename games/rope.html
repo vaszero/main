@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>폰 흔들기 줄다리기</title>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@500;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{--red:#ff3b5c;--blue:#2f7bff;--bg:#10131c;--fg:#fff}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--fg);font-family:'Noto Sans KR',sans-serif;min-height:100vh;overflow:hidden}
+h1,h2,.big,.disp{font-family:'Black Han Sans',sans-serif;font-weight:400}
+button{font:inherit;font-weight:800;border:0;border-radius:14px;cursor:pointer}
+[hidden]{display:none!important}
+.t0{--c:var(--red)} .t1{--c:var(--blue)}
+
+/* 큰 화면 */
+#host{height:100vh;display:flex;flex-direction:column;padding:2.5vh 3vw}
+#host header{display:flex;justify-content:space-between;align-items:center}
+#host h1{font-size:5vh}#host h1 b{color:#ffd23f;font-weight:400}
+#timer{font-family:'Black Han Sans';font-size:7vh;color:#ffd23f}
+#lobby{flex:1;display:flex;gap:3vw;align-items:center;margin-top:2vh}
+.qrbox{background:#fff;color:#111;border-radius:24px;padding:3vh;text-align:center;width:34vw}
+#qr{display:flex;justify-content:center;margin-bottom:2vh}#qr img,#qr canvas{width:28vh!important;height:28vh!important}
+.qrbox p{font-size:2.6vh;font-weight:800}.qrbox small{display:block;margin-top:1vh;font-size:1.4vh;color:#666;word-break:break-all}
+.teams{flex:1;display:flex;gap:2vw;height:62vh}
+.team{flex:1;border:4px solid var(--c);border-radius:24px;padding:2.5vh;overflow:hidden}
+.team h2{color:var(--c);font-size:4.5vh;margin-bottom:1.5vh}
+.team ul{list-style:none;display:flex;flex-wrap:wrap;gap:1vh}
+.team li{background:var(--c);padding:.6vh 1.4vh;border-radius:99px;font-size:2.4vh;font-weight:800}
+#arena{flex:1;display:flex;align-items:center;gap:2vw}
+.side{width:16vw;text-align:center}.side h2{color:var(--c);font-size:5vh}
+.side .big{font-size:12vh;color:var(--c)}.side small{font-size:2.2vh;opacity:.7}
+.field{flex:1;position:relative;height:50vh;border-radius:24px;background:linear-gradient(90deg,#3a1520,#151a2a 50%,#14234a);overflow:hidden}
+.line{position:absolute;top:0;bottom:0;width:6px;background:#ffd23f}
+.line.l{left:15%}.line.r{right:15%}
+.mid{position:absolute;left:50%;top:0;bottom:0;border-left:4px dashed #ffffff55}
+#rope{position:absolute;top:50%;left:-20%;width:140%;height:3vh;margin-top:-1.5vh;border-radius:99px;
+  background:repeating-linear-gradient(60deg,#c99a5b 0 14px,#a87a3f 14px 28px);transition:transform .15s linear}
+.knot{position:absolute;left:50%;top:-5vh;width:0;height:0;border-left:3vh solid transparent;border-right:3vh solid transparent;border-top:5vh solid #ffd23f;margin-left:-3vh}
+#overlay{position:fixed;inset:0;background:#000c;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;z-index:5}
+#overlay .disp{font-size:30vh;color:#ffd23f}
+#overlay h2{font-size:12vh;color:var(--c)}#overlay p{font-size:4vh;margin-top:2vh}
+#overlay button{margin-top:5vh}
+footer{display:flex;gap:2vw;align-items:center;margin-top:2vh}
+.btn{background:#ffd23f;color:#111;font-size:3.2vh;padding:1.6vh 4vh}
+.btn.ghost{background:#ffffff22;color:#fff}
+#hostMsg{font-size:2.4vh;opacity:.8}
+
+/* 참가자 폰 */
+#player{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;text-align:center}
+#joinBox h1{font-size:34px;margin-bottom:24px}
+#nameIn{width:100%;font-size:22px;padding:16px;border-radius:14px;border:0;text-align:center;margin-bottom:14px}
+#joinBtn,#tapBtn{width:100%;background:#ffd23f;color:#111;font-size:24px;padding:18px}
+#pMsg{margin-top:16px;font-size:17px;opacity:.85;line-height:1.5}
+#pGame{width:100%}
+#pTeam{font-family:'Black Han Sans';font-size:40px;color:var(--c)}
+#pBig{font-family:'Black Han Sans';font-size:64px;margin:24px 0;line-height:1.2}
+#pCount{font-size:22px;opacity:.85}
+body.pteam0{background:#3a1520}body.pteam1{background:#14234a}
+body.flash{filter:brightness(1.4)}
+#tapBtn{margin-top:24px;height:30vh;font-size:40px}
+</style>
+</head>
+<body>
+
+<section id="host" hidden>
+  <header><h1>폰 흔들기 <b>줄다리기</b></h1><div id="timer"></div></header>
+  <div id="lobby">
+    <div class="qrbox"><div id="qr"></div><p>QR 찍고 이름만 쓰면 참가!</p><small id="url">연결 준비 중…</small></div>
+    <div class="teams">
+      <div class="team t0"><h2>빨강팀 <span id="c0">0</span>명</h2><ul id="l0"></ul></div>
+      <div class="team t1"><h2>파랑팀 <span id="c1">0</span>명</h2><ul id="l1"></ul></div>
+    </div>
+  </div>
+  <div id="arena" hidden>
+    <div class="side t0"><h2>빨강팀</h2><div class="big" id="s0">0</div><small>흔든 횟수</small></div>
+    <div class="field"><div class="line l"></div><div class="line r"></div><div class="mid"></div><div id="rope"><div class="knot"></div></div></div>
+    <div class="side t1"><h2>파랑팀</h2><div class="big" id="s1">0</div><small>흔든 횟수</small></div>
+  </div>
+  <div id="overlay" hidden></div>
+  <footer><button class="btn" id="startBtn">게임 시작</button><span id="hostMsg"></span></footer>
+</section>
+
+<section id="player" hidden>
+  <div id="joinBox">
+    <h1>폰 흔들기 줄다리기</h1>
+    <input id="nameIn" maxlength="10" placeholder="이름 (예: 김대리)">
+    <button id="joinBtn">참가하기</button>
+    <p id="pMsg"></p>
+  </div>
+  <div id="pGame" hidden>
+    <div id="pTeam"></div><div id="pBig"></div><div id="pCount"></div>
+    <button id="tapBtn" hidden>탭! 탭! 탭!</button>
+  </div>
+</section>
+
+<script>
+const GAME_SEC = 30;  // 한 판 시간(초)
+const WIN = 20;       // 1인당 평균 횟수 차이가 이만큼 나면 즉시 승리
+const MAX_RATE = 8;   // 1인당 초당 최대 인정 횟수(조작 방지)
+const TEAMS = ['빨강팀', '파랑팀'];
+const $ = id => document.getElementById(id);
+
+// 팀 인원이 달라도 공정하게: 1인당 평균으로 비교. 음수 = 빨강팀(왼쪽)이 당기는 중
+function ropePos(players) {
+  const avg = t => { const ps = players.filter(p => p.team === t); return ps.length ? ps.reduce((s, p) => s + p.score, 0) / ps.length : 0; };
+  return Math.max(-WIN, Math.min(WIN, avg(1) - avg(0)));
+}
+console.assert(ropePos([{team:0,score:10},{team:0,score:30},{team:1,score:15}]) === -5, 'ropePos avg');
+console.assert(ropePos([{team:0,score:100},{team:1,score:0}]) === -WIN, 'ropePos clamp');
+console.assert(ropePos([]) === 0, 'ropePos empty');
+
+const joinId = new URLSearchParams(location.search).get('join');
+if (typeof Peer === 'undefined') document.body.innerHTML = '<p style="padding:40px;font-size:22px">인터넷 연결을 확인하고 새로고침해 주세요.</p>';
+else if (joinId) startPlayer(joinId); else startHost();
+
+/* ---------- 큰 화면(진행자) ---------- */
+function startHost() {
+  $('host').hidden = false;
+  const id = 'rope-' + Math.random().toString(36).slice(2, 8);
+  const peer = new Peer(id);
+  const players = new Map();
+  let phase = 'lobby', endAt = 0, timers = [];
+
+  peer.on('open', () => {
+    const url = location.origin + location.pathname + '?join=' + id;
+    new QRCode($('qr'), { text: url, width: 300, height: 300 });
+    $('url').textContent = url;
+  });
+  peer.on('error', e => $('hostMsg').textContent = '연결 오류: ' + e.type + ' — 새로고침해 주세요');
+  peer.on('connection', conn => {
+    conn.on('data', d => onData(conn, d));
+    conn.on('close', () => { players.delete(conn.peer); renderLobby(); });
+  });
+
+  function onData(conn, d) {
+    if (!d || typeof d !== 'object') return;
+    const p = players.get(conn.peer);
+    if (d.type === 'join' && !p) {
+      const n0 = [...players.values()].filter(x => x.team === 0).length;
+      const np = { name: String(d.name || '').trim().slice(0, 10) || '익명', team: n0 <= players.size - n0 ? 0 : 1, score: 0, lastN: 0, lastT: Date.now(), conn };
+      players.set(conn.peer, np);
+      tell(np); renderLobby();
+    } else if (d.type === 'shake' && p && phase === 'play') {
+      const n = Number(d.n), now = Date.now();
+      if (!Number.isFinite(n) || n <= p.lastN) return;
+      const allowed = Math.ceil((now - p.lastT) / 1000 * MAX_RATE) + 1;
+      p.score += Math.min(n - p.lastN, allowed);
+      p.lastN = n; p.lastT = now;
+    }
+  }
+  function tell(p, extra = {}) { if (p.conn.open) p.conn.send({ type: 'state', phase, team: p.team, ...extra }); }
+  function tellAll(extraFn) { players.forEach(p => tell(p, extraFn ? extraFn(p) : {})); }
+
+  function renderLobby() {
+    [0, 1].forEach(t => {
+      const ps = [...players.values()].filter(p => p.team === t);
+      $('c' + t).textContent = ps.length;
+      $('l' + t).innerHTML = '';
+      ps.forEach(p => { const li = document.createElement('li'); li.textContent = p.name; $('l' + t).appendChild(li); });
+    });
+    $('hostMsg').textContent = players.size ? `${players.size}명 참가` : '참가자를 기다리는 중…';
+  }
+
+  function overlay(html, team) {
+    const o = $('overlay'); o.className = team == null ? '' : 't' + team; o.innerHTML = html; o.hidden = !html;
+  }
+
+  $('startBtn').onclick = () => {
+    if (!players.size) { $('hostMsg').textContent = '참가자가 1명 이상 있어야 시작할 수 있어요'; return; }
+    timers.forEach(clearTimeout); timers = [];
+    players.forEach(p => { p.score = 0; p.lastN = 0; p.lastT = Date.now(); });
+    phase = 'count'; tellAll();
+    $('lobby').hidden = true; $('arena').hidden = false; $('startBtn').hidden = true;
+    [3, 2, 1].forEach((n, i) => timers.push(setTimeout(() => overlay(`<div class="disp">${n}</div>`), i * 1000)));
+    timers.push(setTimeout(() => {
+      overlay('');
+      phase = 'play'; endAt = Date.now() + GAME_SEC * 1000;
+      players.forEach(p => p.lastT = Date.now());
+      tellAll(); requestAnimationFrame(loop);
+    }, 3000));
+  };
+
+  function loop() {
+    if (phase !== 'play') return;
+    const all = [...players.values()], pos = ropePos(all), left = Math.max(0, endAt - Date.now());
+    $('rope').style.transform = `translateX(${pos / WIN * 35 / 1.4}%)`; // 35% 지점 = 승리선
+    [0, 1].forEach(t => $('s' + t).textContent = all.filter(p => p.team === t).reduce((s, p) => s + p.score, 0));
+    $('timer').textContent = Math.ceil(left / 1000) + '초';
+    if (Math.abs(pos) >= WIN || left === 0) finish(pos); else requestAnimationFrame(loop);
+  }
+
+  function finish(pos) {
+    phase = 'end';
+    const winner = pos < 0 ? 0 : pos > 0 ? 1 : null;
+    const all = [...players.values()];
+    const mvp = t => all.filter(p => p.team === t).sort((a, b) => b.score - a.score)[0];
+    const mvpTxt = [0, 1].map(t => mvp(t) ? `${TEAMS[t]} MVP <b>${mvp(t).name}</b> (${mvp(t).score}회)` : '').filter(Boolean).join('<br>');
+    tellAll(p => ({ win: winner === null ? null : p.team === winner, score: p.score }));
+    overlay(`<h2>${winner === null ? '무승부!' : TEAMS[winner] + ' 승리!'}</h2><p>${mvpTxt}</p>
+      <div><button class="btn" id="againBtn">한 판 더</button> <button class="btn ghost" id="lobbyBtn">참가자 화면으로</button></div>`, winner);
+    $('timer').textContent = '';
+    $('againBtn').onclick = () => { overlay(''); $('startBtn').click(); };
+    $('lobbyBtn').onclick = () => {
+      overlay(''); phase = 'lobby'; tellAll();
+      $('lobby').hidden = false; $('arena').hidden = true; $('startBtn').hidden = false; renderLobby();
+    };
+  }
+  renderLobby();
+}
+
+/* ---------- 참가자 폰 ---------- */
+function startPlayer(hostId) {
+  $('player').hidden = false;
+  let conn, phase = 'lobby', count = 0, sentN = 0, lastShake = 0, gotMotion = false;
+
+  $('joinBtn').onclick = async () => {
+    const name = $('nameIn').value.trim();
+    if (!name) { $('pMsg').textContent = '이름을 입력해 주세요'; return; }
+    // 아이폰은 버튼을 누른 순간에만 흔들기 권한을 물을 수 있음
+    if (typeof DeviceMotionEvent !== 'undefined' && DeviceMotionEvent.requestPermission) {
+      try { await DeviceMotionEvent.requestPermission(); } catch (e) {}
+    }
+    window.addEventListener('devicemotion', onMotion);
+    $('joinBtn').disabled = true; $('pMsg').textContent = '연결 중…';
+    const peer = new Peer();
+    peer.on('error', e => { $('pMsg').textContent = '연결 실패 — QR을 다시 찍어 주세요 (' + e.type + ')'; $('joinBtn').disabled = false; });
+    peer.on('open', () => {
+      conn = peer.connect(hostId, { reliable: true });
+      conn.on('open', () => conn.send({ type: 'join', name }));
+      conn.on('data', onState);
+      conn.on('close', () => { $('pBig').textContent = '연결이 끊겼어요'; $('pCount').textContent = 'QR을 다시 찍어 주세요'; });
+    });
+  };
+
+  function onMotion(e) {
+    const a = e.accelerationIncludingGravity;
+    if (!a || a.x == null) return;
+    gotMotion = true;
+    if (phase !== 'play') return;
+    const now = Date.now();
+    // shortcut: 1.8g 넘으면 1회로 셈 — 실제 행사 폰 몇 대로 흔들어 보고 너무 안 잡히면 18을 낮출 것
+    if (Math.hypot(a.x, a.y, a.z) > 18 && now - lastShake > 150) { lastShake = now; bump(); }
+  }
+  function bump() {
+    count++;
+    $('pCount').textContent = count + '회';
+    document.body.classList.add('flash'); setTimeout(() => document.body.classList.remove('flash'), 80);
+    if (navigator.vibrate) navigator.vibrate(15);
+  }
+  $('tapBtn').onclick = bump;
+  setInterval(() => { if (phase === 'play' && conn && conn.open && count !== sentN) { sentN = count; conn.send({ type: 'shake', n: count }); } }, 200);
+
+  function onState(d) {
+    if (!d || d.type !== 'state') return;
+    phase = d.phase;
+    $('joinBox').hidden = true; $('pGame').hidden = false;
+    document.body.className = 'pteam' + d.team; $('pGame').className = 't' + d.team;
+    $('pTeam').textContent = TEAMS[d.team];
+    $('tapBtn').hidden = !(phase === 'play' && !gotMotion); // 흔들기 센서가 없는 폰만 탭으로
+    if (phase === 'lobby') { $('pBig').textContent = '곧 시작해요'; $('pCount').textContent = '폰을 꼭 쥐고 기다려 주세요'; }
+    if (phase === 'count') { count = 0; sentN = 0; $('pBig').textContent = '준비!'; $('pCount').textContent = '큰 화면을 보세요'; }
+    if (phase === 'play') { $('pBig').textContent = '흔들어!!!'; $('pCount').textContent = count + '회'; }
+    if (phase === 'end') {
+      $('pBig').textContent = d.win === null ? '무승부!' : d.win ? '승리! 🎉' : '아쉽다! 😭';
+      $('pCount').textContent = `내 기록 ${d.score}회`;
+    }
+  }
+}
+</script>
+</body>
+</html>

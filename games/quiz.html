@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>AI 스피드 퀴즈 배틀</title>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@500;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{--bg:#10131c;--y:#ffd23f;--o0:#e8384f;--o1:#2f7bff;--o2:#f5a623;--o3:#20b26b}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:#fff;font-family:'Noto Sans KR',sans-serif;min-height:100vh;overflow:hidden}
+h1,h2,.disp{font-family:'Black Han Sans',sans-serif;font-weight:400}
+button{font:inherit;font-weight:800;border:0;border-radius:14px;cursor:pointer}
+[hidden]{display:none!important}
+.btn{background:var(--y);color:#111;font-size:3vh;padding:1.5vh 4vh}
+.btn.ghost{background:#ffffff22;color:#fff}
+
+/* 큰 화면 */
+#host{height:100vh;display:flex;flex-direction:column;padding:2.5vh 3vw}
+#host header{display:flex;justify-content:space-between;align-items:center;min-height:7vh}
+#host h1{font-size:5vh}#host h1 b{color:var(--y);font-weight:400}
+#qnum{font-size:3vh;opacity:.8}
+main{flex:1;display:flex;flex-direction:column;min-height:0;margin-top:2vh}
+footer{display:flex;gap:1.5vw;align-items:center;margin-top:2vh}
+#hostMsg{font-size:2.4vh;opacity:.85}
+
+#lobby{flex:1;display:flex;gap:3vw;align-items:center}
+.qrbox{background:#fff;color:#111;border-radius:24px;padding:3vh;text-align:center;width:34vw}
+#qr{display:flex;justify-content:center;margin-bottom:2vh}#qr img,#qr canvas{width:28vh!important;height:28vh!important}
+.qrbox p{font-size:2.6vh;font-weight:800}.qrbox small{display:block;margin-top:1vh;font-size:1.4vh;color:#666;word-break:break-all}
+.plist{flex:1;height:62vh;border:4px solid var(--y);border-radius:24px;padding:2.5vh;overflow:hidden}
+.plist h2{color:var(--y);font-size:4.5vh;margin-bottom:1.5vh}
+.plist ul{list-style:none;display:flex;flex-wrap:wrap;gap:1vh}
+.plist li{background:#ffffff22;padding:.6vh 1.6vh;border-radius:99px;font-size:2.4vh;font-weight:800}
+
+#editor{position:fixed;inset:0;background:#000d;z-index:6;display:flex;gap:2vw;padding:4vh 3vw}
+#editor .col{flex:1;display:flex;flex-direction:column;gap:1.5vh;min-height:0}
+#editor h2{font-size:3.6vh;color:var(--y)}
+#editor textarea{flex:1;width:100%;font:500 2vh/1.6 'Noto Sans KR',sans-serif;padding:2vh;border-radius:14px;border:0;resize:none}
+#editor .note{font-size:1.9vh;opacity:.85;line-height:1.6}
+#parseMsg{font-size:2.2vh;font-weight:800}
+
+#stage{flex:1;display:flex;flex-direction:column;min-height:0}
+#qText{font-size:5.4vh;font-weight:800;text-align:center;line-height:1.35;padding:1vh 4vw 3vh;display:flex;align-items:center;justify-content:center;min-height:20vh}
+#bar{height:1.2vh;background:#ffffff22;border-radius:99px;overflow:hidden;margin-bottom:3vh}
+#bar i{display:block;height:100%;background:var(--y);width:100%}
+#opts{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:2vh}
+.opt{border-radius:20px;padding:2vh 3vh;display:flex;align-items:center;gap:2vh;font-size:4vh;font-weight:800;position:relative;overflow:hidden;transition:opacity .3s}
+.opt .sh{font-size:5vh;width:6vh;text-align:center}
+.opt .cnt{margin-left:auto;font-family:'Black Han Sans';font-size:5vh}
+.opt.dim{opacity:.25}.opt.ok{outline:8px solid #fff}
+#side{display:flex;justify-content:space-between;align-items:center;margin-top:2vh;font-size:2.6vh}
+#timer{font-family:'Black Han Sans';font-size:7vh;color:var(--y)}
+#top5{display:flex;gap:1.5vw;font-size:2.6vh}#top5 span b{color:var(--y)}
+
+#final{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center}
+#final h2{font-size:8vh;color:var(--y);margin-bottom:5vh}
+.podium{display:flex;align-items:flex-end;gap:2vw}
+.pod{width:20vw;text-align:center}
+.pod .nm{font-size:4vh;font-weight:800;margin-bottom:1vh}.pod .sc{font-size:2.6vh;opacity:.8;margin-bottom:1vh}
+.pod .blk{border-radius:18px 18px 0 0;font-family:'Black Han Sans';font-size:8vh;display:flex;align-items:flex-start;justify-content:center;padding-top:2vh}
+.p1 .blk{height:30vh;background:var(--y);color:#111}.p2 .blk{height:22vh;background:#c9ced8;color:#111}.p3 .blk{height:16vh;background:#d08b4a;color:#111}
+#rest{margin-top:4vh;font-size:2.6vh;opacity:.85;text-align:center;max-width:80vw}
+#overlay{position:fixed;inset:0;background:#000c;display:flex;align-items:center;justify-content:center;z-index:5}
+#overlay .disp{font-size:30vh;color:var(--y)}
+
+/* 참가자 폰 */
+#player{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;text-align:center}
+#joinBox{width:100%}
+#joinBox h1{font-size:32px;margin-bottom:24px}
+#nameIn{width:100%;font-size:22px;padding:16px;border-radius:14px;border:0;text-align:center;margin-bottom:14px}
+#joinBtn{width:100%;background:var(--y);color:#111;font-size:24px;padding:18px}
+#pMsg{margin-top:16px;font-size:17px;opacity:.85;line-height:1.5}
+#pGame{width:100%}
+#pHead{font-size:18px;opacity:.8;margin-bottom:12px}
+#pBig{font-family:'Black Han Sans';font-size:52px;line-height:1.25;margin:16px 0}
+#pSub{font-size:20px;opacity:.9;line-height:1.5}
+#pOpts{display:grid;gap:12px;margin-top:8px}
+#pOpts button{color:#fff;font-size:21px;padding:22px 16px;text-align:left;display:flex;gap:12px;align-items:center;min-height:76px}
+#pOpts button .sh{font-size:26px}
+body.good{background:#11522f}body.bad{background:#5a1622}
+</style>
+</head>
+<body>
+
+<section id="host" hidden>
+  <header><h1>AI 스피드 <b>퀴즈 배틀</b></h1><div id="qnum"></div></header>
+  <main>
+    <div id="lobby">
+      <div class="qrbox"><div id="qr"></div><p>QR 찍고 이름만 쓰면 참가!</p><small id="url">연결 준비 중…</small></div>
+      <div class="plist"><h2>참가자 <span id="pc">0</span>명</h2><ul id="pl"></ul></div>
+    </div>
+    <div id="stage" hidden>
+      <div id="qText"></div>
+      <div id="bar"><i id="barFill"></i></div>
+      <div id="opts"></div>
+      <div id="side"><div id="answered"></div><div id="top5"></div><div id="timer"></div></div>
+    </div>
+    <div id="final" hidden><h2>최종 순위</h2><div class="podium" id="podium"></div><div id="rest"></div></div>
+  </main>
+  <footer>
+    <button class="btn" id="startBtn">퀴즈 시작</button>
+    <button class="btn ghost" id="editBtn">문제 넣기</button>
+    <button class="btn" id="nextBtn" hidden>다음 문제</button>
+    <span id="hostMsg"></span>
+  </footer>
+  <div id="overlay" hidden></div>
+  <div id="editor" hidden>
+    <div class="col">
+      <h2>1. 이 문장을 AI에게 붙여 넣기</h2>
+      <p class="note">ChatGPT·Claude·제미나이 아무거나 괜찮아요. 아래 문장 끝에 강의 자료나 회사 소개 내용을 붙여 넣으면 퀴즈가 이 형식으로 나와요.</p>
+      <textarea id="promptBox" readonly></textarea>
+      <button class="btn ghost" id="copyBtn">프롬프트 복사</button>
+    </div>
+    <div class="col">
+      <h2>2. AI가 만든 퀴즈를 여기에 붙여 넣기</h2>
+      <textarea id="quizBox"></textarea>
+      <div id="parseMsg"></div>
+      <div style="display:flex;gap:1vw"><button class="btn" id="saveBtn">이 문제로 하기</button><button class="btn ghost" id="closeBtn">닫기</button></div>
+    </div>
+  </div>
+</section>
+
+<section id="player" hidden>
+  <div id="joinBox">
+    <h1>AI 스피드 퀴즈 배틀</h1>
+    <input id="nameIn" maxlength="10" placeholder="이름 (예: 김대리)">
+    <button id="joinBtn">참가하기</button>
+    <p id="pMsg"></p>
+  </div>
+  <div id="pGame" hidden>
+    <div id="pHead"></div><div id="pBig"></div><div id="pSub"></div><div id="pOpts"></div>
+  </div>
+</section>
+
+<script>
+const Q_SEC = 20;  // 문제당 제한 시간(초)
+const SHAPES = ['▲', '◆', '●', '■'];
+const COLORS = ['var(--o0)', 'var(--o1)', 'var(--o2)', 'var(--o3)'];
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+const PROMPT = `아래 내용으로 객관식 퀴즈 10문제를 만들어 줘.
+- 보기는 4개(OX 문제는 2개), 보기 하나는 25자 이내
+- 문제는 한 줄, 40자 이내
+- 참석자가 웃으면서 풀 수 있게, 너무 어렵지 않게
+- 반드시 아래 형식 그대로, 다른 설명 없이 출력
+
+Q. 문제
+1) 보기
+2) 보기
+3) 보기
+4) 보기
+정답: 번호
+
+[내용]
+`;
+
+const SAMPLE = `Q. ChatGPT를 만든 회사는?
+1) 구글
+2) OpenAI
+3) 삼성
+4) 메타
+정답: 2
+
+Q. Claude를 만든 회사는?
+1) Anthropic
+2) 네이버
+3) 마이크로소프트
+4) 애플
+정답: 1
+
+Q. AI가 사실이 아닌 내용을 그럴듯하게 지어내는 현상은?
+1) 버퍼링
+2) 오버클럭
+3) 할루시네이션
+4) 렌더링
+정답: 3
+
+Q. AI에게 일을 시키는 명령 문장을 부르는 말은?
+1) 프롬프트
+2) 플러그인
+3) 프리셋
+4) 패치
+정답: 1
+
+Q. 구글이 만든 AI 서비스 이름은?
+1) 코파일럿
+2) 클로바
+3) 시리
+4) 제미나이
+정답: 4
+
+Q. '생성형 AI'를 영어로 하면?
+1) Generative AI
+2) General AI
+3) Genius AI
+4) Gentle AI
+정답: 1
+
+Q. 프롬프트를 잘 쓰는 방법으로 가장 알맞은 것은?
+1) 한 단어로 최대한 짧게
+2) 역할·목적·조건을 구체적으로
+3) 영어로만 쓰기
+4) 여러 주제를 한 번에 섞기
+정답: 2
+
+Q. AI 답변을 업무에 쓰기 전 꼭 해야 할 일은?
+1) 글자 수 세기
+2) 바로 복사해 붙이기
+3) 사실 확인하기
+4) 폰트 바꾸기
+정답: 3
+
+Q. AI 채팅창에 넣으면 안 되는 정보는?
+1) 공개된 보도자료
+2) 오늘 날씨
+3) 고객 주민등록번호
+4) 회의 안건 주제
+정답: 3
+
+Q. 이미지 생성 AI가 아닌 것은?
+1) 미드저니
+2) 어도비 파이어플라이
+3) 달리(DALL·E)
+4) 엑셀
+정답: 4`;
+
+// "Q. / 1) / 정답:" 형식을 문제 배열로. 보기 2~4개, 정답이 있는 문제만 인정
+function parseQuiz(text) {
+  const qs = []; let cur = null;
+  for (let line of String(text).split('\n')) {
+    line = line.trim().replace(/^\*+|\*+$/g, ''); let m;
+    if (!line) continue;
+    if ((m = line.match(/^Q\s*\d*\s*[.)．:：]\s*(.+)/i))) { cur = { q: m[1].trim(), opts: [], ans: -1 }; qs.push(cur); }
+    else if (cur && (m = line.match(/^([1-4])\s*[).．:]\s*(.+)/))) cur.opts[m[1] - 1] = m[2].trim();
+    else if (cur && (m = line.match(/^정답\s*[:：]?\s*([1-4])/))) cur.ans = m[1] - 1;
+  }
+  return qs.filter(q => q.opts.length >= 2 && [...q.opts].every(Boolean) && q.opts[q.ans]);
+}
+// 맞히면 500점 + 빨리 낼수록 최대 500점 더
+const points = (ok, ms, limit) => ok ? 500 + Math.round(500 * Math.max(0, 1 - ms / limit)) : 0;
+
+console.assert(parseQuiz(SAMPLE).length === 10, 'sample 10');
+console.assert(parseQuiz('Q1. 하늘은?\n1) 파랑\n2) 빨강\n정답: 1').length === 1, 'OX/2지선다');
+console.assert(parseQuiz('Q. 빈 정답\n1) a\n2) b').length === 0, '정답 없음 제외');
+console.assert(parseQuiz('Q. 구멍\n1) a\n3) c\n정답: 1').length === 0, '보기 빠짐 제외');
+console.assert(points(true, 0, 20000) === 1000 && points(true, 20000, 20000) === 500 && points(false, 0, 20000) === 0, 'points');
+
+const joinId = new URLSearchParams(location.search).get('join');
+if (typeof Peer === 'undefined') document.body.innerHTML = '<p style="padding:40px;font-size:22px">인터넷 연결을 확인하고 새로고침해 주세요.</p>';
+else if (joinId) startPlayer(joinId); else startHost();
+
+/* ---------- 큰 화면(진행자) ---------- */
+function startHost() {
+  $('host').hidden = false;
+  const id = 'quiz-' + Math.random().toString(36).slice(2, 8);
+  const peer = new Peer(id);
+  const players = new Map();
+  let quiz = parseQuiz(SAMPLE), phase = 'lobby', qi = -1, qStart = 0, timers = [];
+
+  $('promptBox').value = PROMPT;
+  $('quizBox').value = SAMPLE;
+
+  peer.on('open', () => {
+    const url = location.origin + location.pathname + '?join=' + id;
+    new QRCode($('qr'), { text: url, width: 300, height: 300 });
+    $('url').textContent = url;
+  });
+  peer.on('error', e => $('hostMsg').textContent = '연결 오류: ' + e.type + ' — 새로고침해 주세요');
+  peer.on('connection', conn => {
+    conn.on('data', d => onData(conn, d));
+    conn.on('close', () => { players.delete(conn.peer); renderLobby(); });
+  });
+
+  function onData(conn, d) {
+    if (!d || typeof d !== 'object') return;
+    const p = players.get(conn.peer);
+    if (d.type === 'join' && !p) {
+      const np = { name: String(d.name || '').trim().slice(0, 10) || '익명', score: 0, conn, ans: {} };
+      players.set(conn.peer, np);
+      tell(np); renderLobby();
+    } else if (d.type === 'answer' && p && phase === 'q' && d.qi === qi && !(qi in p.ans)) {
+      const a = Number(d.a);
+      if (!Number.isInteger(a) || a < 0 || a >= quiz[qi].opts.length) return;
+      p.ans[qi] = { a, ms: Date.now() - qStart }; // 시간은 진행자 화면 기준으로 잼
+      $('answered').textContent = `응답 ${answeredCount()} / ${players.size}`;
+      if (answeredCount() === players.size) reveal();
+    }
+  }
+  const answeredCount = () => [...players.values()].filter(p => qi in p.ans).length;
+  const ranked = () => [...players.values()].sort((a, b) => b.score - a.score);
+
+  function tell(p, extra = {}) {
+    if (!p.conn.open) return;
+    const base = { type: 'state', phase, qi, total: quiz.length };
+    if (phase === 'q') base.opts = quiz[qi].opts;
+    p.conn.send({ ...base, ...extra });
+  }
+  const tellAll = fn => players.forEach(p => tell(p, fn ? fn(p) : {}));
+
+  function renderLobby() {
+    $('pc').textContent = players.size;
+    $('pl').innerHTML = [...players.values()].map(p => `<li>${esc(p.name)}</li>`).join('');
+    if (phase === 'lobby') $('hostMsg').textContent = `문제 ${quiz.length}개 준비됨 · ${players.size ? players.size + '명 참가' : '참가자를 기다리는 중…'}`;
+  }
+  function show(view) { ['lobby', 'stage', 'final'].forEach(v => $(v).hidden = v !== view); }
+
+  // 문제 넣기
+  $('editBtn').onclick = () => { $('editor').hidden = false; checkQuiz(); };
+  $('closeBtn').onclick = () => $('editor').hidden = true;
+  $('quizBox').oninput = checkQuiz;
+  function checkQuiz() {
+    const n = parseQuiz($('quizBox').value).length, raw = ($('quizBox').value.match(/^\s*Q/gim) || []).length;
+    $('parseMsg').textContent = n ? `✅ ${n}문제 인식됨${raw > n ? ` (형식이 안 맞는 ${raw - n}문제는 빠짐)` : ''}` : '⚠️ 인식된 문제가 없어요. 형식을 확인해 주세요';
+  }
+  $('saveBtn').onclick = () => {
+    const q = parseQuiz($('quizBox').value);
+    if (!q.length) return;
+    quiz = q; $('editor').hidden = true; renderLobby();
+  };
+  $('copyBtn').onclick = async () => {
+    try { await navigator.clipboard.writeText(PROMPT); $('copyBtn').textContent = '복사됨!'; }
+    catch (e) { $('promptBox').select(); $('copyBtn').textContent = '선택됨 — Ctrl+C 눌러 주세요'; }
+    setTimeout(() => $('copyBtn').textContent = '프롬프트 복사', 2000);
+  };
+
+  $('startBtn').onclick = () => {
+    if (!players.size) { $('hostMsg').textContent = '참가자가 1명 이상 있어야 시작할 수 있어요'; return; }
+    players.forEach(p => { p.score = 0; p.ans = {}; });
+    qi = -1; $('startBtn').hidden = $('editBtn').hidden = true;
+    nextQ();
+  };
+  $('nextBtn').onclick = () => qi + 1 < quiz.length ? nextQ() : finish();
+
+  function nextQ() {
+    timers.forEach(clearTimeout); timers = [];
+    qi++; phase = 'ready'; tellAll();
+    show('stage'); $('nextBtn').hidden = true; $('hostMsg').textContent = '';
+    $('qnum').textContent = `${qi + 1} / ${quiz.length}`;
+    const Q = quiz[qi];
+    $('qText').textContent = Q.q;
+    $('opts').innerHTML = Q.opts.map((o, i) => `<div class="opt" style="background:${COLORS[i]}"><span class="sh">${SHAPES[i]}</span><span>${esc(o)}</span><span class="cnt"></span></div>`).join('');
+    $('opts').style.visibility = 'hidden'; $('top5').innerHTML = ''; $('answered').textContent = ''; $('timer').textContent = '';
+    $('barFill').style.transition = 'none'; $('barFill').style.width = '100%';
+    // 문제를 3초 먼저 읽게 한 뒤 보기 공개
+    timers.push(setTimeout(() => {
+      phase = 'q'; qStart = Date.now(); tellAll();
+      $('opts').style.visibility = 'visible';
+      $('answered').textContent = `응답 0 / ${players.size}`;
+      requestAnimationFrame(() => { $('barFill').style.transition = `width ${Q_SEC}s linear`; $('barFill').style.width = '0%'; });
+      tick();
+    }, 3000));
+  }
+  function tick() {
+    if (phase !== 'q') return;
+    const left = Q_SEC * 1000 - (Date.now() - qStart);
+    $('timer').textContent = Math.max(0, Math.ceil(left / 1000));
+    if (left <= 0) reveal(); else timers.push(setTimeout(tick, 200));
+  }
+
+  function reveal() {
+    if (phase !== 'q') return;
+    phase = 'reveal'; timers.forEach(clearTimeout); timers = [];
+    const Q = quiz[qi], limit = Q_SEC * 1000, counts = Q.opts.map(() => 0);
+    const gained = new Map();
+    players.forEach(p => {
+      const r = p.ans[qi]; if (r) counts[r.a]++;
+      const g = r ? points(r.a === Q.ans, r.ms, limit) : 0;
+      p.score += g; gained.set(p, g);
+    });
+    const order = ranked();
+    [...$('opts').children].forEach((el, i) => { el.classList.add(i === Q.ans ? 'ok' : 'dim'); el.querySelector('.cnt').textContent = counts[i] + '명'; });
+    $('barFill').style.transition = 'none'; $('timer').textContent = '';
+    $('top5').innerHTML = order.slice(0, 5).map((p, i) => `<span>${i + 1}위 <b>${esc(p.name)}</b> ${p.score}</span>`).join('');
+    tellAll(p => ({ ok: p.ans[qi] ? p.ans[qi].a === Q.ans : null, gained: gained.get(p), score: p.score, rank: order.indexOf(p) + 1, n: order.length }));
+    $('nextBtn').textContent = qi + 1 < quiz.length ? '다음 문제' : '최종 결과';
+    $('nextBtn').hidden = false;
+  }
+
+  function finish() {
+    phase = 'final'; show('final'); $('nextBtn').hidden = true; $('qnum').textContent = '';
+    const order = ranked();
+    $('overlay').innerHTML = '<div class="disp">🥁</div>'; $('overlay').hidden = false;
+    setTimeout(() => {
+      $('overlay').hidden = true;
+      const pod = (p, r) => p ? `<div class="pod p${r}"><div class="nm">${esc(p.name)}</div><div class="sc">${p.score}점</div><div class="blk">${r}</div></div>` : '';
+      $('podium').innerHTML = pod(order[1], 2) + pod(order[0], 1) + pod(order[2], 3);
+      $('rest').innerHTML = order.slice(3, 15).map((p, i) => `${i + 4}위 ${esc(p.name)} ${p.score}점`).join(' · ');
+      tellAll(p => ({ score: p.score, rank: order.indexOf(p) + 1, n: order.length }));
+      $('startBtn').textContent = '처음부터 다시'; $('startBtn').hidden = $('editBtn').hidden = false;
+    }, 2000);
+  }
+  renderLobby();
+}
+
+/* ---------- 참가자 폰 ---------- */
+function startPlayer(hostId) {
+  $('player').hidden = false;
+  let conn, cur = {};
+  $('joinBtn').onclick = () => {
+    const name = $('nameIn').value.trim();
+    if (!name) { $('pMsg').textContent = '이름을 입력해 주세요'; return; }
+    $('joinBtn').disabled = true; $('pMsg').textContent = '연결 중…';
+    const peer = new Peer();
+    peer.on('error', e => { $('pMsg').textContent = '연결 실패 — QR을 다시 찍어 주세요 (' + e.type + ')'; $('joinBtn').disabled = false; });
+    peer.on('open', () => {
+      conn = peer.connect(hostId, { reliable: true });
+      conn.on('open', () => conn.send({ type: 'join', name }));
+      conn.on('data', onState);
+      conn.on('close', () => setView('', '연결이 끊겼어요', 'QR을 다시 찍어 주세요'));
+    });
+  };
+  function setView(head, big, sub, cls = '') {
+    $('joinBox').hidden = true; $('pGame').hidden = false;
+    document.body.className = cls;
+    $('pHead').textContent = head; $('pBig').textContent = big; $('pSub').textContent = sub; $('pOpts').innerHTML = '';
+  }
+  function onState(d) {
+    if (!d || d.type !== 'state') return;
+    cur = d;
+    const head = d.qi >= 0 && d.phase !== 'lobby' && d.phase !== 'final' ? `문제 ${d.qi + 1} / ${d.total}` : '';
+    if (d.phase === 'lobby') setView('', '참가 완료!', '큰 화면을 보며 시작을 기다려 주세요');
+    if (d.phase === 'ready') setView(head, '문제 나와요', '큰 화면의 문제를 읽어 주세요');
+    if (d.phase === 'q') {
+      setView(head, '', '');
+      d.opts.forEach((o, i) => {
+        const b = document.createElement('button');
+        b.style.background = COLORS[i];
+        b.innerHTML = `<span class="sh">${SHAPES[i]}</span><span>${esc(o)}</span>`;
+        b.onclick = () => {
+          if (cur !== d) return;
+          conn.send({ type: 'answer', qi: d.qi, a: i }); cur = null;
+          setView(head, '제출 완료!', '다른 사람을 기다리는 중…');
+        };
+        $('pOpts').appendChild(b);
+      });
+    }
+    if (d.phase === 'reveal') {
+      if (d.ok === null) setView(head, '시간 초과 ⏰', `현재 ${d.rank}위 / ${d.n}명 · ${d.score}점`, 'bad');
+      else setView(head, d.ok ? `정답! +${d.gained}` : '아쉬워요 😭', `현재 ${d.rank}위 / ${d.n}명 · ${d.score}점`, d.ok ? 'good' : 'bad');
+    }
+    if (d.phase === 'final' && d.rank) setView('최종 결과', d.rank <= 3 ? `${d.rank}위 🏆` : `${d.rank}위`, `${d.n}명 중 · ${d.score}점`, d.rank <= 3 ? 'good' : '');
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>CS 상황 대처 게임</title>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@500;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{--bg:#10131c;--y:#ffd23f;--t0:#ff3b5c;--t1:#2f7bff;--t2:#20b26b;--t3:#a65bff}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:#fff;font-family:'Noto Sans KR',sans-serif;min-height:100vh;overflow:hidden}
+h1,h2,.disp{font-family:'Black Han Sans',sans-serif;font-weight:400}
+button{font:inherit;font-weight:800;border:0;border-radius:14px;cursor:pointer}
+[hidden]{display:none!important}
+.btn{background:var(--y);color:#111;font-size:3vh;padding:1.5vh 4vh}
+.btn.ghost{background:#ffffff22;color:#fff}
+.btn.sel{outline:4px solid var(--y)}
+
+/* 큰 화면 */
+#host{height:100vh;display:flex;flex-direction:column;padding:2.5vh 3vw}
+#host header{display:flex;justify-content:space-between;align-items:center;min-height:7vh}
+#host h1{font-size:5vh}#host h1 b{color:var(--y);font-weight:400}
+#qnum{font-size:3vh;opacity:.8}
+main{flex:1;display:flex;flex-direction:column;min-height:0;margin-top:2vh}
+footer{display:flex;gap:1.2vw;align-items:center;margin-top:2vh}
+#hostMsg{font-size:2.4vh;opacity:.85}
+
+#lobby{flex:1;display:flex;gap:3vw;align-items:center}
+.qrbox{background:#fff;color:#111;border-radius:24px;padding:3vh;text-align:center;width:32vw}
+#qr{display:flex;justify-content:center;margin-bottom:2vh}#qr img,#qr canvas{width:28vh!important;height:28vh!important}
+.qrbox p{font-size:2.6vh;font-weight:800}.qrbox small{display:block;margin-top:1vh;font-size:1.4vh;color:#666;word-break:break-all}
+#teams{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:2vh;height:64vh}
+.team{border:4px solid var(--c);border-radius:20px;padding:2vh;overflow:hidden}
+.team h2{color:var(--c);font-size:4vh;margin-bottom:1vh}
+.team ul{list-style:none;display:flex;flex-wrap:wrap;gap:.8vh}
+.team li{background:var(--c);padding:.5vh 1.4vh;border-radius:99px;font-size:2.2vh;font-weight:800}
+
+#stage{flex:1;display:flex;flex-direction:column;min-height:0}
+#sit{background:#fff;color:#111;border-radius:20px;padding:3vh 4vh;font-size:4vh;font-weight:800;line-height:1.5}
+#sit small{display:block;font-size:2.2vh;color:#b5161f;margin-bottom:1vh}
+#opts{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:1.6vh;margin-top:2vh;min-height:0}
+.opt{background:#ffffff14;border-radius:18px;padding:1.8vh 2.4vh;display:flex;gap:1.6vh;align-items:center;font-size:2.9vh;line-height:1.45;transition:opacity .3s}
+.opt .k{font-family:'Black Han Sans';font-size:5vh;color:var(--y);min-width:4vh}
+.opt .sc{margin-left:auto;font-family:'Black Han Sans';font-size:4.5vh;white-space:nowrap;padding-left:1vh}
+.opt .n{font-size:2vh;opacity:.8;white-space:nowrap}
+.opt.best{background:#11522f;outline:6px solid var(--y)}.opt.mid{background:#5a4a12}.opt.bad{background:#5a1622}
+#explain{background:#ffffff14;border-left:8px solid var(--y);border-radius:12px;padding:1.8vh 2.4vh;font-size:2.7vh;line-height:1.6;margin-top:1.6vh}
+#explain b{color:var(--y)}
+#bottom{display:flex;justify-content:space-between;align-items:center;margin-top:1.6vh;min-height:6vh;font-size:2.6vh}
+#timer{font-family:'Black Han Sans';font-size:6vh;color:var(--y)}
+#teamBar{display:flex;gap:1.5vw}
+#teamBar span{color:var(--c);font-weight:800;font-size:2.8vh}
+
+#final{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+#final h2{font-size:7vh;color:var(--y);margin-bottom:4vh}
+#bars{width:70vw;display:flex;flex-direction:column;gap:2vh}
+.bar{display:flex;align-items:center;gap:2vw;font-size:3.4vh;font-weight:800}
+.bar .nm{width:10vw;text-align:right;color:var(--c)}
+.bar .tr{flex:1;background:#ffffff14;border-radius:99px;height:6vh;overflow:hidden}
+.bar .tr i{display:block;height:100%;background:var(--c);border-radius:99px;transition:width 1.5s ease-out;width:0}
+.bar .v{width:10vw;text-align:left}
+#mvp{margin-top:4vh;font-size:3vh;line-height:1.7}#mvp b{color:var(--y)}
+
+#editor{position:fixed;inset:0;background:#000d;z-index:6;display:flex;gap:2vw;padding:4vh 3vw}
+#editor .col{flex:1;display:flex;flex-direction:column;gap:1.5vh;min-height:0}
+#editor h2{font-size:3.4vh;color:var(--y)}
+#editor textarea{flex:1;width:100%;font:500 1.9vh/1.6 'Noto Sans KR',sans-serif;padding:2vh;border-radius:14px;border:0;resize:none}
+#editor .note{font-size:1.9vh;opacity:.85;line-height:1.6}
+#parseMsg{font-size:2.2vh;font-weight:800}
+
+/* 참가자 폰 */
+#player{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:18px;text-align:center}
+#joinBox,#pGame{width:100%}
+#joinBox h1{font-size:30px;margin-bottom:24px}
+#nameIn{width:100%;font-size:22px;padding:16px;border-radius:14px;border:0;text-align:center;margin-bottom:14px}
+#joinBtn{width:100%;background:var(--y);color:#111;font-size:24px;padding:18px}
+#pMsg{margin-top:16px;font-size:17px;opacity:.85;line-height:1.5}
+#pTeam{display:inline-block;background:var(--c);padding:4px 16px;border-radius:99px;font-weight:800;font-size:17px;margin-bottom:10px}
+#pHead{font-size:16px;opacity:.8;margin-bottom:6px}
+#pBig{font-family:'Black Han Sans';font-size:40px;line-height:1.3;margin:10px 0}
+#pSit{background:#fff;color:#111;border-radius:14px;padding:14px;font-size:17px;font-weight:800;line-height:1.5;text-align:left;margin-bottom:12px}
+#pSub{font-size:18px;opacity:.9;line-height:1.6;white-space:pre-line}
+#pOpts{display:grid;gap:10px}
+#pOpts button{background:#ffffff1f;color:#fff;font-size:17px;padding:14px;text-align:left;display:flex;gap:10px;align-items:center;line-height:1.45}
+#pOpts button b{font-family:'Black Han Sans';font-weight:400;font-size:26px;color:var(--y)}
+body.good{background:#11522f}body.mid{background:#4a3c0e}body.bad{background:#4a1520}
+</style>
+</head>
+<body>
+
+<section id="host" hidden>
+  <header><h1>CS 상황 <b>대처 게임</b></h1><div id="qnum"></div></header>
+  <main>
+    <div id="lobby">
+      <div class="qrbox"><div id="qr"></div><p>QR 찍고 이름만 쓰면 참가!</p><small id="url">연결 준비 중…</small></div>
+      <div id="teams"></div>
+    </div>
+    <div id="stage" hidden>
+      <div id="sit"></div>
+      <div id="opts"></div>
+      <div id="explain" hidden></div>
+      <div id="bottom"><div id="answered"></div><div id="teamBar"></div><div id="timer"></div></div>
+    </div>
+    <div id="final" hidden><h2>최종 팀 순위</h2><div id="bars"></div><div id="mvp"></div></div>
+  </main>
+  <footer>
+    <button class="btn" id="startBtn">게임 시작</button>
+    <button class="btn ghost" id="editBtn">상황 넣기</button>
+    <span id="teamPick">
+      <button class="btn ghost" data-n="2">2팀</button>
+      <button class="btn ghost" data-n="3">3팀</button>
+      <button class="btn ghost" data-n="4">4팀</button>
+    </span>
+    <button class="btn" id="nextBtn" hidden>다음 상황</button>
+    <span id="hostMsg"></span>
+  </footer>
+  <div id="editor" hidden>
+    <div class="col">
+      <h2>1. 이 문장을 AI에게 붙여 넣기</h2>
+      <p class="note">맨 아래에 업종(병원·한의원·식당·매장 등)과 실제로 자주 생기는 상황을 적으면 그 현장에 맞는 문제가 나와요.</p>
+      <textarea id="promptBox" readonly></textarea>
+      <button class="btn ghost" id="copyBtn">프롬프트 복사</button>
+    </div>
+    <div class="col">
+      <h2>2. 상황 문제를 여기에 붙여 넣기</h2>
+      <textarea id="qBox"></textarea>
+      <div id="parseMsg"></div>
+      <div style="display:flex;gap:1vw"><button class="btn" id="saveBtn">이 문제로 하기</button><button class="btn ghost" id="closeBtn">닫기</button></div>
+    </div>
+  </div>
+</section>
+
+<section id="player" hidden>
+  <div id="joinBox">
+    <h1>CS 상황 대처 게임</h1>
+    <input id="nameIn" maxlength="10" placeholder="이름 (예: 김간호사)">
+    <button id="joinBtn">참가하기</button>
+    <p id="pMsg"></p>
+  </div>
+  <div id="pGame" hidden><div id="pTeam"></div><div id="pHead"></div><div id="pBig"></div><div id="pSit" hidden></div><div id="pSub"></div><div id="pOpts"></div></div>
+</section>
+
+<script>
+const READ_SEC = 6;   // 상황만 먼저 읽는 시간
+const Q_SEC = 30;     // 보기 고르는 시간
+const TEAM_NAMES = ['1팀', '2팀', '3팀', '4팀'];
+const KEYS = ['A', 'B', 'C', 'D'];
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const tc = t => `var(--t${t})`;
+
+const PROMPT = `직원 CS 교육용 '상황 대처 게임' 문제를 8개 만들어 줘.
+- 실제 현장에서 자주 생기는 고객 응대 상황
+- 보기는 4개, 각 보기 40자 이내, 실제로 직원이 할 법한 말·행동으로
+- 보기마다 점수: 가장 좋은 응대 100, 무난하지만 아쉬운 응대 40~70, 문제가 되는 응대 0
+- 해설은 왜 그 응대가 좋은지 2문장 이내 (공감·사과·설명·대안 순서, 개인정보 보호 관점 포함)
+- 의학적 판단·진단이 필요한 내용은 넣지 말 것
+- 반드시 아래 형식 그대로, 다른 설명 없이 출력
+
+상황: (상황 설명)
+1) 보기 [점수]
+2) 보기 [점수]
+3) 보기 [점수]
+4) 보기 [점수]
+해설: (설명)
+
+[업종과 자주 생기는 상황]
+`;
+
+const SAMPLE = `상황: 대기 40분째인 환자가 접수대에 와서 "도대체 언제 들어가요?" 하고 언성을 높인다.
+1) "순서대로 진료 중이니 조금만 더 기다려 주세요." [30]
+2) "오래 기다리셔서 많이 답답하셨죠. 지금 앞에 두 분 남으셨고 약 10분 정도 걸릴 것 같습니다." [100]
+3) "다른 분들도 다 기다리고 계세요." [0]
+4) "제가 진료실에 한번 여쭤보고 올게요." [60]
+해설: 먼저 기다린 마음에 공감하고, 남은 순서와 예상 시간을 구체적으로 알려 주면 불안이 줄어듭니다. 막연한 '조금만'은 오히려 화를 키웁니다.
+
+상황: 원장님이 진료 중인데 전화한 환자가 "원장님 좀 바로 바꿔 주세요"라고 한다.
+1) "지금 진료 중이라 안 됩니다." [10]
+2) "네, 잠시만요." 하고 진료실에 전화를 돌린다. [0]
+3) "지금 진료 중이셔서 바로 연결은 어렵습니다. 용건을 남겨 주시면 진료 끝나는 대로 연락드리게 전하겠습니다." [100]
+4) "무슨 일 때문에 그러세요?" 하고 용건부터 묻는다. [50]
+해설: 진료 흐름을 지키면서도 거절로 끝내지 않고, 연락 방법과 시점을 약속하는 것이 핵심입니다. 회신 약속은 반드시 기록해 지켜야 신뢰가 쌓입니다.
+
+상황: 수납 중 환자가 "지난번보다 왜 이렇게 많이 나와요?"라며 영수증을 내민다.
+1) "저희가 정한 게 아니라 나라에서 정한 금액이에요." [20]
+2) "이번엔 검사가 추가돼서 그래요." 하고 바로 결제를 진행한다. [40]
+3) "그럼 결제는 다음에 하세요." [0]
+4) "금액이 달라 놀라셨죠. 진료비 세부내역서를 같이 보면서 어떤 항목이 추가됐는지 설명드릴게요." [100]
+해설: 놀란 마음을 먼저 받아 주고, 세부내역서로 항목을 보여 주며 설명하면 오해가 풀립니다. 짧은 한마디로 넘기면 '바가지'라는 인상이 남습니다.
+
+상황: 보호자가 대기실 다른 환자들 앞에서 "우리 엄마 검사 결과 어떻게 나왔어요?"라고 큰 소리로 묻는다.
+1) 대기실에서 들은 대로 결과를 바로 알려 준다. [0]
+2) "궁금하셨죠. 이쪽 상담실로 모실게요. 결과는 의료진이 직접 자세히 설명드리도록 하겠습니다." [100]
+3) "여기서는 말씀 못 드려요." [20]
+4) "결과지 나오면 문자로 보내 드릴게요." [40]
+해설: 검사 결과는 민감한 개인정보라 공개된 장소에서 말하면 안 되고, 결과 설명은 의료진의 몫입니다. 조용한 공간으로 안내하면 보호자도 존중받는다고 느낍니다.
+
+상황: 예약 시간보다 20분 늦게 온 환자가 "예약했으니까 바로 들어가게 해 주세요"라고 한다.
+1) "늦으셨으니 예약이 취소됐어요." [10]
+2) "네, 바로 들어가세요." 하고 앞 순서에 넣는다. [20]
+3) "오시느라 고생하셨어요. 예약 시간이 지나 지금은 대기 순서로 안내드려야 해서, 약 15분 정도 기다리실 것 같습니다." [100]
+4) "원장님께 여쭤볼게요." [50]
+해설: 원칙은 지키되 탓하는 말투를 빼고, 바뀐 순서와 예상 대기 시간을 함께 알려 주는 것이 좋습니다. 늦은 사람만 바로 넣어 주면 제시간에 온 환자들이 불만을 갖게 됩니다.
+
+상황: 어르신 환자가 무인 접수기 앞에서 한참을 헤매고 있다.
+1) "화면에 나온 대로 누르시면 돼요." 하고 자리로 돌아간다. [10]
+2) 직접 다가가 "같이 해 볼까요?" 하며 천천히 함께 누른다. [100]
+3) 말없이 대신 눌러서 접수를 끝내 준다. [60]
+4) "다음부터는 자녀분께 미리 배워 오세요." [0]
+해설: 어르신이 직접 해 보도록 옆에서 함께해 주면 다음 방문 때도 덜 막막합니다. 대신 해 주는 것도 괜찮지만, 말없이 처리하면 무시당했다고 느낄 수 있습니다.
+
+상황: 온라인 리뷰에 "접수 직원이 불친절했다"는 후기가 올라왔다. 병원 계정으로 답글을 단다.
+1) "해당 일에 ○○ 진료로 오신 분 맞으시죠? 기록 확인해 보니…" 하고 사실관계를 적는다. [0]
+2) 답글을 달지 않고 그냥 둔다. [30]
+3) "불편을 드려 죄송합니다. 말씀 주신 부분은 직원들과 함께 돌아보고 개선하겠습니다. 다시 방문해 주시면 더 편안히 모시겠습니다." [100]
+4) "저희 직원은 그런 사람이 아닙니다." [0]
+해설: 답글에서 진료 내용이나 방문 기록을 언급하면 개인정보 문제가 될 수 있습니다. 반박보다는 사과와 개선 의지를 짧게 남기고, 내부에서 사실을 따로 확인하는 것이 안전합니다.
+
+상황: 접수 직원 실수로 환자 접수가 빠져 있었고, 환자는 50분을 기다렸다.
+1) "시스템 오류가 있었나 봐요." [10]
+2) "제 실수로 접수가 누락됐습니다. 정말 죄송합니다. 바로 다음 순서로 모시겠습니다." [100]
+3) 아무 말 없이 조용히 접수를 넣고 순서를 당겨 준다. [40]
+4) "지금 넣어 드릴게요. 조금만 더 기다려 주세요." [20]
+해설: 우리 쪽 실수는 핑계 없이 인정하고, 사과와 함께 바로 할 수 있는 보상(우선 진료)을 제시하는 것이 가장 빠른 수습입니다. 남 탓은 화를 두 배로 만듭니다.`;
+
+// 상황/보기[점수]/해설 형식. 보기 2~4개, 모두 점수가 있어야 인정
+function parseCases(text) {
+  const out = []; let cur = null;
+  for (let line of String(text).split('\n')) {
+    line = line.trim().replace(/^\*+|\*+$/g, ''); let m;
+    if (!line) continue;
+    if ((m = line.match(/^(?:\d+[.)]\s*)?상황\s*\d*\s*[:：]\s*(.+)/))) { cur = { sit: m[1].trim(), opts: [], ex: '' }; out.push(cur); }
+    else if (cur && (m = line.match(/^([1-4])\s*[).．]\s*(.+?)\s*\[\s*(\d{1,3})\s*점?\s*\]\s*$/))) cur.opts[m[1] - 1] = { t: m[2].trim(), s: Math.min(100, +m[3]) };
+    else if (cur && (m = line.match(/^해설\s*[:：]\s*(.+)/))) cur.ex = m[1].trim();
+  }
+  return out.filter(c => c.opts.length >= 2 && [...c.opts].every(Boolean));
+}
+const assignTeams = (n, k) => Array.from({ length: n }, (_, i) => i % k);
+
+console.assert(parseCases(SAMPLE).length === 8, 'sample 8');
+console.assert(parseCases('상황: x\n1) a [100]\n2) b [0점]\n해설: y')[0].opts[1].s === 0, '점 표기');
+console.assert(parseCases('상황: x\n1) a [100]\n2) b\n해설: y').length === 0, '점수 없는 보기 제외');
+console.assert(assignTeams(5, 2).join() === '0,1,0,1,0', 'teams');
+
+const joinId = new URLSearchParams(location.search).get('join');
+if (typeof Peer === 'undefined') document.body.innerHTML = '<p style="padding:40px;font-size:22px">인터넷 연결을 확인하고 새로고침해 주세요.</p>';
+else if (joinId) startPlayer(joinId); else startHost();
+
+/* ---------- 큰 화면(진행자) ---------- */
+function startHost() {
+  $('host').hidden = false;
+  const id = 'cs-' + Math.random().toString(36).slice(2, 8);
+  const peer = new Peer(id);
+  const players = new Map();
+  let cases = parseCases(SAMPLE), nTeams = 2, phase = 'lobby', qi = -1, timers = [], teamTotal = [];
+
+  $('promptBox').value = PROMPT; $('qBox').value = SAMPLE;
+  peer.on('open', () => {
+    const url = location.origin + location.pathname + '?join=' + id;
+    new QRCode($('qr'), { text: url, width: 300, height: 300 });
+    $('url').textContent = url;
+  });
+  peer.on('error', e => $('hostMsg').textContent = '연결 오류: ' + e.type + ' — 새로고침해 주세요');
+  peer.on('connection', conn => {
+    conn.on('data', d => onData(conn, d));
+    conn.on('close', () => { players.delete(conn.peer); renderLobby(); });
+  });
+
+  function onData(conn, d) {
+    if (!d || typeof d !== 'object') return;
+    const p = players.get(conn.peer);
+    if (d.type === 'join' && !p) {
+      const cnt = Array(nTeams).fill(0); players.forEach(x => cnt[x.team]++);
+      const np = { name: String(d.name || '').trim().slice(0, 10) || '익명', team: cnt.indexOf(Math.min(...cnt)), score: 0, conn, ans: {} };
+      players.set(conn.peer, np); tell(np); renderLobby();
+    } else if (d.type === 'answer' && p && phase === 'q' && d.qi === qi && !(qi in p.ans)) {
+      const a = Number(d.a);
+      if (!Number.isInteger(a) || a < 0 || a >= cases[qi].opts.length) return;
+      p.ans[qi] = a;
+      const n = [...players.values()].filter(x => qi in x.ans).length;
+      $('answered').textContent = `응답 ${n} / ${players.size}`;
+      if (n === players.size) reveal();
+    }
+  }
+  function tell(p, extra = {}) {
+    if (!p.conn.open) return;
+    const s = { type: 'state', phase, qi, total: cases.length, team: p.team };
+    if (phase === 'read' || phase === 'q') s.sit = cases[qi].sit;
+    if (phase === 'q') s.opts = cases[qi].opts.map(o => o.t);
+    p.conn.send({ ...s, ...extra });
+  }
+  const tellAll = fn => players.forEach(p => tell(p, fn ? fn(p) : {}));
+
+  function renderLobby() {
+    $('teams').innerHTML = '';
+    $('teams').style.gridTemplateColumns = nTeams === 3 ? '1fr 1fr 1fr' : '1fr 1fr';
+    for (let t = 0; t < nTeams; t++) {
+      const ps = [...players.values()].filter(p => p.team === t);
+      $('teams').insertAdjacentHTML('beforeend', `<div class="team" style="--c:${tc(t)}"><h2>${TEAM_NAMES[t]} ${ps.length}명</h2><ul>${ps.map(p => `<li>${esc(p.name)}</li>`).join('')}</ul></div>`);
+    }
+    document.querySelectorAll('#teamPick button').forEach(b => b.classList.toggle('sel', +b.dataset.n === nTeams));
+    if (phase === 'lobby') $('hostMsg').textContent = `상황 ${cases.length}개 · ${players.size}명 참가`;
+  }
+  document.querySelectorAll('#teamPick button').forEach(b => b.onclick = () => {
+    nTeams = +b.dataset.n;
+    const t = assignTeams(players.size, nTeams); [...players.values()].forEach((p, i) => p.team = t[i]);
+    renderLobby(); tellAll();
+  });
+  function show(v) { ['lobby', 'stage', 'final'].forEach(x => $(x).hidden = x !== v); }
+
+  $('editBtn').onclick = () => { $('editor').hidden = false; checkQs(); };
+  $('closeBtn').onclick = () => $('editor').hidden = true;
+  $('qBox').oninput = checkQs;
+  function checkQs() {
+    const n = parseCases($('qBox').value).length, raw = ($('qBox').value.match(/상황\s*\d*\s*[:：]/g) || []).length;
+    $('parseMsg').textContent = n ? `✅ ${n}개 인식됨${raw > n ? ` (형식이 안 맞는 ${raw - n}개는 빠짐)` : ''}` : '⚠️ 인식된 문제가 없어요. 보기 끝에 [점수]가 있는지 확인해 주세요';
+  }
+  $('saveBtn').onclick = () => { const c = parseCases($('qBox').value); if (c.length) { cases = c; $('editor').hidden = true; renderLobby(); } };
+  $('copyBtn').onclick = async () => {
+    try { await navigator.clipboard.writeText(PROMPT); $('copyBtn').textContent = '복사됨!'; }
+    catch (e) { $('promptBox').select(); $('copyBtn').textContent = '선택됨 — Ctrl+C 눌러 주세요'; }
+    setTimeout(() => $('copyBtn').textContent = '프롬프트 복사', 2000);
+  };
+
+  $('startBtn').onclick = () => {
+    if (!players.size) { $('hostMsg').textContent = '참가자가 1명 이상 있어야 시작할 수 있어요'; return; }
+    players.forEach(p => { p.score = 0; p.ans = {}; });
+    teamTotal = Array(nTeams).fill(0); qi = -1;
+    $('startBtn').hidden = $('editBtn').hidden = $('teamPick').hidden = true;
+    nextQ();
+  };
+  $('nextBtn').onclick = () => qi + 1 < cases.length ? nextQ() : finish();
+
+  function nextQ() {
+    timers.forEach(clearTimeout); timers = [];
+    qi++; phase = 'read'; show('stage');
+    const C = cases[qi];
+    $('qnum').textContent = `${qi + 1} / ${cases.length}`;
+    $('sit').innerHTML = `<small>상황 ${qi + 1}</small>${esc(C.sit)}`;
+    $('opts').innerHTML = C.opts.map((o, i) => `<div class="opt"><span class="k">${KEYS[i]}</span><span>${esc(o.t)}</span><span class="sc"></span></div>`).join('');
+    $('opts').style.visibility = 'hidden';
+    $('explain').hidden = true; $('nextBtn').hidden = true; $('hostMsg').textContent = '';
+    $('answered').textContent = '상황을 먼저 읽어 주세요'; $('teamBar').innerHTML = ''; $('timer').textContent = '';
+    tellAll();
+    timers.push(setTimeout(() => {
+      phase = 'q'; const start = Date.now();
+      $('opts').style.visibility = 'visible';
+      $('answered').textContent = `응답 0 / ${players.size}`;
+      tellAll();
+      const tick = () => {
+        if (phase !== 'q') return;
+        const left = Q_SEC * 1000 - (Date.now() - start);
+        $('timer').textContent = Math.max(0, Math.ceil(left / 1000)) + '초';
+        if (left <= 0) reveal(); else timers.push(setTimeout(tick, 250));
+      };
+      tick();
+    }, READ_SEC * 1000));
+  }
+
+  function reveal() {
+    if (phase !== 'q') return;
+    phase = 'reveal'; timers.forEach(clearTimeout); timers = [];
+    const C = cases[qi], best = Math.max(...C.opts.map(o => o.s)), counts = C.opts.map(() => 0);
+    const tSum = Array(nTeams).fill(0), tN = Array(nTeams).fill(0);
+    players.forEach(p => {
+      const a = p.ans[qi], s = a === undefined ? 0 : C.opts[a].s; // 안 고르면 0점
+      if (a !== undefined) counts[a]++;
+      p.score += s; tSum[p.team] += s; tN[p.team]++;
+    });
+    // 팀 점수 = 그 팀 평균 (인원이 달라도 공정하게)
+    const tAvg = tSum.map((s, t) => tN[t] ? Math.round(s / tN[t]) : 0);
+    tAvg.forEach((v, t) => teamTotal[t] += v);
+    [...$('opts').children].forEach((el, i) => {
+      const s = C.opts[i].s;
+      el.classList.add(s === best ? 'best' : s >= 40 ? 'mid' : 'bad');
+      el.querySelector('.sc').innerHTML = `${s}<span class="n"> 점 · ${counts[i]}명</span>`;
+    });
+    if (C.ex) { $('explain').innerHTML = `<b>해설</b> ${esc(C.ex)}`; $('explain').hidden = false; }
+    $('timer').textContent = '';
+    $('teamBar').innerHTML = tAvg.map((v, t) => `<span style="--c:${tc(t)}">${TEAM_NAMES[t]} +${v}</span>`).join('');
+    tellAll(p => { const a = p.ans[qi]; return { my: a === undefined ? null : KEYS[a], got: a === undefined ? 0 : C.opts[a].s, best: KEYS[C.opts.findIndex(o => o.s === best)], teamGot: tAvg[p.team] }; });
+    $('nextBtn').textContent = qi + 1 < cases.length ? '다음 상황' : '최종 결과'; $('nextBtn').hidden = false;
+  }
+
+  function finish() {
+    phase = 'final'; show('final'); $('nextBtn').hidden = true; $('qnum').textContent = '';
+    const order = teamTotal.map((v, t) => ({ v, t })).sort((a, b) => b.v - a.v), max = Math.max(1, ...teamTotal);
+    $('bars').innerHTML = order.map(({ v, t }, i) => `<div class="bar" style="--c:${tc(t)}"><span class="nm">${i === 0 ? '🏆 ' : ''}${TEAM_NAMES[t]}</span><span class="tr"><i data-w="${v / max * 100}"></i></span><span class="v">${v}점</span></div>`).join('');
+    requestAnimationFrame(() => setTimeout(() => document.querySelectorAll('#bars i').forEach(i => i.style.width = i.dataset.w + '%'), 50));
+    const top = Math.max(0, ...[...players.values()].map(p => p.score));
+    const mvps = [...players.values()].filter(p => p.score === top && top > 0);
+    $('mvp').innerHTML = mvps.length ? `🌟 베스트 응대왕: <b>${mvps.map(p => esc(p.name)).join(', ')}</b> (${top}점 / ${cases.length * 100}점 만점)` : '';
+    const rankOf = t => 1 + teamTotal.filter(v => v > teamTotal[t]).length; // 동점은 같은 순위
+    tellAll(p => ({ teamRank: rankOf(p.team), teamScore: teamTotal[p.team], score: p.score, max: cases.length * 100, mvp: mvps.includes(p) }));
+    $('startBtn').textContent = '처음부터 다시'; $('startBtn').hidden = $('editBtn').hidden = $('teamPick').hidden = false;
+  }
+  renderLobby();
+}
+
+/* ---------- 참가자 폰 ---------- */
+function startPlayer(hostId) {
+  $('player').hidden = false;
+  let conn, cur = null;
+  $('joinBtn').onclick = () => {
+    const name = $('nameIn').value.trim();
+    if (!name) { $('pMsg').textContent = '이름을 입력해 주세요'; return; }
+    $('joinBtn').disabled = true; $('pMsg').textContent = '연결 중…';
+    const peer = new Peer();
+    peer.on('error', e => { $('pMsg').textContent = '연결 실패 — QR을 다시 찍어 주세요 (' + e.type + ')'; $('joinBtn').disabled = false; });
+    peer.on('open', () => {
+      conn = peer.connect(hostId, { reliable: true });
+      conn.on('open', () => conn.send({ type: 'join', name }));
+      conn.on('data', onState);
+      conn.on('close', () => view(null, '', '연결이 끊겼어요', 'QR을 다시 찍어 주세요'));
+    });
+  };
+  function view(d, head, big, sub, cls = '', sit = '') {
+    $('joinBox').hidden = true; $('pGame').hidden = false;
+    $('pTeam').hidden = !d; if (d) { $('pTeam').textContent = TEAM_NAMES[d.team]; $('pTeam').style.setProperty('--c', tc(d.team)); }
+    $('pHead').textContent = head; $('pBig').textContent = big; $('pSub').textContent = sub;
+    $('pSit').hidden = !sit; $('pSit').textContent = sit; $('pOpts').innerHTML = '';
+    document.body.className = cls;
+  }
+  function onState(d) {
+    if (!d || d.type !== 'state') return;
+    const head = d.qi >= 0 && d.phase !== 'final' && d.phase !== 'lobby' ? `상황 ${d.qi + 1} / ${d.total}` : '';
+    if (d.phase === 'lobby') view(d, '', '참가 완료!', '큰 화면을 보며 시작을 기다려 주세요');
+    if (d.phase === 'read') view(d, head, '', '상황을 읽어 주세요. 곧 보기가 나와요', '', d.sit);
+    if (d.phase === 'q') {
+      cur = d;
+      view(d, head, '', '나라면 어떻게 할까요?', '', d.sit);
+      d.opts.forEach((t, i) => {
+        const b = document.createElement('button');
+        b.innerHTML = `<b>${KEYS[i]}</b><span>${esc(t)}</span>`;
+        b.onclick = () => {
+          if (cur !== d) return; cur = null;
+          conn.send({ type: 'answer', qi: d.qi, a: i });
+          view(d, head, `${KEYS[i]} 선택!`, '다른 사람을 기다리는 중…');
+        };
+        $('pOpts').appendChild(b);
+      });
+    }
+    if (d.phase === 'reveal') view(d, head, d.my ? `${d.my} · ${d.got}점` : '시간 초과 ⏰', `가장 좋은 응대는 ${d.best}\n우리 팀 +${d.teamGot}점 · 큰 화면 해설을 보세요`, d.got === 100 ? 'good' : d.got >= 40 ? 'mid' : 'bad');
+    if (d.phase === 'final') view(d, '최종 결과', `우리 팀 ${d.teamRank}위${d.teamRank === 1 ? ' 🏆' : ''}`, `팀 ${d.teamScore}점\n내 점수 ${d.score} / ${d.max}점${d.mvp ? '\n🌟 베스트 응대왕!' : ''}`, d.teamRank === 1 || d.mvp ? 'good' : '');
+  }
+}
+</script>
+</body>
+</html>
