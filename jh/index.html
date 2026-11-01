@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>JH특허법률사무소 1회차 사전 점검표</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+:root{--bg:#F3F3EF;--card:#fff;--ink:#363636;--muted:#6b6b63;--green:#508172;--sage:#BABAA9;--line:#dcdcd2;
+  --font:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 var(--font)}
+main{max-width:760px;margin:0 auto;padding:20px 16px 80px}
+.who{text-align:right;color:var(--green);font-size:13px}
+.dots{display:flex;gap:6px;margin-bottom:8px}.dots i{width:10px;height:10px;border-radius:50%}
+h1{color:var(--green);font-size:24px;margin:4px 0 2px}
+.sub{color:var(--muted);font-size:14px;margin:0 0 12px}
+.intro{background:var(--card);border-left:4px solid var(--green);padding:12px 14px;border-radius:8px;font-size:15px}
+section{background:var(--card);border-radius:12px;padding:16px;margin:16px 0;border:1px solid var(--line)}
+h2{color:var(--green);font-size:18px;margin:0 0 10px}
+.q{margin:12px 0 4px;font-weight:500}
+.hint{color:var(--muted);font-size:14px;margin:0 0 8px}
+input[type=text],input[type=number],textarea{width:100%;font:inherit;padding:9px 10px;border:1px solid var(--sage);border-radius:8px;background:#fff;color:var(--ink)}
+textarea{min-height:64px;resize:vertical}
+.opts{display:flex;flex-wrap:wrap;gap:6px 14px}
+.opts label{display:flex;align-items:center;gap:6px;min-height:36px}
+input[type=checkbox],input[type=radio]{width:20px;height:20px;accent-color:var(--green)}
+.row{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.row label{display:flex;flex-direction:column;font-size:13px;color:var(--muted)}
+.flow{border-top:1px solid var(--line);padding:10px 0;display:flex;gap:10px;align-items:center;justify-content:space-between}
+.flow .t{flex:1}.flow .st{display:inline-block;font-size:12px;color:#fff;background:var(--green);border-radius:4px;padding:0 6px;margin-right:6px}
+.flow .yn{display:flex;gap:4px}
+.flow .yn label{border:1px solid var(--sage);border-radius:8px;padding:6px 10px;display:flex;gap:4px;align-items:center}
+.ch{border-top:1px solid var(--line);padding:10px 0}
+.ch .top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.ch .more{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}
+button{font:inherit;font-weight:700;border:0;border-radius:10px;padding:14px 18px;cursor:pointer}
+.send{background:var(--green);color:#fff;width:100%;font-size:18px}
+.ghost{background:transparent;color:var(--green);border:1px solid var(--green);margin-top:8px;width:100%}
+#done{text-align:center}
+.saved{color:var(--muted);font-size:13px;text-align:center;margin-top:8px}
+@media(max-width:560px){.row{grid-template-columns:repeat(3,1fr)}.flow{flex-direction:column;align-items:stretch}.ch .more{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+<div class="who">주장훈 대표님 용</div>
+<div class="dots"><i style="background:#508172"></i><i style="background:#BABAA9"></i><i style="background:#D9A86C"></i><i style="background:#8FA9C4"></i></div>
+<p class="sub">「2026 소담스퀘어 강원 맞춤형 컨설팅」</p>
+<h1>JH특허법률사무소 1회차 사전 점검표</h1>
+<p class="sub">1회차 2026. 11. 2.(월) 10:00~12:00 · 2회차 2026. 11. 9.(월) 10:00~12:00 · 컨설턴트 정경(바스제로 컨설팅)</p>
+<div class="intro">의뢰인이 사무소를 처음 알게 되는 순간부터 상담·수임, 다시 찾아오시기까지의 흐름을 함께 살펴보고, 브랜딩·블로그·인스타그램·칼럼과 AI 활용을 실제 수임으로 이어지게 잡는 것이 이번 컨설팅의 목적입니다. 정답이 있는 질문이 아니니 떠오르는 대로 편하게 적어 주시고, 모르는 칸은 비워 두셔도 됩니다. 적으신 내용은 이 기기에 자동 저장됩니다.</div>
+
+<form id="f">
+<section>
+<h2>1. 사무소 기본</h2>
+<p class="q">업무 비중(%)</p>
+<div class="row">
+  <label>특허<input type="number" name="비중_특허" min="0" max="100" inputmode="numeric"></label>
+  <label>상표<input type="number" name="비중_상표" min="0" max="100" inputmode="numeric"></label>
+  <label>디자인<input type="number" name="비중_디자인" min="0" max="100" inputmode="numeric"></label>
+  <label>심판·분쟁<input type="number" name="비중_심판분쟁" min="0" max="100" inputmode="numeric"></label>
+  <label>기타<input type="number" name="비중_기타" min="0" max="100" inputmode="numeric"></label>
+</div>
+<p class="q">주 의뢰인</p>
+<div class="opts" data-name="주의뢰인">개인 발명가|소상공인(상표)|스타트업|중소기업|대학·연구소|해외|기타</div>
+<p class="q">가장 자신 있는 분야 (기술 분야·사건 유형)</p>
+<input type="text" name="자신있는분야">
+<p class="q">활동 지역</p>
+<div class="opts" data-name="활동지역">서울|강원(원주 등)|전국 비대면|기타</div>
+<input type="text" name="활동지역_메모" placeholder="기타 또는 자세히">
+<p class="q">구성원 (대표님 포함)</p>
+<div class="row">
+  <label>전체<input type="number" name="인원_전체" min="0" inputmode="numeric"></label>
+  <label>변리사<input type="number" name="인원_변리사" min="0" inputmode="numeric"></label>
+  <label>사무직원<input type="number" name="인원_직원" min="0" inputmode="numeric"></label>
+</div>
+</section>
+
+<section>
+<h2>2. 의뢰는 어떻게 들어오나요</h2>
+<p class="hint">최근 1년 기준으로 해당하는 곳에 모두 체크해 주세요.</p>
+<div class="opts" data-name="의뢰경로">지인·기존 의뢰인 소개|기존 의뢰인 재의뢰|세무사·법무사·회계사 연계|협회·창업센터·대학 연계|네이버·구글 검색|블로그·SNS|정부·기관 지원사업(IP 바우처 등)|기타</div>
+<p class="q">그중 가장 많은 경로 하나</p>
+<input type="text" name="의뢰경로_1위">
+<p class="q">의뢰 한 건의 평균 금액대 / 1년 수임 건수(대략)</p>
+<input type="text" name="평균금액_수임건수">
+<p class="q">가장 고맙고 함께 일하기 좋았던 의뢰인은 어떤 분이었나요?</p>
+<textarea name="좋은의뢰인"></textarea>
+</section>
+
+<section>
+<h2>3. 의뢰인 흐름 점검표</h2>
+<p class="hint">‘아니오’가 많은 구간이 이번에 먼저 손볼 곳입니다.</p>
+<div id="flow"></div>
+</section>
+
+<section>
+<h2>4. 지금 운영 중인 홍보 채널</h2>
+<div id="channels"></div>
+<p class="q">홍보에 쓸 수 있는 시간 (일주일에 몇 시간)</p>
+<input type="number" name="홍보시간_주" min="0" step="0.5" inputmode="decimal">
+<p class="q">글은 주로 누가 쓰나요</p>
+<div class="opts" data-name="글담당" data-type="radio">대표님|직원|맡길 생각</div>
+<p class="q">홍보를 미뤄 온 가장 큰 이유</p>
+<textarea name="미룬이유"></textarea>
+</section>
+
+<section>
+<h2>5. 브랜딩: 어떤 사무소로 기억되고 싶으세요</h2>
+<p class="q">의뢰인이 우리 사무소를 한 문장으로 소개한다면?</p>
+<input type="text" name="한문장">
+<p class="q">다른 특허사무소와 확실히 다른 점 3가지</p>
+<textarea name="차별점"></textarea>
+<p class="q">피하고 싶은 이미지 (예: 비싸 보임, 어려워 보임)</p>
+<input type="text" name="피하고싶은이미지">
+<p class="q">광고·홍보에서 직업상 조심하고 계신 표현이나 규정</p>
+<textarea name="광고규정"></textarea>
+</section>
+
+<section>
+<h2>6. 블로그·인스타그램·칼럼</h2>
+<p class="q">의뢰인들이 상담에서 가장 자주 묻는 질문 3가지</p>
+<textarea name="자주묻는질문" placeholder="1.&#10;2.&#10;3."></textarea>
+<p class="q">칼럼으로 꼭 써 보고 싶은 주제 (사례·제도·분쟁 경험 등)</p>
+<textarea name="칼럼주제"></textarea>
+<p class="q">칼럼을 싣고 싶은 곳</p>
+<div class="opts" data-name="칼럼게재처">블로그|언론·매체|협회지|기타</div>
+</section>
+
+<section>
+<h2>7. AI 활용</h2>
+<p class="q">지금 쓰는 AI</p>
+<div class="opts" data-name="사용AI">사용 안 함|ChatGPT|Claude|Gemini|기타</div>
+<p class="q">시간이 가장 많이 드는 업무</p>
+<input type="text" name="시간드는업무">
+<p class="q">AI로 줄이고 싶은 일</p>
+<div class="opts" data-name="AI로줄일일">홍보 글쓰기|의뢰인 안내문·메일|선행기술 조사 보조|번역|서류 정리|기타</div>
+<p class="q">걱정되는 점</p>
+<div class="opts" data-name="AI걱정">기밀 유출|정확도|사용법|비용|기타</div>
+</section>
+
+<section>
+<h2>8. 이번 컨설팅에서 바라는 것</h2>
+<p class="q">6개월 뒤 사무소에 생겼으면 하는 변화</p>
+<textarea name="6개월변화"></textarea>
+<p class="q">2회 만남이 끝났을 때 꼭 손에 쥐고 싶은 것</p>
+<textarea name="손에쥘것"></textarea>
+</section>
+
+<button type="submit" class="send">컨설턴트에게 보내기</button>
+<p class="saved" id="saved"></p>
+</form>
+
+<section id="done" hidden>
+<h2>잘 받았습니다</h2>
+<p>적어 주신 내용은 정경 컨설턴트에게 전달되었습니다. 만남 때 함께 보면서 이야기 나누겠습니다.</p>
+<button type="button" class="ghost" id="copy">혹시 몰라 내용 복사해 두기</button>
+<button type="button" class="ghost" id="edit">고쳐서 다시 보내기</button>
+</section>
+</main>
+
+<script>
+// 대표님 응답을 받을 구글 Apps Script 웹앱 주소 (apps-script.gs 배포 후 붙여넣기)
+const SCRIPT_URL = '';
+const KEY = 'jh-survey-1';
+
+const FLOW = [
+  ['찾기', '네이버에 ‘JH특허’ 또는 사무소명을 검색하면 사무소 정보(플레이스)가 나온다', '네이버 플레이스 등록·정비 (상호·주소·전화·소개글)'],
+  ['찾기', '‘상표등록 비용’, ‘특허출원 절차’ 같은 검색에 우리 사무소 글이 나온다', '자주 묻는 질문을 블로그 글로 전환, 검색어 맞춤 제목'],
+  ['찾기', '구글 지도에 사무소가 정확한 주소·전화번호로 등록되어 있다', '구글 비즈니스 프로필 등록·소유권 확인 (네이버와 글자까지 동일)'],
+  ['고르기', '홈페이지(또는 소개 페이지)가 있고, 대표님 경력·전문 분야가 정리되어 있다', '대표 변리사 소개 페이지·전 채널 공통 정의 문장'],
+  ['고르기', '출원 절차·기간·대략의 비용 범위를 미리 알려 주는 글이 있다', '절차·기간·비용 범위 안내 글 1편 (확인된 사실만)'],
+  ['고르기', 'ChatGPT 등 AI에 ‘상표등록 맡길 변리사 추천’을 물으면 우리 사무소가 나온다', 'AEO 실측 → 목표 답변 정의 → 정보 반복 설계'],
+  ['상담', '상담 신청 방법(전화·카톡·메일)이 한눈에 보인다', '전 채널 상담 경로 통일, 카카오톡 채널 검토'],
+  ['상담', '문의가 오면 당일 안에 답을 드린다', '첫 응대 안내문 템플릿 (AI로 초안)'],
+  ['다시 찾기', '등록 이후 갱신·연차료 시기에 먼저 연락드린다', '갱신·연차료 알림 관리 (재의뢰 매출 원천)'],
+  ['다시 찾기', '만족한 의뢰인께 소개나 후기를 부탁드린 적이 있다', '종결 시 소개·후기 요청 문구 (대가 제공 없이)'],
+];
+const CHANNELS = ['홈페이지', '네이버 플레이스', '네이버 블로그', '인스타그램', '카카오톡 채널', '유튜브·기타'];
+
+/* ── 분석 시작 (jh.test.js 가 이 블록을 그대로 실행) ── */
+function analyze(d) {
+  const L = [];
+  const no = FLOW.map((f, i) => ({ stage: f[0], text: f[1], fix: f[2], ans: d['흐름' + (i + 1)] }));
+  const stages = [...new Set(FLOW.map(f => f[0]))];
+  const answered = no.filter(x => x.ans).length;
+  const noList = no.filter(x => x.ans === '아니오');
+
+  L.push('■ 의뢰인 흐름 점검 (아니오 ' + noList.length + ' / 응답 ' + answered + ' / 10문항)');
+  stages.forEach(s => {
+    const all = no.filter(x => x.stage === s), n = all.filter(x => x.ans === '아니오').length;
+    L.push('  - ' + s + ': 아니오 ' + n + '/' + all.length);
+  });
+  const weak = stages.map(s => [s, no.filter(x => x.stage === s && x.ans === '아니오').length / no.filter(x => x.stage === s).length])
+    .sort((a, b) => b[1] - a[1]);
+  if (noList.length) L.push('  → 가장 약한 구간: ' + weak[0][0]);
+
+  L.push('', '■ 1회차 우선 과제 후보 (아니오 항목, 흐름 순서)');
+  if (!noList.length) L.push('  - 아니오 항목 없음 → 응답 실제 상태를 현장에서 화면으로 교차 확인');
+  noList.slice(0, 3).forEach((x, i) => L.push('  ' + (i + 1) + '. [' + x.stage + '] ' + x.fix));
+  if (noList.length > 3) L.push('  (그 외 ' + (noList.length - 3) + '건은 2회차 또는 숙제 후보)');
+
+  const paths = d['의뢰경로'] || [];
+  const online = paths.some(p => /검색|블로그/.test(p));
+  L.push('', '■ 의뢰 유입');
+  L.push('  - 체크: ' + (paths.join(', ') || '응답 없음') + (d['의뢰경로_1위'] ? ' / 1위: ' + d['의뢰경로_1위'] : ''));
+  if (paths.length && !online) L.push('  → 온라인 유입 없음: 소개·연계 의존형. 검색에 걸리는 글이 첫 과제');
+  if (paths.some(p => /재의뢰/.test(p)) || d['흐름9'] === '아니오') L.push('  → 재의뢰 관리(갱신·연차료)가 가장 비용 적은 매출 원천인지 확인');
+
+  L.push('', '■ 채널 현황');
+  const none = CHANNELS.filter(c => d['채널_' + c] === '없음');
+  const have = CHANNELS.filter(c => d['채널_' + c] === '있음');
+  L.push('  - 있음: ' + (have.join(', ') || '없음') + ' / 없음: ' + (none.join(', ') || '없음'));
+  have.forEach(c => {
+    const o = d['채널주인_' + c] || '';
+    if (o && !/본인|대표/.test(o)) L.push('  → ' + c + ' 계정 주인 "' + o + '" — 대표님 명의로 소유권 확인 필요');
+  });
+
+  const h = parseFloat(d['홍보시간_주']);
+  L.push('', '■ 실행 여력');
+  if (isNaN(h)) L.push('  - 주간 홍보 시간 응답 없음 → 현장 확인');
+  else if (h < 2) L.push('  - 주 ' + h + '시간 → 블로그 주 1편 + 인스타는 블로그 재가공 정도가 현실적');
+  else L.push('  - 주 ' + h + '시간 → 블로그 주 1~2편 + 인스타 주 2회 + 월 1회 칼럼 가능 범위');
+  if (d['글담당']) L.push('  - 글 담당: ' + d['글담당']);
+
+  const worry = d['AI걱정'] || [];
+  L.push('', '■ AI 활용');
+  L.push('  - 사용 중: ' + ((d['사용AI'] || []).join(', ') || '응답 없음') + ' / 줄이고 싶은 일: ' + ((d['AI로줄일일'] || []).join(', ') || '응답 없음'));
+  if (worry.includes('기밀 유출')) L.push('  → 기밀 우려: 의뢰인·발명 정보는 AI에 넣지 않는 원칙부터 합의, 홍보 글쓰기 등 공개 업무로 시작');
+  if (d['광고규정']) L.push('  → 광고 규정 언급 있음: 블로그·칼럼 문구 전 규정 확인');
+
+  return L.join('\n');
+}
+/* ── 분석 끝 ── */
+
+const $ = s => document.querySelector(s);
+const f = $('#f');
+
+// 보기 목록을 체크박스/라디오로 펼침
+document.querySelectorAll('.opts[data-name]').forEach(box => {
+  const type = box.dataset.type || 'checkbox';
+  box.innerHTML = box.textContent.trim().split('|').map(v =>
+    `<label><input type="${type}" name="${box.dataset.name}" value="${v}">${v}</label>`).join('');
+});
+$('#flow').innerHTML = FLOW.map((q, i) => `
+  <div class="flow"><div class="t"><span class="st">${q[0]}</span>${i + 1}. ${q[1]}</div>
+  <div class="yn"><label><input type="radio" name="흐름${i + 1}" value="예">예</label>
+  <label><input type="radio" name="흐름${i + 1}" value="아니오">아니오</label></div></div>`).join('');
+$('#channels').innerHTML = CHANNELS.map(c => `
+  <div class="ch"><div class="top"><b>${c}</b><div class="opts">
+  <label><input type="radio" name="채널_${c}" value="있음">있음</label>
+  <label><input type="radio" name="채널_${c}" value="없음">없음</label></div></div>
+  <div class="more"><input type="text" name="채널주인_${c}" placeholder="계정 주인 (본인·직원·업체)">
+  <input type="text" name="채널메모_${c}" placeholder="마지막 게시 / 메모"></div></div>`).join('');
+
+function collect() {
+  const d = {}, fd = new FormData(f);
+  for (const k of new Set(fd.keys())) {
+    const v = fd.getAll(k).filter(x => x !== '');
+    if (!v.length) continue;
+    d[k] = f.querySelector(`[name="${CSS.escape(k)}"]`).type === 'checkbox' ? v : v[0];
+  }
+  return d;
+}
+function restore(d) {
+  Object.entries(d).forEach(([k, v]) => f.querySelectorAll(`[name="${CSS.escape(k)}"]`).forEach(el => {
+    if (el.type === 'checkbox' || el.type === 'radio') el.checked = [].concat(v).includes(el.value);
+    else el.value = v;
+  }));
+}
+function answersText(d) {
+  return Object.entries(d).map(([k, v]) => k + ': ' + [].concat(v).join(', ')).join('\n');
+}
+
+try { restore(JSON.parse(localStorage.getItem(KEY) || '{}')); } catch (e) {}
+f.addEventListener('input', () => {
+  try { localStorage.setItem(KEY, JSON.stringify(collect())); $('#saved').textContent = '자동 저장됨 ' + new Date().toLocaleTimeString('ko-KR'); } catch (e) {}
+});
+
+f.addEventListener('submit', async e => {
+  e.preventDefault();
+  const d = collect();
+  if (!Object.keys(d).length) { alert('한 칸 이상 적어 주세요.'); return; }
+  const btn = f.querySelector('.send');
+  btn.disabled = true; btn.textContent = '보내는 중…';
+  const payload = { client: 'JH특허법률사무소', round: '1회차 사전 점검표', sentAt: new Date().toISOString(),
+    answers: d, answersText: answersText(d), analysis: analyze(d) };
+  try {
+    if (!SCRIPT_URL) throw new Error('no url');
+    // shortcut: no-cors라 성공 여부를 못 읽음, 누락되면 '내용 복사'로 받기 — 확실한 확인이 필요하면 JSONP 방식으로 교체
+    await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(payload) });
+    f.hidden = true; $('#done').hidden = false; scrollTo(0, 0);
+  } catch (err) {
+    alert('전송이 되지 않았습니다. 적으신 내용은 이 기기에 저장되어 있으니, 아래 「내용 복사」를 눌러 카카오톡으로 보내 주세요.');
+    f.hidden = true; $('#done').hidden = false; $('#done h2').textContent = '전송이 되지 않았어요'; $('#done p').textContent = '아래 버튼으로 내용을 복사해 정경 컨설턴트(010-9727-6345)에게 카카오톡으로 보내 주세요.';
+  } finally { btn.disabled = false; btn.textContent = '컨설턴트에게 보내기'; }
+});
+$('#copy').onclick = async () => {
+  const t = 'JH특허법률사무소 1회차 사전 점검표\n\n' + answersText(collect());
+  try { await navigator.clipboard.writeText(t); alert('복사되었습니다. 카카오톡에 붙여 넣어 보내 주세요.'); }
+  catch (e) { prompt('아래 내용을 길게 눌러 복사해 주세요.', t); }
+};
+$('#edit').onclick = () => { $('#done').hidden = true; f.hidden = false; };
+</script>
+</body>
+</html>
