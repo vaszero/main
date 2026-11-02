@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>오푸스메디카 컨설팅 사전 설문지</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+:root{--bg:#F3F3EF;--card:#fff;--ink:#363636;--muted:#6b6b63;--green:#508172;--sage:#BABAA9;--line:#dcdcd2;
+  --font:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 var(--font)}
+main{max-width:760px;margin:0 auto;padding:20px 16px 80px}
+.who{text-align:right;color:var(--green);font-size:13px}
+.dots{display:flex;gap:6px;margin-bottom:8px}.dots i{width:10px;height:10px;border-radius:50%}
+h1{color:var(--green);font-size:24px;margin:4px 0 2px}
+.sub{color:var(--muted);font-size:14px;margin:0 0 12px}
+.intro{background:var(--card);border-left:4px solid var(--green);padding:12px 14px;border-radius:8px;font-size:15px}
+section{background:var(--card);border-radius:12px;padding:16px;margin:16px 0;border:1px solid var(--line)}
+h2{color:var(--green);font-size:18px;margin:0 0 10px}
+.q{margin:12px 0 4px;font-weight:500}
+.hint{color:var(--muted);font-size:14px;margin:0 0 8px}
+input[type=text],input[type=number],textarea{width:100%;font:inherit;padding:9px 10px;border:1px solid var(--sage);border-radius:8px;background:#fff;color:var(--ink)}
+textarea{min-height:64px;resize:vertical}
+.opts{display:flex;flex-wrap:wrap;gap:6px 14px}
+.opts label{display:flex;align-items:center;gap:6px;min-height:36px}
+input[type=checkbox],input[type=radio]{width:20px;height:20px;accent-color:var(--green)}
+.row{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.row label{display:flex;flex-direction:column;font-size:13px;color:var(--muted)}
+.flow{border-top:1px solid var(--line);padding:10px 0;display:flex;gap:10px;align-items:center;justify-content:space-between}
+.flow .t{flex:1}.flow .st{display:inline-block;font-size:12px;color:#fff;background:var(--green);border-radius:4px;padding:0 6px;margin-right:6px}
+.flow .yn{display:flex;gap:4px}
+.flow .yn label{border:1px solid var(--sage);border-radius:8px;padding:6px 10px;display:flex;gap:4px;align-items:center}
+.ch{border-top:1px solid var(--line);padding:10px 0}
+.ch .top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.ch .more{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}
+button{font:inherit;font-weight:700;border:0;border-radius:10px;padding:14px 18px;cursor:pointer}
+.send{background:var(--green);color:#fff;width:100%;font-size:18px}
+.ghost{background:transparent;color:var(--green);border:1px solid var(--green);margin-top:8px;width:100%}
+#done{text-align:center}
+.saved{color:var(--muted);font-size:13px;text-align:center;margin-top:8px}
+@media(max-width:560px){.row{grid-template-columns:repeat(3,1fr)}.flow{flex-direction:column;align-items:stretch}.ch .more{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+<div class="who">김미경 대표님 용</div>
+<div class="dots"><i style="background:#508172"></i><i style="background:#BABAA9"></i><i style="background:#D9A86C"></i><i style="background:#8FA9C4"></i></div>
+<p class="sub">「2026 소담스퀘어 강원 맞춤형 컨설팅」</p>
+<h1>홈페이지·홍보마케팅 컨설팅 사전 설문지</h1>
+<p class="sub">(주)오푸스메디카 · 1회차 2026. 11. 2.(월) 13:30 줌 · 2회차 2026. 11. 10.(화) 13:30 춘천 · 컨설턴트 정경(바스제로 컨설팅)</p>
+<div class="intro">컨설팅 시간을 실제 해결책을 만드는 데 쓰기 위해 회사 상황을 미리 여쭙는 설문입니다. 대부분 체크 문항이며 15~20분 정도 걸립니다. 모르시거나 아직 정하지 않은 항목은 비워 두셔도 됩니다.<br><br>
+연구 기밀, 미공개 특허·실험 결과, 계정 비밀번호는 적지 마시고 외부에 공개해도 되는 범위로만 답해 주세요. 응답은 이번 컨설팅 준비에만 쓰며, 홈페이지 등에 들어갈 문구는 반드시 회사 확인을 거칩니다. 적으신 내용은 이 기기에 자동 저장됩니다.</div>
+
+<form id="f">
+<section>
+<h2>기본 정보</h2>
+<p class="q">작성자 / 직위</p>
+<input type="text" name="작성자">
+<p class="q">당일 참석자 (성명 / 역할)</p>
+<input type="text" name="참석자">
+<p class="q">2회차 방문 주소: 춘천시 강원대학길 1 B동 215호</p>
+<div class="opts" data-name="주소확인" data-type="radio">맞음|변경</div>
+<input type="text" name="주소_변경" placeholder="변경된 주소">
+</section>
+
+<section>
+<h2>A. 홈페이지를 왜, 누구를 위해 만드나요</h2>
+<p class="q">Q1. 홈페이지를 만들려는 가장 큰 이유는 무엇인가요? (최대 2개)</p>
+<div class="opts" data-name="Q1_이유">기술이전·공동연구 파트너 발굴|투자자 대응|회사 신뢰도 확보|정부과제·지원사업 대응|채용|기타</div>
+<p class="q">Q2. 홈페이지를 꼭 봐야 하는 사람을 중요한 순서대로 1~3까지 적어 주세요.</p>
+<div id="rank"></div>
+<p class="q">Q3. 방문자가 홈페이지에서 무엇을 하기를 원하시나요? (최대 2개)</p>
+<div class="opts" data-name="Q3_행동">협력·기술이전 문의|미팅 요청|기술·회사소개서 요청|회사 소식 확인|채용 지원|기타</div>
+<p class="q">Q4. 홈페이지를 열고 6개월 뒤, 무엇이 달라지면 "성공"이라고 보시겠어요? (최대 2개)</p>
+<div class="opts" data-name="Q4_성공">적합한 파트너 문의가 옴|미팅·자료 요청이 늘어남|검색하면 회사가 나옴|투자자·기관 대응이 쉬워짐|기타</div>
+<p class="q">Q5. 언제까지, 어떤 일 때문에 홈페이지가 필요한가요?</p>
+<p class="hint">예: 12월 투자 미팅 전, 내년 6월 해외 파트너링 행사 전, 정부과제 신청 마감 전 등</p>
+<div class="opts" data-name="Q5_시기" data-type="radio">1개월 이내|1~3개월|3~6개월|미정</div>
+<input type="text" name="Q5_계기" placeholder="계기가 되는 일정">
+<p class="q">Q6. 홈페이지가 없어서 실제로 불편했던 일이 있었나요?</p>
+<p class="hint">예: 해외 담당자가 회사 사이트를 물어봤는데 보여줄 곳이 없었다</p>
+<textarea name="Q6_불편"></textarea>
+</section>
+
+<section>
+<h2>B. 회사와 기술 — 홈페이지에 담을 이야기</h2>
+<p class="q">Q7. EndocytoMax® 기술을 비전공자도 이해할 수 있게 한두 문장으로 설명해 주세요.</p>
+<p class="hint">예: "암세포가 약을 더 잘 삼키게 만들어, 같은 약으로 더 강하게 암을 공격하도록 돕는 기술"</p>
+<textarea name="Q7_기술설명"></textarea>
+<p class="q">Q8. 제약사 담당자에게 강조할 강점은 무엇인가요? (최대 2개)</p>
+<div class="opts" data-name="Q8_강점">세포 내재화 유도 기술 자체|다양한 표적·암종 확장성|연구 데이터·검증 결과|특허(IP)|공동연구 유연성|아직 정리 필요</div>
+<input type="text" name="Q8_ADC차이" placeholder="기존 ADC와 다른 점 한 줄">
+<p class="q">Q9. 대외적으로 말할 수 있는 개발 단계는 어디까지인가요? (해당 모두)</p>
+<div class="opts" data-name="Q9_단계">플랫폼 개념 검증|세포 실험(in vitro)|동물 실험(in vivo)|후보물질 발굴·최적화|공동연구 진행 중|대외 비공개</div>
+<p class="q">Q10. 외부에 공개 가능한 성과에 체크하고, 건수나 이름을 적어 주세요.</p>
+<div id="achv"></div>
+<p class="q">Q11. 협력 중인 병원·연구소·기업 이름을 홈페이지에 표기해도 되나요?</p>
+<div class="opts" data-name="Q11_협력표기" data-type="radio">표기 가능|상대 기관 동의 후 가능|표기 불가|해당 없음</div>
+<p class="q">Q12. 외부에 쓰면 안 되거나 법무·특허 검토가 필요한 표현이 있나요? 최종 문구는 누가 승인하나요?</p>
+<p class="hint">내용은 쓰지 마시고 범주만 적어 주세요. (예: 표적 이름, 실험 수치)</p>
+<input type="text" name="Q12_피할범주" placeholder="피해야 할 내용의 범주">
+<input type="text" name="Q12_승인자" placeholder="최종 승인자" style="margin-top:6px">
+</section>
+
+<section>
+<h2>C. 가지고 있는 자료와 채널</h2>
+<p class="q">Q13. 지금 가지고 있는 자료에 모두 체크해 주세요.</p>
+<div class="opts" data-name="Q13_자료">국문 회사소개서|영문 회사소개서|IR 자료|로고 원본(AI·PNG)|브랜드 색상·서체|기술 모식도·그림|대표·연구진 프로필 사진|연구실·사무실 사진|소개 영상|도메인|회사 도메인 이메일|없음</div>
+<input type="text" name="Q13_도메인주소" placeholder="도메인이 있다면 주소">
+<p class="q">Q14. 지금 운영 중인 대외 채널에 체크하고 주소를 적어 주세요.</p>
+<div class="opts" data-name="Q14_채널">링크드인(회사·대표)|블로그·SNS|보도자료·언론 기사|없음</div>
+<textarea name="Q14_주소" placeholder="채널 주소"></textarea>
+<p class="q">Q15. 앞으로 1년 안에 있는 중요한 대외 일정을 적어 주세요.</p>
+<p class="hint">학회·파트너링 행사(BIO USA, BIO-Europe, 바이오코리아, AACR 등), 투자 유치, 정부과제 신청 등</p>
+<textarea name="Q15_일정" placeholder="시기 - 일정"></textarea>
+<p class="q">Q16. 판판대로 「소담스퀘어 in 강원」에서 받았거나 받을 예정인 프로그램이 있나요?</p>
+<p class="hint">프로필 촬영·영상 결과물은 홈페이지 소재로 바로 쓸 수 있어 함께 계획하려 합니다.</p>
+<div class="opts" data-name="Q16_소담프로그램">프로필 촬영|영상 제작|사진 촬영|우리기업알리기 TV방송|1:1 컨설팅|없음·모름</div>
+<p class="q">Q17. 홈페이지 언어는 어떻게 생각하시나요?</p>
+<div class="opts" data-name="Q17_언어" data-type="radio">한국어만|영어만|국·영문 모두|자문 후 결정</div>
+<p class="q">Q18. 마음에 드는 홈페이지(바이오텍 또는 다른 업종)가 있다면 주소와 좋은 점을 적어 주세요.</p>
+<textarea name="Q18_참고사이트" placeholder="1. 주소 / 좋은 점&#10;2.&#10;3."></textarea>
+</section>
+
+<section>
+<h2>D. 제작·운영 여건</h2>
+<p class="q">Q19. 제작 방식과 예산은 어떻게 생각하시나요?</p>
+<div class="opts" data-name="Q19_방식" data-type="radio">직접 제작(아임웹·익스 등 빌더)|외주 제작|지원사업 활용|미정</div>
+<div class="opts" data-name="Q19_예산" data-type="radio" style="margin-top:6px">100만 원 미만|100~300만 원|300~700만 원|700만 원 이상|미정|공개 곤란</div>
+<p class="q">Q20. 홈페이지를 맡을 사람을 적어 주세요.</p>
+<input type="text" name="Q20_제작관리" placeholder="제작·관리 담당자">
+<input type="text" name="Q20_검수" placeholder="기술·영문 문구 검수자" style="margin-top:6px">
+<input type="text" name="Q20_문의응답" placeholder="홈페이지로 문의가 오면 답할 사람" style="margin-top:6px">
+<p class="q">소식 업데이트 가능 빈도</p>
+<div class="opts" data-name="Q20_업데이트" data-type="radio">월 1회 이상|분기 1회|반기 이하|어려움</div>
+</section>
+
+<section>
+<h2>E. 이번 컨설팅에 바라는 점</h2>
+<p class="q">Q21. 컨설팅이 끝났을 때 손에 쥐고 싶은 결과물을 골라 주세요. (복수 선택)</p>
+<div class="opts" data-name="Q21_결과물">홈페이지 메뉴 구성안|메인 화면 문구 초안|제작 방법·업체 선택 기준|오픈까지 일정표|준비할 콘텐츠 목록|영문 회사 소개 문구|링크드인 운영 방향|기타</div>
+<p class="q">Q22. 이번 컨설팅에서 가장 먼저 풀고 싶은 질문이나 고민 3가지를 적어 주세요.</p>
+<textarea name="Q22_고민" placeholder="①&#10;②&#10;③"></textarea>
+</section>
+
+<section>
+<h2>당일 준비해 주시면 좋은 자료</h2>
+<p class="hint">공개용 회사소개서(PDF) · 로고 원본 파일 · 참고 홈페이지 주소 · 보유 사진·영상 · 공개된 특허·논문 목록 · 도메인 구입처(계정명만)<br>민감한 연구 데이터나 미공개 특허 자료는 보내지 않으셔도 됩니다.</p>
+</section>
+
+<button type="submit" class="send">컨설턴트에게 보내기</button>
+<p class="saved" id="saved"></p>
+</form>
+
+<section id="done" hidden>
+<h2>잘 받았습니다</h2>
+<p>적어 주신 내용은 정경 컨설턴트에게 전달되었습니다. 바쁘신 중에 작성해 주셔서 감사합니다.</p>
+<button type="button" class="ghost" id="copy">혹시 몰라 내용 복사해 두기</button>
+<button type="button" class="ghost" id="edit">고쳐서 다시 보내기</button>
+</section>
+</main>
+
+<script>
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxA7kKubXKSmxT988hBgaJdXas3dMzXBkMDVS6Bggw6XsKB1P0n37XsnzkhN21ioo6t/exec';
+const KEY = 'opus-survey-1';
+const VISITORS = ['글로벌 제약사·바이오텍 BD·라이선싱 담당자', '국내 제약·바이오 기업', '투자자(VC, 액셀러레이터)', '공동연구 파트너(병원·연구소·대학)', '정부·공공기관, 지원사업 심사위원', '채용 후보자·기타'];
+const ACHV = ['특허 출원·등록', '논문·학회 발표', '정부과제 선정', '수상·인증', '투자 유치', '공동연구 협약(MOU 등)'];
+
+/* ── 분석 시작 (opus.test.js 가 이 블록을 그대로 실행) ── */
+function analyze(d) {
+  const L = [], arr = k => [].concat(d[k] || []), has = (k, v) => arr(k).includes(v);
+  const rank = VISITORS.map((v, i) => [v, parseInt(d['Q2_' + i], 10)]).filter(x => x[1] >= 1).sort((a, b) => a[1] - b[1]);
+  const top = rank[0] && rank[0][0];
+  const global = rank.slice(0, 2).some(x => /글로벌/.test(x[0]));
+
+  L.push('■ 목적·타깃');
+  L.push('  - 이유: ' + (arr('Q1_이유').join(', ') || '응답 없음'));
+  L.push('  - 방문자 순위: ' + (rank.map(x => x[1] + '. ' + x[0]).join(' / ') || '응답 없음'));
+  L.push('  - 원하는 행동: ' + (arr('Q3_행동').join(', ') || '응답 없음') + ' / 성공 기준: ' + (arr('Q4_성공').join(', ') || '응답 없음'));
+  if (arr('Q1_이유').length > 2 || arr('Q3_행동').length > 2) L.push('  → 목적이 넓음: 1회차에서 메인 화면이 겨냥할 1순위 방문자 하나로 좁히기');
+
+  L.push('', '■ 언어·자료 정합성');
+  if (global && !['영어만', '국·영문 모두'].includes(d['Q17_언어'])) L.push('  → 해외 BD가 상위 타깃인데 영문 계획 ' + (d['Q17_언어'] || '미응답') + ': 영문 페이지 필요성 짚기');
+  if (global && !has('Q13_자료', '영문 회사소개서')) L.push('  → 해외 타깃인데 영문 회사소개서 없음: 영문 소개 문구가 선행 과제');
+  if (!has('Q13_자료', '로고 원본(AI·PNG)')) L.push('  → 로고 원본 없음/미확인: 제작 전 확보 필요');
+  if (!has('Q13_자료', '도메인')) L.push('  → 도메인 미보유/미확인: 도메인·회사 메일 먼저');
+  if (has('Q14_채널', '없음') || !arr('Q14_채널').length) L.push('  → 대외 채널 없음: 홈페이지와 함께 링크드인 회사 페이지 최소 개설 검토');
+  if (global && !has('Q14_채널', '링크드인(회사·대표)')) L.push('  → 해외 BD 대상인데 링크드인 없음: BD 담당자 1차 확인 채널');
+
+  L.push('', '■ 공개 범위·검토');
+  if (has('Q9_단계', '대외 비공개')) L.push('  → 개발 단계 대외 비공개: 기술 설명은 원리·플랫폼 수준으로만, 데이터 수치 없이');
+  if (d['Q11_협력표기'] === '상대 기관 동의 후 가능') L.push('  → 협력기관 표기는 동의 받은 곳부터, 동의 목록 작성');
+  if (!d['Q12_승인자']) L.push('  → 최종 문구 승인자 미정: 1회차에 반드시 지정');
+  if (d['Q12_피할범주']) L.push('  - 피할 범주: ' + d['Q12_피할범주']);
+  if (!d['Q7_기술설명']) L.push('  → 한 줄 기술 설명 없음: 1회차에 함께 만들 최우선 문장');
+  L.push('  - 공개 가능 성과: ' + (ACHV.filter((a, i) => d['Q10_' + i]).map((a, i) => a).join(', ') || '응답 없음'));
+
+  L.push('', '■ 일정·제작 여건');
+  L.push('  - 필요 시기: ' + (d['Q5_시기'] || '응답 없음') + (d['Q5_계기'] ? ' (' + d['Q5_계기'] + ')' : ''));
+  if (d['Q5_시기'] === '1개월 이내' && d['Q19_방식'] === '외주 제작') L.push('  → 1개월 이내 + 외주: 일정 위험, 1페이지 소개 사이트 먼저 여는 안 검토');
+  L.push('  - 방식: ' + (d['Q19_방식'] || '응답 없음') + ' / 예산: ' + (d['Q19_예산'] || '응답 없음'));
+  if (d['Q19_방식'] === '외주 제작' && d['Q19_예산'] === '100만 원 미만') L.push('  → 외주 + 100만 원 미만: 기대 수준과 예산 차이 확인');
+  if (!d['Q20_문의응답']) L.push('  → 문의 응답 담당자 미정: 문의 버튼보다 먼저 정할 것');
+  if (['반기 이하', '어려움'].includes(d['Q20_업데이트'])) L.push('  → 업데이트 여력 낮음: 소식 메뉴는 빼거나 최소화');
+  if (arr('Q16_소담프로그램').some(p => /촬영|영상/.test(p))) L.push('  → 소담 촬영·영상 프로그램 연계 가능: 홈페이지 소재로 일정 맞추기');
+
+  L.push('', '■ 대표님이 원하는 결과물');
+  L.push('  - ' + (arr('Q21_결과물').join(', ') || '응답 없음'));
+  if (d['Q22_고민']) L.push('  - 먼저 풀고 싶은 고민: ' + d['Q22_고민'].replace(/\n/g, ' / '));
+  return L.join('\n');
+}
+/* ── 분석 끝 ── */
+
+const $ = s => document.querySelector(s);
+const f = $('#f');
+
+document.querySelectorAll('.opts[data-name]').forEach(box => {
+  const type = box.dataset.type || 'checkbox';
+  box.innerHTML = box.textContent.trim().split('|').map(v =>
+    `<label><input type="${type}" name="${box.dataset.name}" value="${v}">${v}</label>`).join('');
+});
+$('#rank').innerHTML = VISITORS.map((v, i) => `
+  <div class="flow"><div class="t">${v}</div>
+  <div class="yn"><label>순위 <input type="number" name="Q2_${i}" min="1" max="3" inputmode="numeric" style="width:64px"></label></div></div>`).join('');
+$('#achv').innerHTML = ACHV.map((a, i) => `
+  <div class="ch"><b>${a}</b><input type="text" name="Q10_${i}" placeholder="건수 · 공개 가능한 이름" style="margin-top:6px"></div>`).join('');
+
+function collect() {
+  const d = {}, fd = new FormData(f);
+  for (const k of new Set(fd.keys())) {
+    const v = fd.getAll(k).filter(x => x !== '');
+    if (!v.length) continue;
+    d[k] = f.querySelector(`[name="${CSS.escape(k)}"]`).type === 'checkbox' ? v : v[0];
+  }
+  return d;
+}
+function restore(d) {
+  Object.entries(d).forEach(([k, v]) => f.querySelectorAll(`[name="${CSS.escape(k)}"]`).forEach(el => {
+    if (el.type === 'checkbox' || el.type === 'radio') el.checked = [].concat(v).includes(el.value);
+    else el.value = v;
+  }));
+}
+// 시트·메일에서 읽기 쉽게 내부 키를 질문 이름으로 바꿔 적음
+function label(k) {
+  let m = k.match(/^Q2_(\d)$/); if (m) return 'Q2 순위 - ' + VISITORS[m[1]];
+  m = k.match(/^Q10_(\d)$/); if (m) return 'Q10 성과 - ' + ACHV[m[1]];
+  return k.replace(/_/g, ' ');
+}
+function answersText(d) {
+  return Object.entries(d).map(([k, v]) => label(k) + ': ' + [].concat(v).join(', ')).join('\n');
+}
+
+try { restore(JSON.parse(localStorage.getItem(KEY) || '{}')); } catch (e) {}
+f.addEventListener('input', () => {
+  try { localStorage.setItem(KEY, JSON.stringify(collect())); $('#saved').textContent = '자동 저장됨 ' + new Date().toLocaleTimeString('ko-KR'); } catch (e) {}
+});
+
+f.addEventListener('submit', async e => {
+  e.preventDefault();
+  const d = collect();
+  if (!Object.keys(d).length) { alert('한 칸 이상 적어 주세요.'); return; }
+  const btn = f.querySelector('.send');
+  btn.disabled = true; btn.textContent = '보내는 중…';
+  const payload = { client: '오푸스메디카', round: '사전 설문지', sentAt: new Date().toISOString(),
+    answers: d, answersText: answersText(d), analysis: analyze(d) };
+  try {
+    // shortcut: no-cors라 성공 여부를 못 읽음, 누락되면 '내용 복사'로 받기 — 확실한 확인이 필요하면 JSONP 방식으로 교체
+    await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(payload) });
+    f.hidden = true; $('#done').hidden = false; scrollTo(0, 0);
+  } catch (err) {
+    alert('전송이 되지 않았습니다. 적으신 내용은 이 기기에 저장되어 있으니, 아래 「내용 복사」를 눌러 보내 주세요.');
+    f.hidden = true; $('#done').hidden = false; $('#done h2').textContent = '전송이 되지 않았어요'; $('#done p').textContent = '아래 버튼으로 내용을 복사해 정경 컨설턴트(010-9727-6345)에게 문자나 카카오톡으로 보내 주세요.';
+  } finally { btn.disabled = false; btn.textContent = '컨설턴트에게 보내기'; }
+});
+$('#copy').onclick = async () => {
+  const t = '오푸스메디카 컨설팅 사전 설문지\n\n' + answersText(collect());
+  try { await navigator.clipboard.writeText(t); alert('복사되었습니다. 문자나 카카오톡에 붙여 넣어 보내 주세요.'); }
+  catch (e) { prompt('아래 내용을 길게 눌러 복사해 주세요.', t); }
+};
+$('#edit').onclick = () => { $('#done').hidden = true; f.hidden = false; };
+</script>
+</body>
+</html>
