@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>여성사업가모임 11월 독서모임 참석 신청</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;700&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+:root{--bg:#2b2b2b;--gold:#d9b878;--ink:#f6f1e7;--muted:#bdb6a8;--line:#5a5242}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 "Noto Sans KR","Apple SD Gothic Neo",sans-serif}
+main{max-width:520px;margin:0 auto;padding:28px 18px 60px}
+.card{border:1px solid var(--gold);border-radius:6px;padding:26px 20px}
+.top{color:var(--gold);text-align:center;letter-spacing:.3em;font-size:15px;margin:0}
+h1{font-family:"Noto Serif KR",serif;text-align:center;font-size:40px;margin:6px 0 4px}
+.info{text-align:center;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:12px 0;margin:14px 0 20px}
+.info b{font-family:"Noto Serif KR",serif;font-size:24px;display:block}
+.info .g{color:var(--gold)}
+label{display:block;margin:14px 0 6px;font-weight:500}
+input[type=text],input[type=tel]{width:100%;font:inherit;padding:12px;border:1px solid var(--line);border-radius:8px;background:#1f1f1f;color:var(--ink)}
+input:focus{outline:2px solid var(--gold);border-color:var(--gold)}
+.hint{color:var(--muted);font-size:14px;margin:4px 0 0}
+.agree{display:flex;gap:8px;align-items:flex-start;font-weight:400;font-size:14px;color:var(--muted);margin-top:18px}
+.agree input{width:20px;height:20px;accent-color:var(--gold);flex:none;margin-top:2px}
+button{font:inherit;font-weight:700;width:100%;margin-top:20px;padding:15px;border:0;border-radius:10px;background:var(--gold);color:#2b2b2b;font-size:18px;cursor:pointer}
+button:disabled{opacity:.6}
+#done{text-align:center}
+#done h2{font-family:"Noto Serif KR",serif;color:var(--gold)}
+</style>
+</head>
+<body>
+<main>
+<div class="card">
+  <p class="top">여성사업가모임</p>
+  <h1>독서 모임</h1>
+  <div class="info">
+    <b>11월 26일(목)</b>오전 9시 ~ 11시<br>
+    바스제로 컨설팅 · 입춘로 45 A동 609호<br>
+    <span class="g">회비 10,000원 · 『트렌드 코리아 2027』</span>
+  </div>
+
+  <form id="f">
+    <label for="name">이름</label>
+    <input id="name" name="name" type="text" required maxlength="20" autocomplete="name">
+
+    <label for="phone">연락처</label>
+    <input id="phone" name="phone" type="tel" required maxlength="13" placeholder="010-0000-0000"
+           pattern="0\d{1,2}-?\d{3,4}-?\d{4}" autocomplete="tel">
+
+    <label for="drink">원하는 음료</label>
+    <input id="drink" name="drink" type="text" required maxlength="40" placeholder="예) 아이스 아메리카노">
+    <p class="hint">드시고 싶은 음료를 편하게 적어 주세요.</p>
+
+    <label class="agree"><input type="checkbox" required> 이름·연락처는 이번 모임 안내 연락에만 쓰고, 모임이 끝나면 지웁니다. 동의합니다.</label>
+
+    <button id="send">참석 신청하기</button>
+  </form>
+
+  <div id="done" hidden>
+    <h2>신청 완료</h2>
+    <p>11월 26일(목) 오전 9시에 뵙겠습니다.<br>책은 안 읽고 오셔도 괜찮아요 ^^</p>
+  </div>
+</div>
+</main>
+<script>
+// 이미 배포된 바스제로 점검표 수신기(jh/apps-script.gs)를 재사용 — 구글시트에 '독서모임 11월' 탭으로 쌓이고 메일 알림
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxA7kKubXKSmxT988hBgaJdXas3dMzXBkMDVS6Bggw6XsKB1P0n37XsnzkhN21ioo6t/exec';
+const f = document.getElementById('f');
+f.onsubmit = async e => {
+  e.preventDefault();
+  const d = Object.fromEntries(new FormData(f));
+  const btn = document.getElementById('send');
+  btn.disabled = true; btn.textContent = '보내는 중…';
+  const payload = {
+    client: '독서모임 11월', round: '참석신청', analysis: '',
+    answersText: `이름: ${d.name.trim()}\n연락처: ${d.phone.trim()}\n음료: ${d.drink.trim()}`,
+    answers: { 이름: d.name.trim(), 연락처: d.phone.trim(), 음료: d.drink.trim() },
+  };
+  try {
+    // shortcut: no-cors라 저장 성공 여부를 못 읽음, 네트워크 오류만 잡힘 — 확인이 꼭 필요하면 JSONP로 교체
+    await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(payload) });
+    f.hidden = true; document.getElementById('done').hidden = false;
+  } catch (err) {
+    alert('전송이 안 됐어요. 인터넷 연결을 확인하고 다시 눌러 주세요.');
+    btn.disabled = false; btn.textContent = '참석 신청하기';
+  }
+};
+</script>
+</body>
+</html>
