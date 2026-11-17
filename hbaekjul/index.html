@@ -44,7 +44,6 @@ textarea{min-height:64px}
 .todo{display:grid;grid-template-columns:2fr 1fr 1fr;gap:8px}
 .btn{display:block;width:100%;min-height:52px;font-size:18px;font-weight:700;border:0;border-radius:12px;background:#E2702A;color:#fff;margin-top:12px}
 .muted{color:#5A574E;font-size:15px}
-#score{font-weight:700;color:#A9481A}
 </style>
 </head>
 <body>
@@ -53,7 +52,7 @@ textarea{min-height:64px}
 <p>2026년 11월 18일(수) · 바스제로 컨설팅 경영컨설턴트 정경</p>
 </header>
 <nav aria-label="목차">
-<a href="#flow">오늘 순서</a><a href="#check">손님 흐름 점검</a><a href="#area">상권</a><a href="#rival">주변 김밥집</a><a href="#online">온라인 점검</a><a href="#ask">여쭤볼 것</a><a href="#way">방향 제안</a><a href="#today">오늘 정한 것</a>
+<a href="#flow">오늘 순서</a><a href="#area">상권</a><a href="#rival">주변 김밥집</a><a href="#online">온라인 점검</a><a href="#way">방향 제안</a><a href="#today">오늘 정한 것</a><a href="https://vaszero.github.io/main/hbaekjul/survey/">사전 설문지</a>
 </nav>
 <main>
 
@@ -71,12 +70,6 @@ textarea{min-height:64px}
 </table></div>
 </section>
 
-<section id="check">
-<h2>손님 흐름 점검표</h2>
-<p class="muted">예/아니오로 눌러 주세요. '아니오'가 나온 곳이 오늘 같이 손볼 곳입니다.</p>
-<div id="checklist"></div>
-<p>예 <span id="score">0</span> / 10</p>
-</section>
 
 <section id="area">
 <h2>홍천 상권 한눈에</h2>
@@ -127,11 +120,6 @@ textarea{min-height:64px}
 <p>상호는 'H-백줄김밥', 손님이 치는 이름은 '에이치백줄김밥'. 네이버·구글·당근에 똑같이 씁니다.</p>
 </section>
 
-<section id="ask">
-<h2>사장님께 여쭤볼 것</h2>
-<p class="muted">숫자는 대략이면 충분합니다. 말씀하기 어려우시면 종이에 적어 주셔도 됩니다.</p>
-<div id="asks"></div>
-</section>
 
 <section id="way">
 <h2>이렇게 가 보면 어떨까요</h2>
@@ -183,25 +171,22 @@ textarea{min-height:64px}
 </main>
 
 <script>
-const CHECKS=["네이버에서 '홍천 김밥'을 치면 우리 가게가 보인다","네이버 플레이스 대표사진 첫 장에 김밥 단면이 보인다","영업시간·일요일 휴무가 네이버·당근에 똑같이 적혀 있다","메뉴와 가격이 네이버·당근에 모두 올라가 있다","소개글에 '아침 7시'와 '단체 예약'이 적혀 있다","리뷰에 답글을 달고 있다","단골이 다시 오게 하는 방법이 있다","가게 앞에서 간판과 메뉴가 잘 보인다","잘 팔리는 김밥과 많이 남는 김밥을 알고 있다","단체 주문 받는 방법이 정해져 있다"];
 const PLACE=["대표사진 첫 3장","별점·리뷰 수","소개글","메뉴·가격","영업시간·휴무","리뷰 키워드","소식"];
-const ASKS=["하루 평균 몇 줄 정도 파시나요?","가장 많이 팔리는 김밥 3가지는?","가장 많이 남는 김밥 3가지는?","손님이 가장 많은 시간대는?","주로 오시는 손님은 어떤 분들인가요?","손님들은 우리 가게를 어떻게 알고 오시나요?","단체 주문 경험과 하루 최대 가능한 수량은?","혼자 일하시나요? 하루 몇 시간 일하시나요?","홍보에 하루 몇 분 쓰실 수 있나요?","마라톤 이야기를 가게 소개에 써도 괜찮으신가요?","6개월 뒤 가게가 어떻게 되어 있으면 좋겠나요?"];
 let S={};try{S=JSON.parse(localStorage.getItem('hbaekjul1')||'{}')}catch(e){}
 const save=()=>{try{localStorage.setItem('hbaekjul1',JSON.stringify(S))}catch(e){}};
 const esc=t=>t.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function yn(id,list,prefix){document.getElementById(id).innerHTML=list.map((q,i)=>`<div class="q"><span>${i+1}. ${esc(q)}</span><div class="yn" role="group" aria-label="${esc(q)}"><button type="button" data-y="${prefix}${i}" data-v="예">예</button><button type="button" data-y="${prefix}${i}" data-v="아니오">아니오</button></div></div>`).join('')}
-yn('checklist',CHECKS,'c');yn('placecheck',PLACE.map(p=>p+' 확인 / 정리됨'),'p');
-document.getElementById('asks').innerHTML=ASKS.map((q,i)=>`<div class="q"><label>${i+1}. ${esc(q)}<textarea data-k="a${i}"></textarea></label></div>`).join('');
+yn('placecheck',PLACE.map(p=>p+' 확인 / 정리됨'),'p');
 document.getElementById('todos').innerHTML=[1,2,3].map(n=>`<div class="todo" style="margin-bottom:8px"><input type="text" data-k="t${n}w" aria-label="${n}번 할 일" placeholder="${n}. 할 일"><input type="text" data-k="t${n}d" aria-label="${n}번 언제까지" placeholder="언제까지"><input type="text" data-k="t${n}p" aria-label="${n}번 누가" placeholder="누가"></div>`).join('');
-function paint(){document.querySelectorAll('[data-y]').forEach(b=>b.setAttribute('aria-pressed',S[b.dataset.y]===b.dataset.v));document.getElementById('score').textContent=CHECKS.filter((_,i)=>S['c'+i]==='예').length}
+function paint(){document.querySelectorAll('[data-y]').forEach(b=>b.setAttribute('aria-pressed',S[b.dataset.y]===b.dataset.v))}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-y]');if(!b)return;S[b.dataset.y]=S[b.dataset.y]===b.dataset.v?'':b.dataset.v;save();paint()});
 document.querySelectorAll('[data-k]').forEach(el=>{el.value=S[el.dataset.k]||'';el.addEventListener('input',()=>{S[el.dataset.k]=el.value;save()})});
 paint();
 const secs=[...document.querySelectorAll('main section')];
 function tab(){const id=secs.some(s=>s.id===location.hash.slice(1))?location.hash.slice(1):secs[0].id;secs.forEach(s=>s.hidden=s.id!==id);document.querySelectorAll('nav a').forEach(a=>a.setAttribute('aria-current',a.getAttribute('href')==='#'+id?'page':'false'));window.scrollTo(0,0)}
 addEventListener('hashchange',tab);tab();
-function report(s){const L=['H-백줄김밥 경영 진단 1회차 (2026.11.18)','','[손님 흐름 점검표]'];CHECKS.forEach((q,i)=>L.push(`${i+1}. ${q} - ${s['c'+i]||'미체크'}`));L.push('','[네이버 플레이스]');PLACE.forEach((q,i)=>L.push(`- ${q}: ${s['p'+i]||'미체크'}`));L.push('','[사장님 답변]');ASKS.forEach((q,i)=>L.push(`${i+1}. ${q}\n   ${s['a'+i]||''}`));L.push('','[오늘 정한 것]');[1,2,3].forEach(n=>L.push(`${n}. ${s['t'+n+'w']||''} / ${s['t'+n+'d']||''} / ${s['t'+n+'p']||''}`));L.push('','[오늘 고친 것]',s.fixed||'','','[다음 만남] '+(s.next||''),'','[메모]',s.memo||'');return L.join('\n')}
-console.assert(report({c0:'예',t1w:'구글 등록'}).includes('1. 네이버에서 \'홍천 김밥\'을 치면 우리 가게가 보인다 - 예')&&report({t1w:'구글 등록'}).includes('1. 구글 등록'),'report self-check');
+function report(s){const L=['H-백줄김밥 경영 진단 1회차 (2026.11.18)','','[네이버 플레이스]'];PLACE.forEach((q,i)=>L.push(`- ${q}: ${s['p'+i]||'미체크'}`));L.push('','[오늘 정한 것]');[1,2,3].forEach(n=>L.push(`${n}. ${s['t'+n+'w']||''} / ${s['t'+n+'d']||''} / ${s['t'+n+'p']||''}`));L.push('','[오늘 고친 것]',s.fixed||'','','[다음 만남] '+(s.next||''),'','[메모]',s.memo||'');return L.join('\n')}
+console.assert(report({p0:'예',t1w:'구글 등록'}).includes('- 대표사진 첫 3장: 예')&&report({t1w:'구글 등록'}).includes('1. 구글 등록'),'report self-check');
 document.getElementById('copy').addEventListener('click',async()=>{const t=report(S);try{await navigator.clipboard.writeText(t)}catch(e){const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();document.execCommand('copy');a.remove()}document.getElementById('copied').hidden=false});
 </script>
 </body>

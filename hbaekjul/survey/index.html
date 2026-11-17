@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>H-백줄김밥 경영 컨설팅 사전 설문지</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+:root{--bg:#F3F3EF;--card:#fff;--ink:#363636;--muted:#6b6b63;--green:#508172;--sage:#BABAA9;--line:#dcdcd2;
+  --font:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 var(--font)}
+main{max-width:760px;margin:0 auto;padding:20px 16px 80px}
+.who{text-align:right;color:var(--green);font-size:13px}
+.dots{display:flex;gap:6px;margin-bottom:8px}.dots i{width:10px;height:10px;border-radius:50%}
+h1{color:var(--green);font-size:24px;margin:4px 0 2px}
+.sub{color:var(--muted);font-size:14px;margin:0 0 12px}
+.intro{background:var(--card);border-left:4px solid var(--green);padding:12px 14px;border-radius:8px;font-size:15px}
+section{background:var(--card);border-radius:12px;padding:16px;margin:16px 0;border:1px solid var(--line)}
+h2{color:var(--green);font-size:18px;margin:0 0 10px}
+.q{margin:12px 0 4px;font-weight:500}
+.hint{color:var(--muted);font-size:14px;margin:0 0 8px}
+input[type=text],input[type=number],textarea{width:100%;font:inherit;padding:9px 10px;border:1px solid var(--sage);border-radius:8px;background:#fff;color:var(--ink)}
+textarea{min-height:64px;resize:vertical}
+.opts{display:flex;flex-wrap:wrap;gap:6px 14px}
+.opts label{display:flex;align-items:center;gap:6px;min-height:36px}
+input[type=checkbox],input[type=radio]{width:20px;height:20px;accent-color:var(--green)}
+.row{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.row label{display:flex;flex-direction:column;font-size:13px;color:var(--muted)}
+.flow{border-top:1px solid var(--line);padding:10px 0;display:flex;gap:10px;align-items:center;justify-content:space-between}
+.flow .t{flex:1}.flow .st{display:inline-block;font-size:12px;color:#fff;background:var(--green);border-radius:4px;padding:0 6px;margin-right:6px}
+.flow .yn{display:flex;gap:4px}
+.flow .yn label{border:1px solid var(--sage);border-radius:8px;padding:6px 10px;display:flex;gap:4px;align-items:center}
+.ch{border-top:1px solid var(--line);padding:10px 0}
+.ch .top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.ch .more{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}
+button{font:inherit;font-weight:700;border:0;border-radius:10px;padding:14px 18px;cursor:pointer}
+.send{background:var(--green);color:#fff;width:100%;font-size:18px}
+.ghost{background:transparent;color:var(--green);border:1px solid var(--green);margin-top:8px;width:100%}
+#done{text-align:center}
+.saved{color:var(--muted);font-size:13px;text-align:center;margin-top:8px}
+@media(max-width:560px){.row{grid-template-columns:repeat(3,1fr)}.flow{flex-direction:column;align-items:stretch}.ch .more{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+<div class="who">H-백줄김밥 사장님 용</div>
+<div class="dots"><i style="background:#508172"></i><i style="background:#BABAA9"></i><i style="background:#D9A86C"></i><i style="background:#8FA9C4"></i></div>
+<p class="sub">바스제로 컨설팅 경영 컨설팅</p>
+<h1>H-백줄김밥 사전 설문지</h1>
+<p class="sub">1회차 2026. 11. 18.(수) · 컨설턴트 정경(바스제로 컨설팅)</p>
+<div class="intro">사장님 가게를 제대로 알고, 정말 필요한 도움을 드리고 싶어서 여쭙는 설문입니다. 사장님이 어떤 마음으로 가게를 시작하셨는지, 요즘 무엇이 가장 힘드신지, 앞으로 가게가 어떻게 되었으면 하시는지를 먼저 듣고 싶습니다.<br><br>
+정답이 있는 질문이 아니니 떠오르는 대로 편하게 적어 주세요. 숫자는 대략이면 충분하고, 모르시거나 적기 어려운 칸은 비워 두셨다가 만나서 말씀해 주셔도 됩니다. 적으신 내용은 이 기기에 자동 저장되고, 이번 컨설팅 준비에만 씁니다. 20~30분 정도 걸립니다.</div>
+
+<form id="f">
+<section>
+<h2>1. 사장님과 가게 이야기</h2>
+<p class="q">김밥집을 시작하게 된 계기가 궁금합니다</p>
+<textarea name="시작계기"></textarea>
+<p class="q">'H-백줄김밥'이라는 이름에 담은 뜻 (H, 백 줄의 의미)</p>
+<input type="text" name="이름뜻">
+<p class="q">우리 가게 김밥에서 사장님이 가장 자부심을 갖는 것</p>
+<p class="hint">재료, 만드는 방법, 맛, 정성, 위생 등 무엇이든 좋습니다.</p>
+<textarea name="자부심"></textarea>
+<p class="q">장사하면서 가장 기뻤던 순간</p>
+<textarea name="기뻤던순간"></textarea>
+<p class="q">장사하면서 가장 힘들었던 순간</p>
+<textarea name="힘들었던순간"></textarea>
+<p class="q">가게 이야기에 함께 담고 싶은 사장님만의 이야기가 있나요?</p>
+<p class="hint">살아온 이야기, 운동·취미, 가족, 김밥에 얽힌 추억 등. 소개에 써도 될지는 따로 여쭙겠습니다.</p>
+<textarea name="사장님이야기"></textarea>
+</section>
+
+<section>
+<h2>2. 요즘 가장 큰 고민</h2>
+<p class="q">요즘 걱정되는 것에 모두 체크해 주세요</p>
+<div class="opts" data-name="고민">손님이 적다|매출은 있는데 남는 게 적다|재료비가 너무 올랐다|몸이 힘들다·일손이 부족하다|홍보를 어떻게 해야 할지 모르겠다|단골이 잘 안 생긴다|주변에 김밥집이 많다|메뉴 구성이 고민이다|가격을 올려야 할지 고민이다|시간대별로 손님 차이가 크다|앞으로 어떻게 해야 할지 모르겠다|기타</div>
+<p class="q">그중 가장 큰 고민 하나를 자세히 적어 주세요</p>
+<textarea name="가장큰고민" placeholder="언제부터, 어떤 상황에서, 무엇이 가장 답답하신지"></textarea>
+<p class="q">누구에게도 쉽게 말하지 못한 고민이 있다면 편하게 적어 주세요</p>
+<textarea name="말못한고민"></textarea>
+<p class="q">이번 컨설팅에서 가장 받고 싶은 도움 (2가지까지)</p>
+<div class="opts" data-name="받고싶은도움">손님 늘리기 (네이버·당근·인스타 홍보)|남는 장사 만들기 (원가·가격·메뉴)|일 줄이기 (준비 과정·동선·AI 활용)|새 상품 만들기 (도시락·단체 주문)|가게 이야기·브랜드 정리|지원사업·정책자금 알아보기|기타</div>
+<p class="q">컨설턴트에게 꼭 물어보고 싶은 것</p>
+<textarea name="묻고싶은것"></textarea>
+</section>
+
+<section>
+<h2>3. 가게 운영</h2>
+<p class="q">함께 일하는 분</p>
+<div class="opts" data-name="일하는사람" data-type="radio">사장님 혼자|가족과 함께|직원과 함께</div>
+<input type="text" name="일하는사람_메모" placeholder="몇 분이, 몇 시부터 몇 시까지 일하시는지">
+<p class="q">사장님 하루 일하는 시간 (준비·장보기 포함)</p>
+<div class="row">
+  <label>출근 시각<input type="text" name="출근시각" placeholder="예: 5시"></label>
+  <label>퇴근 시각<input type="text" name="퇴근시각" placeholder="예: 16시"></label>
+  <label>쉬는 날<input type="text" name="쉬는날" placeholder="예: 일요일"></label>
+</div>
+<p class="q">하루에 김밥을 대략 몇 줄 마시나요?</p>
+<div class="row">
+  <label>평일<input type="number" name="하루줄수_평일" min="0" inputmode="numeric"></label>
+  <label>토요일<input type="number" name="하루줄수_토" min="0" inputmode="numeric"></label>
+  <label>하루 최대 가능<input type="number" name="하루최대줄수" min="0" inputmode="numeric"></label>
+</div>
+<p class="q">손님이 가장 많은 시간대 (모두)</p>
+<div class="opts" data-name="바쁜시간">7~9시|9~11시|11~13시|13~15시</div>
+<p class="q">매장에서 드시는 손님과 포장 손님 비율</p>
+<div class="opts" data-name="매장포장" data-type="radio">거의 포장|포장이 더 많음|반반|매장이 더 많음</div>
+<p class="q">주로 오시는 손님 (모두)</p>
+<div class="opts" data-name="주손님">출근하는 직장인|학부모·주부|학생|어르신|운동·산책하는 분|관공서·기관 직원|군인 가족|관광객·외지 손님|기타</div>
+<p class="q">단골손님 비율은 어느 정도인가요?</p>
+<div class="opts" data-name="단골비율" data-type="radio">거의 단골|절반 정도|단골이 적은 편|잘 모르겠다</div>
+<p class="q">가게 운영에서 시간이 가장 많이 드는 일</p>
+<input type="text" name="시간드는일" placeholder="예: 재료 손질, 장보기, 설거지">
+</section>
+
+<section>
+<h2>4. 메뉴와 남는 장사</h2>
+<p class="q">가장 많이 팔리는 김밥 3가지</p>
+<input type="text" name="잘팔리는3">
+<p class="q">팔면 가장 많이 남는 김밥 3가지</p>
+<input type="text" name="많이남는3">
+<p class="q">손이 많이 가는데 덜 남는 메뉴가 있나요?</p>
+<input type="text" name="손많이덜남는">
+<p class="q">재료비 중 가장 부담이 큰 재료</p>
+<input type="text" name="부담재료">
+<p class="q">재료는 주로 어디서 사시나요? (모두)</p>
+<div class="opts" data-name="재료구입처">동네 마트|시장|식자재 도매|온라인|직접 기르거나 받아 옴|기타</div>
+<p class="q">하루 마감 때 남아서 버리는 재료</p>
+<div class="opts" data-name="폐기" data-type="radio">거의 없음|조금 있음|꽤 많음</div>
+<p class="q">개업 후 가격을 올린 적이 있나요? 앞으로 계획은요?</p>
+<input type="text" name="가격조정">
+<p class="q">한 달 매출은 대략 어느 정도인가요? (선택)</p>
+<div class="opts" data-name="월매출" data-type="radio">300만 원 미만|300~500만 원|500~800만 원|800~1,200만 원|1,200만 원 이상|말하기 어려움</div>
+<p class="q">매달 꼭 나가는 돈 중 가장 큰 것 (선택)</p>
+<input type="text" name="고정비" placeholder="예: 임대료, 인건비, 대출 이자">
+<p class="q">매출이 지금보다 20% 늘면 남는 돈도 그만큼 늘 것 같으신가요?</p>
+<div class="opts" data-name="매출20" data-type="radio">늘 것 같다|조금만 늘 것 같다|일만 늘고 남는 건 비슷할 것 같다|모르겠다</div>
+</section>
+
+<section>
+<h2>5. 손님은 어떻게 알고 오시나요</h2>
+<p class="q">손님들이 우리 가게를 알게 되는 경로 (모두)</p>
+<div class="opts" data-name="유입경로">지나가다 보고|아는 사람 소개|당근|네이버 검색·지도|블로그 후기|인스타그램|단체 주문 연결|잘 모르겠다|기타</div>
+<p class="q">그중 가장 많은 경로 하나</p>
+<input type="text" name="유입경로_1위">
+<h2 style="margin-top:18px">손님 흐름 점검</h2>
+<p class="hint">손님이 가게를 찾고, 고르고, 오시고, 다시 오시기까지 10가지입니다. '아니오'가 많은 곳부터 함께 손보겠습니다.</p>
+<div id="flow"></div>
+</section>
+
+<section>
+<h2>6. 지금 쓰고 있는 홍보 채널</h2>
+<div id="channels"></div>
+<p class="q">홍보에 하루 몇 분 정도 쓰실 수 있나요?</p>
+<div class="opts" data-name="홍보시간" data-type="radio">거의 없음|10분 정도|30분 정도|1시간 이상</div>
+<p class="q">휴대폰으로 사진 찍고 글 올리는 일은요?</p>
+<div class="opts" data-name="폰활용" data-type="radio">편하다|보통이다|어렵다</div>
+<p class="q">ChatGPT 같은 AI를 써 보셨나요?</p>
+<div class="opts" data-name="AI" data-type="radio">자주 쓴다|몇 번 써 봤다|안 써 봤다</div>
+</section>
+
+<section>
+<h2>7. 단체 주문과 새로운 시도</h2>
+<p class="q">단체 주문을 받아 보셨나요? 가장 많을 때 몇 줄이었나요?</p>
+<input type="text" name="단체주문경험">
+<p class="q">단체 주문은 주로 어디서 들어오나요?</p>
+<input type="text" name="단체주문처" placeholder="예: 학교, 어린이집, 관공서, 교회, 운동 모임">
+<p class="q">김밥 도시락(김밥·과일·음료를 예쁘게 담은 예약 상품)을 해 볼 생각이 있으신가요?</p>
+<div class="opts" data-name="도시락" data-type="radio">해 보고 싶다|관심은 있다|힘들 것 같다|생각해 본 적 없다</div>
+<p class="q">해 보고 싶었던 메뉴나 아이디어</p>
+<textarea name="아이디어"></textarea>
+<p class="q">이것만큼은 하고 싶지 않다는 것</p>
+<p class="hint">예: 영업시간 늘리기, 배달, 메뉴 늘리기 등</p>
+<textarea name="하기싫은것"></textarea>
+</section>
+
+<section>
+<h2>8. 앞으로 바라는 가게 모습</h2>
+<p class="q">6개월 뒤 가게가 어떻게 되어 있으면 좋겠나요?</p>
+<textarea name="6개월뒤"></textarea>
+<p class="q">3년 뒤 사장님이 그리는 모습</p>
+<div class="opts" data-name="3년뒤" data-type="radio">지금 가게를 더 단단하게|일은 줄이고 더 편하게|가게를 넓히거나 2호점|다른 일을 준비|아직 모르겠다</div>
+<textarea name="3년뒤_메모" placeholder="자세히 적어 주셔도 좋습니다"></textarea>
+<p class="q">이번 컨설팅이 끝났을 때 꼭 손에 쥐고 싶은 것</p>
+<textarea name="손에쥘것"></textarea>
+<p class="q">컨설턴트에게 바라는 점이나 부탁</p>
+<textarea name="부탁"></textarea>
+</section>
+
+<button type="submit" class="send">컨설턴트에게 보내기</button>
+<p class="saved" id="saved"></p>
+</form>
+
+<section id="done" hidden>
+<h2>잘 받았습니다</h2>
+<p>적어 주신 내용은 정경 컨설턴트에게 전달되었습니다. 만나서 함께 보면서 이야기 나누겠습니다.</p>
+<button type="button" class="ghost" id="copy">혹시 몰라 내용 복사해 두기</button>
+<button type="button" class="ghost" id="edit">고쳐서 다시 보내기</button>
+</section>
+</main>
+
+<script>
+// 응답 수신: jh/apps-script.gs 와 같은 구글 Apps Script 웹앱 (업체별 탭으로 쌓임)
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxA7kKubXKSmxT988hBgaJdXas3dMzXBkMDVS6Bggw6XsKB1P0n37XsnzkhN21ioo6t/exec';
+const KEY = 'hbaekjul-survey-1';
+
+const FLOW = [
+  ['찾기', '네이버에서 \'홍천 김밥\'을 검색하면 우리 가게가 보인다', '네이버 플레이스 소개글·키워드 정비'],
+  ['찾기', '구글 지도에 우리 가게가 등록되어 있다', '구글 비즈니스 프로필 등록 (네이버와 상호·주소·전화 동일)'],
+  ['찾기', '가게 이름을 네이버·당근·간판에서 똑같이 쓴다', 'H-백줄김밥 / 에이치백줄김밥 표기 통일'],
+  ['고르기', '네이버 대표사진 첫 장에 김밥 단면이 먹음직스럽게 보인다', '대표사진 3장 교체 (단면·포장·외관)'],
+  ['고르기', '메뉴와 가격이 네이버·당근에 모두 올라가 있다', '메뉴·가격 전 채널 등록'],
+  ['고르기', '\'아침 7시 오픈\'과 \'단체 예약 가능\'이 소개에 적혀 있다', '소개글에 강점 문장 넣기'],
+  ['방문', '미리 전화로 주문하면 기다리지 않고 바로 가져갈 수 있다', '미리 주문·픽업 안내'],
+  ['방문', '가게 앞에서 간판과 메뉴가 잘 보인다', '입구 메뉴판·간판 점검'],
+  ['다시 오기', '리뷰에 사장님이 답글을 달고 있다', '리뷰 답글 루틴'],
+  ['다시 오기', '단골이 다시 오게 하는 방법(쿠폰·단골 혜택·소식)이 있다', '당근 단골 소식·혜택 설계'],
+];
+const CHANNELS = ['네이버 플레이스', '당근 비즈프로필', '인스타그램', '네이버 블로그', '배달앱', '카카오톡 채널'];
+
+/* ── 분석 시작 (survey.test.js 가 이 블록을 그대로 실행) ── */
+function analyze(d) {
+  const L = [];
+  const no = FLOW.map((f, i) => ({ stage: f[0], fix: f[2], ans: d['흐름' + (i + 1)] }));
+  const stages = [...new Set(FLOW.map(f => f[0]))];
+  const noList = no.filter(x => x.ans === '아니오');
+
+  L.push('■ 고민과 바라는 도움');
+  L.push('  - 고민: ' + ((d['고민'] || []).join(', ') || '응답 없음'));
+  if (d['가장큰고민']) L.push('  - 가장 큰 고민: ' + d['가장큰고민']);
+  L.push('  - 받고 싶은 도움: ' + ((d['받고싶은도움'] || []).join(', ') || '응답 없음'));
+  if ((d['받고싶은도움'] || []).length > 2) L.push('  → 3개 이상 선택: 현장에서 우선순위 2개로 좁히기');
+  if (d['하기싫은것']) L.push('  → 하기 싫은 것: ' + d['하기싫은것'] + ' (제안에서 제외)');
+
+  L.push('', '■ 손님 흐름 (아니오 ' + noList.length + ' / 10)');
+  stages.forEach(s => {
+    const all = no.filter(x => x.stage === s);
+    L.push('  - ' + s + ': 아니오 ' + all.filter(x => x.ans === '아니오').length + '/' + all.length);
+  });
+  noList.slice(0, 3).forEach((x, i) => L.push('  ' + (i + 1) + '. [' + x.stage + '] ' + x.fix));
+
+  L.push('', '■ 생산 여력');
+  const day = parseInt(d['하루줄수_평일'], 10), max = parseInt(d['하루최대줄수'], 10);
+  if (!isNaN(day) && !isNaN(max)) {
+    const room = max - day;
+    L.push('  - 평일 ' + day + '줄 / 최대 ' + max + '줄 → 여유 ' + room + '줄');
+    if (room <= 0) L.push('  → 여유 없음: 손님 늘리기보다 객단가·준비 효율이 먼저');
+    else if (/해 보고 싶다|관심/.test(d['도시락'] || '')) L.push('  → 여유 있고 도시락 관심 있음: 전날 예약제 소량 시험 가능');
+  } else L.push('  - 하루 줄 수 응답 부족 → 현장 확인');
+
+  L.push('', '■ 남는 장사');
+  if (d['잘팔리는3'] || d['많이남는3']) L.push('  - 잘 팔림: ' + (d['잘팔리는3'] || '-') + ' / 많이 남음: ' + (d['많이남는3'] || '-'));
+  if (d['매출20'] === '일만 늘고 남는 건 비슷할 것 같다') L.push('  → 매출보다 원가·메뉴 구조가 먼저');
+  if (d['폐기'] === '꽤 많음') L.push('  → 폐기 많음: 준비량·예약제 검토');
+
+  L.push('', '■ 실행 여력');
+  L.push('  - 홍보 시간: ' + (d['홍보시간'] || '응답 없음') + ' / 휴대폰: ' + (d['폰활용'] || '응답 없음') + ' / AI: ' + (d['AI'] || '응답 없음'));
+  if (/거의 없음|10분/.test(d['홍보시간'] || '')) L.push('  → 숙제는 한 번 하면 끝나는 일 위주 (플레이스·구글 정비)');
+  const none = CHANNELS.filter(c => d['채널_' + c] === '없음');
+  if (none.length) L.push('  - 없는 채널: ' + none.join(', '));
+  return L.join('\n');
+}
+/* ── 분석 끝 ── */
+
+const $ = s => document.querySelector(s);
+const f = $('#f');
+
+document.querySelectorAll('.opts[data-name]').forEach(box => {
+  const type = box.dataset.type || 'checkbox';
+  box.innerHTML = box.textContent.trim().split('|').map(v =>
+    `<label><input type="${type}" name="${box.dataset.name}" value="${v}">${v}</label>`).join('');
+});
+$('#flow').innerHTML = FLOW.map((q, i) => `
+  <div class="flow"><div class="t"><span class="st">${q[0]}</span>${i + 1}. ${q[1]}</div>
+  <div class="yn"><label><input type="radio" name="흐름${i + 1}" value="예">예</label>
+  <label><input type="radio" name="흐름${i + 1}" value="아니오">아니오</label></div></div>`).join('');
+$('#channels').innerHTML = CHANNELS.map(c => `
+  <div class="ch"><div class="top"><b>${c}</b><div class="opts">
+  <label><input type="radio" name="채널_${c}" value="있음">있음</label>
+  <label><input type="radio" name="채널_${c}" value="없음">없음</label></div></div>
+  <div class="more"><input type="text" name="채널주인_${c}" placeholder="누가 관리 (사장님·가족·업체)">
+  <input type="text" name="채널메모_${c}" placeholder="마지막 게시 / 메모"></div></div>`).join('');
+
+function collect() {
+  const d = {}, fd = new FormData(f);
+  for (const k of new Set(fd.keys())) {
+    const v = fd.getAll(k).filter(x => x !== '');
+    if (!v.length) continue;
+    d[k] = f.querySelector(`[name="${CSS.escape(k)}"]`).type === 'checkbox' ? v : v[0];
+  }
+  return d;
+}
+function restore(d) {
+  Object.entries(d).forEach(([k, v]) => f.querySelectorAll(`[name="${CSS.escape(k)}"]`).forEach(el => {
+    if (el.type === 'checkbox' || el.type === 'radio') el.checked = [].concat(v).includes(el.value);
+    else el.value = v;
+  }));
+}
+function answersText(d) {
+  return Object.entries(d).map(([k, v]) => k + ': ' + [].concat(v).join(', ')).join('\n');
+}
+
+try { restore(JSON.parse(localStorage.getItem(KEY) || '{}')); } catch (e) {}
+f.addEventListener('input', () => {
+  try { localStorage.setItem(KEY, JSON.stringify(collect())); $('#saved').textContent = '자동 저장됨 ' + new Date().toLocaleTimeString('ko-KR'); } catch (e) {}
+});
+
+f.addEventListener('submit', async e => {
+  e.preventDefault();
+  const d = collect();
+  if (!Object.keys(d).length) { alert('한 칸 이상 적어 주세요.'); return; }
+  const btn = f.querySelector('.send');
+  btn.disabled = true; btn.textContent = '보내는 중…';
+  const payload = { client: 'H-백줄김밥', round: '1회차 사전 설문지', sentAt: new Date().toISOString(),
+    answers: d, answersText: answersText(d), analysis: analyze(d) };
+  try {
+    // shortcut: no-cors라 성공 여부를 못 읽음, 누락되면 '내용 복사'로 받기 — 확실한 확인이 필요하면 JSONP 방식으로 교체
+    await fetch(SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(payload) });
+    f.hidden = true; $('#done').hidden = false; scrollTo(0, 0);
+  } catch (err) {
+    alert('전송이 되지 않았습니다. 적으신 내용은 이 기기에 저장되어 있으니, 아래 「내용 복사」를 눌러 카카오톡으로 보내 주세요.');
+    f.hidden = true; $('#done').hidden = false; $('#done h2').textContent = '전송이 되지 않았어요'; $('#done p').textContent = '아래 버튼으로 내용을 복사해 정경 컨설턴트(010-9727-6345)에게 카카오톡으로 보내 주세요.';
+  } finally { btn.disabled = false; btn.textContent = '컨설턴트에게 보내기'; }
+});
+$('#copy').onclick = async () => {
+  const t = 'H-백줄김밥 1회차 사전 설문지\n\n' + answersText(collect());
+  try { await navigator.clipboard.writeText(t); alert('복사되었습니다. 카카오톡에 붙여 넣어 보내 주세요.'); }
+  catch (e) { prompt('아래 내용을 길게 눌러 복사해 주세요.', t); }
+};
+$('#edit').onclick = () => { $('#done').hidden = true; f.hidden = false; };
+</script>
+</body>
+</html>
