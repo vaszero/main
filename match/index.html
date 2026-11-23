@@ -146,7 +146,7 @@ table.leads th{color:var(--muted);font-weight:700;font-size:13px}
       <div class="cal-wrap"><div class="cal" id="cal"></div></div>
       <h2>사업별 지난 3년 흐름<small>2024 · 2025 · 2026 공고 → 2027 예상</small></h2>
       <div class="list" id="annual"></div>
-      <h2>올해 아직 접수 중인 사업<small>마감이 가까운 순</small></h2>
+      <h2>참고 · 연말까지 남은 사업<small>마감이 가까운 순</small></h2>
       <div class="list" id="open"></div>
 
       <h2 id="leadH">추천 자료 받기<small>연락처를 남겨 주시면 오늘 중으로 맞춤 자료(PDF)를 보내 드립니다</small></h2>
@@ -233,7 +233,7 @@ const P=[
   hist:{'2024':'','2025':'','2026':'중소기업육성기금 사회적경제계정, 예산 소진 시까지 접수 (11/23 현재 접수 중)'},exp:[1],expText:'1월 공고 예상'},
  {name:'경기도 사회적경제 성장패키지',org:'경기도사회적경제원',kind:'annual',regions:['경기'],ages:['0','1','3'],
   types:['pre','se','pse','coop'],needs:['startup','market'],kw:'경기도 사회적경제 성장패키지',url:'https://www.bizinfo.go.kr',
-  hist:{'2024':'','2025':'','2025':'3.7~3.28 접수','2026':'3.13~4.8 접수, 기업당 최대 5,000만 원(업력 7년 이내)'},exp:[3],expText:'3월 공고 예상'},
+  hist:{'2024':'','2025':'3.7~3.28 접수','2026':'3.13~4.8 접수, 기업당 최대 5,000만 원(업력 7년 이내)'},exp:[3],expText:'3월 공고 예상'},
  {name:'공공기관 우선구매 · 공공구매 상담회',org:'한국사회적기업진흥원',kind:'annual',
   types:['se'],needs:['market'],kw:'사회적기업 제품 우선구매',url:'https://www.socialenterprise.or.kr',
   hist:{'2024':'공공기관 우선구매 상담회 7월(세종·대구·서울)','2025':'우선구매 제도설명회 6월','2026':'공공구매 상담회: 6월 세종·서울, 8월 부산·경남, 9월 대구, 10월 강원'},exp:[6],expText:'우선구매는 상시, 공공구매 상담회는 6~10월 지역별 예상',
@@ -287,6 +287,8 @@ function match(v){
   }
   return out;
 }
+// 지난 3년 공고 달(exp)로 '언제 신청해 보라'는 한 줄 안내
+function guide(p){if(!p.exp||!p.exp.length)return p.expText||'';const e=[...new Set(p.exp)].sort((a,b)=>a-b),L=k=>k===0?'올해 12월':k+'월',run=e.every((k,i)=>!i||k===e[i-1]+1);const t=e.length>1&&run?(e[0]===0?'올해 12월~':e[0]+'~')+e[e.length-1]+'월':e.map(L).join('·');return '지난 3년 흐름으로 보면 '+t+'쯤 공고가 나옵니다. 그때 공고를 확인하고 신청해 보세요.'}
 function card(m){
   const p=m.p, el=document.createElement('article'); el.className='card';
   let pill;
@@ -295,7 +297,7 @@ function card(m){
   el.innerHTML='<h3></h3><div class="org"></div><div class="dday">'+pill+'</div>'+(p.hist?'<div class="hist"></div>':'')+'<p class="why">맞는 이유: <em></em></p>'+(p.note?'<p class="note"></p>':'')+
    '<div class="links"><a target="_blank" rel="noopener"></a><span class="kw">검색어 <code></code></span></div>';
   el.querySelector('h3').textContent=p.name; el.querySelector('.org').textContent=p.org;
-  if(p.kind!=='open') el.querySelector('.ddate').textContent=p.expText||p.when||'';
+  if(p.kind!=='open'){const g=el.querySelector('.ddate');g.textContent=guide(p);g.style.cssText='font-size:15px;font-weight:700;color:var(--ink,#26235f)'}
   if(p.hist){const h=el.querySelector('.hist');['2024','2025','2026'].forEach(y=>{const d=document.createElement('div');const t=p.hist[y];d.innerHTML='<b>'+y+'</b>';const sp=document.createElement('span');sp.textContent=t||'공식 자료 확인 못 함';if(!t)sp.className='na';d.append(sp);h.append(d)});
     const d=document.createElement('div');d.className='y27';d.innerHTML='<b>2027 예상</b>';d.append(document.createTextNode(p.expText||''));h.append(d)}
   el.querySelector('em').textContent=m.why.join(' / ')||'기본 조건 해당';
@@ -319,7 +321,7 @@ function render(){
   const open=ms.filter(m=>m.p.kind==='open').sort((a,b)=>a.left-b.left||b.score-a.score);
   const ann=ms.filter(m=>m.p.kind==='annual').sort((a,b)=>Math.min(...(a.p.exp.length?a.p.exp:[99]))-Math.min(...(b.p.exp.length?b.p.exp:[99])));
   const soon=ann.filter(m=>m.p.exp.some(k=>k<=2)).length;
-  $('#summary').innerHTML='<div class="stat"><b>'+ann.length+'</b><span>2027년에 나올 사업</span></div><div class="stat"><b>'+soon+'</b><span>12~2월에 열릴 사업</span></div><div class="stat"><b>'+open.length+'</b><span>올해 아직 접수 중</span></div>';
+  $('#summary').innerHTML='<div class="stat"><b>'+ann.length+'</b><span>2027년에 나올 사업</span></div><div class="stat"><b>'+soon+'</b><span>12~2월에 열릴 사업</span></div><div class="stat"><b>'+open.length+'</b><span>연말까지 남은 사업</span></div>';
   lastResult={ann,open,v};
   calendar(ann);
   const fill=(id,arr,msg)=>{const box=$(id);box.replaceChildren();if(!arr.length){const e=document.createElement('p');e.className='empty';e.textContent=msg;box.append(e)}else arr.forEach(m=>box.append(card(m)))};
@@ -351,7 +353,7 @@ function reportHTML(co,person,vv){
   const months=MONTHS;
   const calRows=ann.filter(m=>m.p.exp&&m.p.exp.length).map(m=>'<tr><th>'+esc(m.p.name)+'</th>'+months.map(([k])=>'<td class="'+(m.p.exp.includes(k)?'on':'')+'"></td>').join('')+'</tr>').join('');
   const cards=ann.map(m=>{const p=m.p;const h=p.hist?['2024','2025','2026'].map(y=>'<td>'+(esc(p.hist[y])||'<span class="na">확인 못 함</span>')+'</td>').join(''):'<td colspan="3">-</td>';
-    return '<div class="card"><h3>'+esc(p.name)+'</h3><p class="org">'+esc(p.org)+'</p><table class="h"><tr><th>2024</th><th>2025</th><th>2026</th><th class="y">2027 예상</th></tr><tr>'+h+'<td class="y">'+esc(p.expText||'')+'</td></tr></table>'+
+    return '<div class="card"><h3>'+esc(p.name)+'</h3><p class="org">'+esc(p.org)+'</p><p style="font-weight:700;color:#26235f;margin:4px 0 6px">'+esc(guide(p))+'</p><table class="h"><tr><th>2024</th><th>2025</th><th>2026</th><th class="y">2027 예상</th></tr><tr>'+h+'<td class="y">'+esc(p.expText||'')+'</td></tr></table>'+
     (m.why.length?'<p><b>추천 이유</b> '+esc(m.why.join(' / '))+'</p>':'')+(p.note?'<p class="note">'+esc(p.note)+'</p>':'')+'<p class="lk">공고 확인: '+esc(p.url.replace('https://',''))+' · 검색어 「'+esc(p.kw)+'」</p></div>'}).join('');
   const opens=open.map(m=>'<li><b>'+esc(m.p.name)+'</b> — '+fmt(m.p.end)+' 마감 ('+esc(m.p.org)+')</li>').join('')||'<li>해당 없음</li>';
   const prep=['사업자등록증명, 부가가치세 과세표준증명(최근 매출)','4대보험 가입자 명부(직원 수 확인용)'];
@@ -374,7 +376,7 @@ function reportHTML(co,person,vv){
   '<h2>상담에서 확인한 조건</h2><ul class="cond">'+condText(v).map(t=>'<li>'+esc(t)+'</li>').join('')+'</ul>'+
   '<h2>2027년 공고 예상 달력</h2><table class="cal"><thead><tr><th></th>'+months.map(([,l])=>'<th>'+l+'</th>').join('')+'</tr></thead><tbody>'+calRows+'</tbody></table>'+
   '<h2>추천 사업 — 지난 3년 흐름과 2027년 예상</h2>'+cards+
-  '<h2>올해 아직 접수 중인 사업</h2><ul>'+opens+'</ul>'+
+  '<h2>참고 · 연말까지 남은 사업</h2><ul>'+opens+'</ul>'+
   '<h2>지금부터 준비해 두면 좋은 서류</h2><ul class="prep">'+prep.map(t=>'<li>'+esc(t)+'</li>').join('')+'</ul>'+
   '<div class="foot"><b>'+BZ.name+'</b><p>'+BZ.ceo+' · 신청서·사업계획서 준비부터 함께 정리해 드립니다.</p><p>전화 '+BZ.tel+' · 메일 '+BZ.mail+' · '+BZ.web+'</p><p>사업자등록번호 '+BZ.biz+' · '+BZ.addr+'</p></div>'+
   '<p class="fine">이 자료는 공식 공고를 바탕으로 정리한 참고 자료입니다. 2027년 시기는 2024~2026년 공고를 바탕으로 한 예상이며 정부 예산과 지자체 사정에 따라 달라질 수 있습니다. 신청 자격과 마감일은 반드시 원문 공고에서 확인해 주세요. 선정 여부는 각 기관의 심사로 결정됩니다.</p></div></body></html>';
