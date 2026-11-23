@@ -381,7 +381,7 @@ function reportHTML(co,person,vv){
 }
 const msg=(t,ok)=>{const m=$('#l_msg');m.textContent=t;m.className='msg '+(ok?'ok':'err')};
 // 연락처는 대표님 구글 시트(Apps Script 웹앱)로 보냄
-const SHEET_URL='__SHEET_URL__';
+const SHEET_URL='https://script.google.com/macros/s/AKfycbwdBdz9eyt0n5WGtbub_f3IQND3_utMoGuO8NlLqtml2-LlOxYzSaKO1vtRrSnqfHOm/exec';
 async function makePDF(co,person,v){
   const html=reportHTML(co||'우리 회사',person,v);
   const fr=document.createElement('iframe');fr.style.cssText='position:fixed;left:-10000px;top:0;width:794px;height:1123px;border:0';document.body.append(fr);
