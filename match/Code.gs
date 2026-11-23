@@ -7,7 +7,7 @@ function doPost(e) {
   };
   if (!d.company || !d.phone || d.consent !== true) return ContentService.createTextOutput('bad');
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var sh = ss.getSheetByName('연락처') || ss.insertSheet('연락처');
+  var sh = ss.getSheets()[0];
   if (sh.getLastRow() === 0) sh.appendRow(['받은 시간', '회사명', '성함', '휴대폰', '이메일', '메모', '조건', '추천 사업', 'PDF 만들기 링크', '자료 보냄']);
   sh.appendRow([new Date(), clean(d.company, 100), clean(d.name, 50), clean(d.phone, 20), clean(d.email, 100),
     clean(d.memo, 500), clean(d.conditions, 500), clean(d.programs, 1000), clean(d.link, 3000), '']);
